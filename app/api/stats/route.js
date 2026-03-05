@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import Stat from '@/models/Stat';
 import Volunteer from '@/models/Volunteer';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     await connectDB();
