@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { 
   Utensils, 
@@ -10,12 +10,12 @@ import {
   Check, 
   Copy,
   Wallet,
-  Building2
+  Building2,
+  Loader2
 } from 'lucide-react';
 import Container from './ui/Container';
 import Card from './ui/Card';
 import Button from './ui/Button';
-import { donationTiers } from '@/data/animals';
 
 const iconMap = {
   Utensils,
@@ -28,15 +28,46 @@ export default function DonationSection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [copiedText, setCopiedText] = useState(null);
+  const [settings, setSettings] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const upiId = 'lahit@upi';
-  const bankDetails = {
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        if (data.success) {
+          setSettings(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  const upiId = settings?.upiId || 'lahit@upi';
+  const bankDetails = settings ? {
+    accountName: settings.bankAccountName || 'LAHIT Animal Welfare',
+    accountNumber: settings.bankAccountNumber || '1234567890',
+    ifscCode: settings.bankIfscCode || 'HDFC0001234',
+    bankName: settings.bankName || 'HDFC Bank',
+    branch: settings.bankBranch || 'Dehradun Main Branch',
+  } : {
     accountName: 'LAHIT Animal Welfare',
     accountNumber: '1234567890',
     ifscCode: 'HDFC0001234',
     bankName: 'HDFC Bank',
     branch: 'Dehradun Main Branch',
   };
+  const donationTiers = settings?.donationTiers || [
+    { id: 1, amount: 500, title: 'Daily Meals', description: 'Feed stray dogs for a day', icon: 'Utensils', impact: 'Provides nutritious meals for 10 street dogs' },
+    { id: 2, amount: 1500, title: 'Vaccination', description: 'Vaccination for one animal', icon: 'Syringe', impact: 'Complete vaccination course for a rescued animal' },
+    { id: 3, amount: 3000, title: 'Emergency Treatment', description: 'Emergency treatment support', icon: 'HeartPulse', impact: 'Covers emergency medical treatment and medicines' },
+    { id: 4, amount: 5000, title: 'Rescue Mission', description: 'Fund a complete rescue', icon: 'Ambulance', impact: 'Covers rescue, treatment, and rehabilitation' }
+  ];
 
   const handleCopy = (text, label) => {
     navigator.clipboard.writeText(text);
@@ -67,145 +98,153 @@ export default function DonationSection() {
         </motion.div>
 
         {/* Donation Tiers */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {donationTiers.map((tier, index) => {
-            const Icon = iconMap[tier.icon];
-            return (
-              <motion.div
-                key={tier.id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="h-full text-center group" padding="xl">
-                  <div className="w-16 h-16 bg-[#164020]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-[#164020] transition-colors duration-300">
-                    <Icon className="w-8 h-8 text-[#164020] group-hover:text-white transition-colors duration-300" />
-                  </div>
-
-                  <div className="mb-4">
-                    <span className="text-sm text-[#401E01]/60">₹</span>
-                    <span className="text-4xl font-bold text-[#401E01]">
-                      {tier.amount.toLocaleString()}
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-[#401E01] mb-2">
-                    {tier.title}
-                  </h3>
-                  <p className="text-[#401E01]/70 text-sm mb-4">
-                    {tier.description}
-                  </p>
-
-                  <div className="pt-4 border-t border-[#401E01]/10">
-                    <p className="text-xs text-[#401E01]/60 mb-1">Impact:</p>
-                    <p className="text-sm text-[#164020] font-medium">
-                      {tier.impact}
-                    </p>
-                  </div>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Payment Methods */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid md:grid-cols-2 gap-8"
-        >
-          {/* UPI Payment */}
-          <div className="bg-[#F2CDAC] rounded-3xl p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-[#164020] rounded-xl flex items-center justify-center">
-                <Wallet className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-[#401E01]">Donate via UPI</h3>
-                <p className="text-sm text-[#401E01]/60">Quick and easy payment</p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-6 mb-6">
-              <p className="text-sm text-[#401E01]/60 mb-2">UPI ID</p>
-              <div className="flex items-center justify-between">
-                <code className="text-lg font-mono text-[#401E01] font-semibold">
-                  {upiId}
-                </code>
-                <button
-                  onClick={() => handleCopy(upiId, 'upi')}
-                  className="flex items-center gap-1 px-3 py-1 bg-[#164020]/10 text-[#164020] rounded-lg text-sm font-medium hover:bg-[#164020]/20 transition-colors"
-                >
-                  {copiedText === 'upi' ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4" />
-                      Copy
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <p className="text-sm text-[#401E01]/70">
-              Open any UPI app (Google Pay, PhonePe, Paytm) and scan or enter the UPI ID to donate.
-            </p>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#401E01]" />
           </div>
-
-          {/* Bank Transfer */}
-          <div className="bg-[#F2CDAC] rounded-3xl p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-[#401E01] rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-[#401E01]">Bank Transfer</h3>
-                <p className="text-sm text-[#401E01]/60">Direct bank donation</p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-6 space-y-4">
-              {Object.entries(bankDetails).map(([key, value]) => (
-                <div key={key} className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-[#401E01]/60 uppercase">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
-                    </p>
-                    <p className="text-sm font-semibold text-[#401E01]">{value}</p>
-                  </div>
-                  <button
-                    onClick={() => handleCopy(value, key)}
-                    className="p-2 hover:bg-[#401E01]/10 rounded-lg transition-colors"
+        ) : (
+          <>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+              {donationTiers.map((tier, index) => {
+                const Icon = iconMap[tier.icon];
+                return (
+                  <motion.div
+                    key={tier.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    {copiedText === key ? (
-                      <Check className="w-4 h-4 text-[#164020]" />
-                    ) : (
-                      <Copy className="w-4 h-4 text-[#401E01]/60" />
-                    )}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+                    <Card className="h-full text-center group" padding="xl">
+                      <div className="w-16 h-16 bg-[#164020]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-[#164020] transition-colors duration-300">
+                        {Icon && <Icon className="w-8 h-8 text-[#164020] group-hover:text-white transition-colors duration-300" />}
+                      </div>
 
-        {/* Tax Benefits Note */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-sm text-[#401E01]/60">
-            All donations are eligible for tax benefits under Section 80G. 
-            Receipts will be sent to your email within 24 hours.
-          </p>
-        </motion.div>
+                      <div className="mb-4">
+                        <span className="text-sm text-[#401E01]/60">₹</span>
+                        <span className="text-4xl font-bold text-[#401E01]">
+                          {tier.amount.toLocaleString()}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-bold text-[#401E01] mb-2">
+                        {tier.title}
+                      </h3>
+                      <p className="text-[#401E01]/70 text-sm mb-4">
+                        {tier.description}
+                      </p>
+
+                      <div className="pt-4 border-t border-[#401E01]/10">
+                        <p className="text-xs text-[#401E01]/60 mb-1">Impact:</p>
+                        <p className="text-sm text-[#164020] font-medium">
+                          {tier.impact}
+                        </p>
+                      </div>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Payment Methods */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="grid md:grid-cols-2 gap-8"
+            >
+              {/* UPI Payment */}
+              <div className="bg-[#F2CDAC] rounded-3xl p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-[#164020] rounded-xl flex items-center justify-center">
+                    <Wallet className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#401E01]">Donate via UPI</h3>
+                    <p className="text-sm text-[#401E01]/60">Quick and easy payment</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 mb-6">
+                  <p className="text-sm text-[#401E01]/60 mb-2">UPI ID</p>
+                  <div className="flex items-center justify-between">
+                    <code className="text-lg font-mono text-[#401E01] font-semibold">
+                      {upiId}
+                    </code>
+                    <button
+                      onClick={() => handleCopy(upiId, 'upi')}
+                      className="flex items-center gap-1 px-3 py-1 bg-[#164020]/10 text-[#164020] rounded-lg text-sm font-medium hover:bg-[#164020]/20 transition-colors"
+                    >
+                      {copiedText === 'upi' ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-sm text-[#401E01]/70">
+                  Open any UPI app (Google Pay, PhonePe, Paytm) and scan or enter the UPI ID to donate.
+                </p>
+              </div>
+
+              {/* Bank Transfer */}
+              <div className="bg-[#F2CDAC] rounded-3xl p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-[#401E01] rounded-xl flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#401E01]">Bank Transfer</h3>
+                    <p className="text-sm text-[#401E01]/60">Direct bank donation</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 space-y-4">
+                  {Object.entries(bankDetails).map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-[#401E01]/60 uppercase">
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                        </p>
+                        <p className="text-sm font-semibold text-[#401E01]">{value}</p>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(value, key)}
+                        className="p-2 hover:bg-[#401E01]/10 rounded-lg transition-colors"
+                      >
+                        {copiedText === key ? (
+                          <Check className="w-4 h-4 text-[#164020]" />
+                        ) : (
+                          <Copy className="w-4 h-4 text-[#401E01]/60" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Tax Benefits Note */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="mt-12 text-center"
+            >
+              <p className="text-sm text-[#401E01]/60">
+                All donations are eligible for tax benefits under Section 80G. 
+                Receipts will be sent to your email within 24 hours.
+              </p>
+            </motion.div>
+          </>
+        )}
       </Container>
     </section>
   );

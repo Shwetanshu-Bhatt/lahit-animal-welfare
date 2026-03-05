@@ -2,9 +2,8 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation, Loader2 } from 'lucide-react';
 import Container from './ui/Container';
-import { rescueLocations } from '@/data/rescues';
 import dynamic from 'next/dynamic';
 
 // Dynamically import Leaflet components to avoid SSR issues
@@ -42,7 +41,7 @@ const createCustomIcon = () => {
   return null;
 };
 
-function MapComponent() {
+function MapComponent({ locations }) {
   const [mounted, setMounted] = useState(false);
   const [customIcon, setCustomIcon] = useState(null);
 
@@ -77,9 +76,9 @@ function MapComponent() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {rescueLocations.map((location) => (
+      {locations.map((location, index) => (
         <Marker
-          key={location.id}
+          key={location.id || index}
           position={location.coordinates}
           icon={customIcon}
         >
@@ -101,6 +100,31 @@ function MapComponent() {
 export default function RescueMap() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const [locations, setLocations] = useState([
+    { id: 1, name: 'Dehradun Rescue Center', coordinates: [30.3165, 78.0322], address: 'Rajpur Road, Dehradun', animalsHelped: 450 },
+    { id: 2, name: 'Mussoorie Feeding Point', coordinates: [30.4598, 78.0644], address: 'Mall Road, Mussoorie', animalsHelped: 180 },
+    { id: 3, name: 'Uttarkashi Shelter', coordinates: [30.7268, 78.4354], address: 'Main Market, Uttarkashi', animalsHelped: 95 },
+    { id: 4, name: 'Rishikesh Care Unit', coordinates: [30.0869, 78.2676], address: 'Laxman Jhula Road, Rishikesh', animalsHelped: 220 },
+    { id: 5, name: 'Haridwar Help Center', coordinates: [29.9457, 78.1642], address: 'Near Har Ki Pauri, Haridwar', animalsHelped: 165 }
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        if (data.success && data.data.rescueLocations && data.data.rescueLocations.length > 0) {
+          setLocations(data.data.rescueLocations);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   return (
     <section className="section-padding bg-white" ref={sectionRef}>
@@ -139,56 +163,66 @@ export default function RescueMap() {
             integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
             crossOrigin=""
           />
-          <MapComponent />
+          {loading ? (
+            <div className="w-full h-full bg-[#F2CDAC] rounded-3xl flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-[#164020]" />
+            </div>
+          ) : (
+            <MapComponent locations={locations} />
+          )}
 
           {/* Map Legend */}
-          <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 shadow-lg z-[400]">
-            <h4 className="font-semibold text-[#401E01] mb-2 text-sm">Our Locations</h4>
-            <div className="space-y-2">
-              {rescueLocations.slice(0, 3).map((location) => (
-                <div key={location.id} className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-[#164020] rounded-full" />
-                  <span className="text-sm text-[#401E01]">{location.name}</span>
-                </div>
-              ))}
-              {rescueLocations.length > 3 && (
-                <p className="text-xs text-[#401E01]/60">
-                  +{rescueLocations.length - 3} more locations
-                </p>
-              )}
+          {!loading && (
+            <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 shadow-lg z-[400]">
+              <h4 className="font-semibold text-[#401E01] mb-2 text-sm">Our Locations</h4>
+              <div className="space-y-2">
+                {locations.slice(0, 3).map((location) => (
+                  <div key={location.id} className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-[#164020] rounded-full" />
+                    <span className="text-sm text-[#401E01]">{location.name}</span>
+                  </div>
+                ))}
+                {locations.length > 3 && (
+                  <p className="text-xs text-[#401E01]/60">
+                    +{locations.length - 3} more locations
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </motion.div>
 
         {/* Location Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8"
-        >
-          {rescueLocations.map((location, index) => (
-            <motion.div
-              key={location.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-              className="bg-[#F2CDAC] rounded-xl p-4 hover:bg-[#164020]/10 transition-colors cursor-pointer"
-            >
-              <div className="flex items-start gap-2">
-                <MapPin className="w-5 h-5 text-[#164020] flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-[#401E01] text-sm mb-1">
-                    {location.name}
-                  </h4>
-                  <p className="text-xs text-[#401E01]/60">
-                    {location.animalsHelped}+ animals helped
-                  </p>
+        {!loading && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8"
+          >
+            {locations.map((location, index) => (
+              <motion.div
+                key={location.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
+                className="bg-[#F2CDAC] rounded-xl p-4 hover:bg-[#164020]/10 transition-colors cursor-pointer"
+              >
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-5 h-5 text-[#164020] flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-semibold text-[#401E01] text-sm mb-1">
+                      {location.name}
+                    </h4>
+                    <p className="text-xs text-[#401E01]/60">
+                      {location.animalsHelped}+ animals helped
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </Container>
     </section>
   );

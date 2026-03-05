@@ -2,10 +2,14 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Animal from '@/models/Animal';
 
-export async function GET() {
+export async function GET(request) {
   try {
     await connectDB();
-    const animals = await Animal.find({ published: true }).sort({ createdAt: -1 });
+    const { searchParams } = new URL(request.url);
+    const includeAll = searchParams.get('all') === 'true';
+    
+    const query = includeAll ? {} : { published: true };
+    const animals = await Animal.find(query).sort({ createdAt: -1 });
     return NextResponse.json({ success: true, data: animals });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

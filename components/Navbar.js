@@ -11,7 +11,7 @@ const navLinks = [
   { name: 'Home', href: '#home' },
   { name: 'About', href: '#about' },
   { name: 'Rescues', href: '#rescues' },
-  { name: 'Adopt', href: '#adopt' },
+  { name: 'Adopt', href: '/animals' },
   { name: 'Volunteer', href: '#volunteer' },
   { name: 'Contact', href: '#contact' },
 ];

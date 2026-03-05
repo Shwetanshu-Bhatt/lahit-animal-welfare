@@ -1,12 +1,11 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { MapPin, Calendar, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight, Loader2 } from 'lucide-react';
 import Container from './ui/Container';
 import Card from './ui/Card';
 import Button from './ui/Button';
-import { rescueStories } from '@/data/rescues';
 import Image from 'next/image';
 
 function RescueCard({ story, index }) {
@@ -81,6 +80,29 @@ function RescueCard({ story, index }) {
 export default function RescueStories() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const [rescues, setRescues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchRescues() {
+      try {
+        const res = await fetch('/api/rescues');
+        const data = await res.json();
+        if (data.success) {
+          setRescues(data.data);
+        } else {
+          setError('Failed to load rescues');
+        }
+      } catch (err) {
+        setError('Error loading rescues');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRescues();
+  }, []);
 
   return (
     <section id="rescues" className="section-padding bg-[#F2CDAC]" ref={sectionRef}>
@@ -105,11 +127,25 @@ export default function RescueStories() {
         </motion.div>
 
         {/* Stories Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {rescueStories.map((story, index) => (
-            <RescueCard key={story.id} story={story} index={index} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#401E01]" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-[#401E01]/60">
+            {error}
+          </div>
+        ) : rescues.length === 0 ? (
+          <div className="text-center py-20 text-[#401E01]/60">
+            No rescue stories available yet.
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {rescues.map((story, index) => (
+              <RescueCard key={story._id || index} story={story} index={index} />
+            ))}
+          </div>
+        )}
 
         {/* CTA */}
         <motion.div

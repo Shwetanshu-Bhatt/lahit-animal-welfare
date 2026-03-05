@@ -1,27 +1,48 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Users, CheckCircle2, Send, X } from 'lucide-react';
+import { Users, CheckCircle2, Send, X, Loader2 } from 'lucide-react';
 import Container from './ui/Container';
 import Button from './ui/Button';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-
-const volunteerActivities = [
-  'Animal Rescue Operations',
-  'Daily Feeding Drives',
-  'Medical Assistance',
-  'Adoption Events',
-  'Community Awareness',
-  'Foster Care',
-];
 
 export default function VolunteerSection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [volunteerCount, setVolunteerCount] = useState(50);
+  const [activities, setActivities] = useState([
+    'Animal Rescue Operations',
+    'Daily Feeding Drives',
+    'Medical Assistance',
+    'Adoption Events',
+    'Community Awareness',
+    'Foster Care',
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        if (data.success) {
+          if (data.data.volunteerActivities && data.data.volunteerActivities.length > 0) {
+            setActivities(data.data.volunteerActivities);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   const {
     register,
@@ -30,14 +51,28 @@ export default function VolunteerSection() {
     reset,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log('Volunteer application:', data);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setIsFormOpen(false);
-      reset();
-    }, 3000);
+  const onSubmit = async (data) => {
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/volunteers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      if (res.ok) {
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setIsFormOpen(false);
+          reset();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error submitting:', error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -53,7 +88,7 @@ export default function VolunteerSection() {
           >
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden">
               <Image
-                src="/images/volunteers.jpg"
+                src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=600&fit=crop"
                 alt="LAHIT Volunteers"
                 fill
                 className="object-cover"
@@ -73,7 +108,7 @@ export default function VolunteerSection() {
                   <Users className="w-6 h-6 text-[#164020]" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[#401E01]">50+</p>
+                  <p className="text-2xl font-bold text-[#401E01]">{volunteerCount}+</p>
                   <p className="text-sm text-[#401E01]/70">Active Volunteers</p>
                 </div>
               </div>
@@ -102,20 +137,26 @@ export default function VolunteerSection() {
             </p>
 
             {/* Activities List */}
-            <div className="grid sm:grid-cols-2 gap-3 mb-8">
-              {volunteerActivities.map((activity, index) => (
-                <motion.div
-                  key={activity}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
-                  className="flex items-center gap-2"
-                >
-                  <CheckCircle2 className="w-5 h-5 text-[#164020] flex-shrink-0" />
-                  <span className="text-[#401E01]">{activity}</span>
-                </motion.div>
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-[#164020]" />
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-3 mb-8">
+                {activities.map((activity, index) => (
+                  <motion.div
+                    key={activity}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
+                    className="flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-5 h-5 text-[#164020] flex-shrink-0" />
+                    <span className="text-[#401E01]">{activity}</span>
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
             <Button
               onClick={() => setIsFormOpen(true)}
@@ -244,7 +285,7 @@ export default function VolunteerSection() {
                       className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all bg-white"
                     >
                       <option value="">Select an area</option>
-                      {volunteerActivities.map((activity) => (
+                      {activities.map((activity) => (
                         <option key={activity} value={activity}>
                           {activity}
                         </option>
@@ -272,9 +313,10 @@ export default function VolunteerSection() {
                     variant="primary"
                     size="lg"
                     className="w-full"
-                    icon={Send}
+                    icon={submitting ? Loader2 : Send}
+                    disabled={submitting}
                   >
-                    Submit Application
+                    {submitting ? 'Submitting...' : 'Submit Application'}
                   </Button>
                 </form>
               </>

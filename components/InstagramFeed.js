@@ -1,10 +1,9 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Instagram, Heart, MessageCircle, ExternalLink } from 'lucide-react';
+import { Instagram, Heart, MessageCircle, ExternalLink, Loader2 } from 'lucide-react';
 import Container from './ui/Container';
-import { instagramPosts } from '@/data/animals';
 import Image from 'next/image';
 
 function InstagramCard({ post, index }) {
@@ -56,6 +55,44 @@ function InstagramCard({ post, index }) {
 export default function InstagramFeed() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const [instagramPosts, setInstagramPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        if (data.success && data.data.instagramPosts && data.data.instagramPosts.length > 0) {
+          setInstagramPosts(data.data.instagramPosts);
+        } else {
+          // Default posts if none in settings
+          setInstagramPosts([
+            { id: 1, image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop', caption: 'Bruno found his forever home today! 🐕❤️', likes: 245, comments: 18 },
+            { id: 2, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=400&fit=crop', caption: 'Morning feeding drive in Dehradun 🍲', likes: 189, comments: 12 },
+            { id: 3, image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop', caption: 'Rescue mission success! Luna is recovering well 🐱', likes: 312, comments: 24 },
+            { id: 4, image: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=400&fit=crop', caption: 'Our amazing volunteers at work 💪', likes: 156, comments: 8 },
+            { id: 5, image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=400&fit=crop', caption: 'New puppies looking for homes 🐾', likes: 423, comments: 45 },
+            { id: 6, image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=400&fit=crop', caption: 'Thank you for your donations! 🙏', likes: 278, comments: 15 }
+          ]);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        // Fallback to default posts
+        setInstagramPosts([
+          { id: 1, image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop', caption: 'Bruno found his forever home today! 🐕❤️', likes: 245, comments: 18 },
+          { id: 2, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=400&fit=crop', caption: 'Morning feeding drive in Dehradun 🍲', likes: 189, comments: 12 },
+          { id: 3, image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop', caption: 'Rescue mission success! Luna is recovering well 🐱', likes: 312, comments: 24 },
+          { id: 4, image: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=400&fit=crop', caption: 'Our amazing volunteers at work 💪', likes: 156, comments: 8 },
+          { id: 5, image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=400&fit=crop', caption: 'New puppies looking for homes 🐾', likes: 423, comments: 45 },
+          { id: 6, image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=400&fit=crop', caption: 'Thank you for your donations! 🙏', likes: 278, comments: 15 }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   return (
     <section className="section-padding bg-[#F2CDAC]" ref={sectionRef}>
@@ -81,11 +118,17 @@ export default function InstagramFeed() {
         </motion.div>
 
         {/* Instagram Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-          {instagramPosts.map((post, index) => (
-            <InstagramCard key={post.id} post={post} index={index} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#401E01]" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+            {instagramPosts.map((post, index) => (
+              <InstagramCard key={post.id || index} post={post} index={index} />
+            ))}
+          </div>
+        )}
 
         {/* CTA */}
         <motion.div

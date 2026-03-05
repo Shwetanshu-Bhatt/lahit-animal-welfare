@@ -5,7 +5,6 @@ import { motion, useInView } from 'framer-motion';
 import { Heart, Utensils, Stethoscope, Home } from 'lucide-react';
 import Container from './ui/Container';
 import Card from './ui/Card';
-import { impactStats } from '@/data/stats';
 
 const iconMap = {
   Heart,
@@ -48,8 +47,67 @@ function AnimatedCounter({ value, suffix = '' }) {
 }
 
 export default function ImpactStats() {
+  const [stats, setStats] = useState(null);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+        if (data.success) {
+          setStats(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        // Fallback to default values
+        setStats({
+          animalsRescued: 1200,
+          mealsServed: 30000,
+          treatments: 500,
+          adoptions: 200
+        });
+      }
+    }
+    fetchStats();
+  }, []);
+
+  const impactStats = stats ? [
+    {
+      id: 1,
+      value: stats.animalsRescued || 0,
+      suffix: '+',
+      label: 'Animals Rescued',
+      icon: 'Heart'
+    },
+    {
+      id: 2,
+      value: stats.mealsServed || 0,
+      suffix: '+',
+      label: 'Meals Served',
+      icon: 'Utensils'
+    },
+    {
+      id: 3,
+      value: stats.treatments || 0,
+      suffix: '+',
+      label: 'Treatments',
+      icon: 'Stethoscope'
+    },
+    {
+      id: 4,
+      value: stats.adoptions || 0,
+      suffix: '+',
+      label: 'Adoptions',
+      icon: 'Home'
+    }
+  ] : [
+    { id: 1, value: 0, suffix: '+', label: 'Animals Rescued', icon: 'Heart' },
+    { id: 2, value: 0, suffix: '+', label: 'Meals Served', icon: 'Utensils' },
+    { id: 3, value: 0, suffix: '+', label: 'Treatments', icon: 'Stethoscope' },
+    { id: 4, value: 0, suffix: '+', label: 'Adoptions', icon: 'Home' }
+  ];
 
   return (
     <section id="about" className="section-padding bg-white" ref={sectionRef}>
@@ -124,19 +182,19 @@ export default function ImpactStats() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-white mb-1">15+</p>
+                <p className="text-3xl font-bold text-white mb-1">{stats?.citiesCovered || 15}+</p>
                 <p className="text-white/80 text-sm">Cities Covered</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-white mb-1">50+</p>
+                <p className="text-3xl font-bold text-white mb-1">{stats?.volunteers || 50}+</p>
                 <p className="text-white/80 text-sm">Volunteers</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-white mb-1">10+</p>
+                <p className="text-3xl font-bold text-white mb-1">{stats?.partnerVets || 10}+</p>
                 <p className="text-white/80 text-sm">Partner Vets</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-white mb-1">4+</p>
+                <p className="text-3xl font-bold text-white mb-1">{stats?.yearsActive || 4}+</p>
                 <p className="text-white/80 text-sm">Years Active</p>
               </div>
             </div>

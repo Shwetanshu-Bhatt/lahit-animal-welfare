@@ -1,2 +1,1463 @@
-[00:00:00.549] Server  LOG     ✓ Ready in 342ms
-[00:00:05.473] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:00.449] Server  LOG     ✓ Ready in 288ms
+[00:00:01.093] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:03.104] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:27.571] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:27.790] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:28.695] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:28.889] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:29.122] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:29.308] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:29.522] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:29.709] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:29.901] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:30.089] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:30.275] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:30.464] Server  ERROR   ⨯ Error: The default export is not a React Component in "/admin/login/page"
+[00:00:30.589] Browser ERROR   uncaughtError: Error: The default export is not a React Component in "/admin/login/page"
+[00:00:30.634] Browser ERROR   uncaughtError: Error: The default export is not a React Component in "/admin/login/page"
+[00:00:37.520] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:48.073] Server  LOG     ✓ Compiled in 493ms
+[00:01:02.343] Server  LOG     ✓ Compiled in 330ms
+[00:01:30.743] Server  LOG     ✓ Compiled in 89ms
+[00:01:40.376] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/shared/lib/router/router.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:01:40.487] Server  LOG     ✓ Compiled in 94ms
+[00:01:41.169] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:59.887] Server  LOG     ✓ Compiled in 126ms
+[00:04:41.300] Server  LOG     ✓ Compiled in 76ms
+[00:05:02.309] Server  LOG     ✓ Compiled in 75ms
+[00:05:16.096] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.127] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.319] Server  LOG     ✓ Compiled in 3ms
+[00:05:16.337] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.400] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.448] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:16.473] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.526] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.616] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.686] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.870] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:16.919] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:17.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:28.540] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:28.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:38.774] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:38.813] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:38.851] Server  LOG     ✓ Compiled in 95ms
+[00:05:38.879] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:38.949] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:39.162] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:39.207] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:39.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:48.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:05:48.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:01.634] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:01.634] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:01.702] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:01.764] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:01.821] Server  LOG     ✓ Compiled in 57ms
+[00:06:01.863] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:01.935] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:02.168] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:02.214] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:02.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:08.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:08.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:18.351] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:18.413] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:18.514] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:18.564] Server  LOG     ✓ Compiled in 0ms
+[00:06:18.576] Server  ERROR   ⨯ ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:18.826] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:18.876] Browser ERROR   uncaughtError: Error: ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+
+
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:19.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:21.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
+[00:06:21.541] Browser ERROR   ./app/globals.css:943:25
+Parsing CSS source code failed
+  941 |   }
+  942 |   .bg-\[50\!\] {
+> 943 |     background-color: 50!;
+      |                         ^
+  944 |   }
+  945 |   .bg-black {
+  946 |     background-color: var(--color-black);
+
+Unexpected token Delim('!')
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/layout.js [Server Component]
