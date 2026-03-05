@@ -7,6 +7,8 @@ export default function AdminVolunteers() {
   const [volunteers, setVolunteers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [processingId, setProcessingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchVolunteers();
@@ -27,6 +29,13 @@ export default function AdminVolunteers() {
   }
 
   async function updateStatus(id, status) {
+    // Optimistic update
+    setProcessingId(id);
+    const previousStatus = volunteers.find(v => v._id === id)?.status;
+    setVolunteers(prev => prev.map(v => 
+      v._id === id ? { ...v, status } : v
+    ));
+
     try {
       const res = await fetch(`/api/volunteers/${id}`, {
         method: 'PUT',
@@ -34,26 +43,37 @@ export default function AdminVolunteers() {
         body: JSON.stringify({ status })
       });
       const data = await res.json();
-      if (data.success) {
-        fetchVolunteers();
+      if (!data.success) {
+        setVolunteers(prev => prev.map(v => 
+          v._id === id ? { ...v, status: previousStatus } : v
+        ));
       }
     } catch (error) {
       console.error('Error updating status:', error);
+      setVolunteers(prev => prev.map(v => 
+        v._id === id ? { ...v, status: previousStatus } : v
+      ));
+    } finally {
+      setProcessingId(null);
     }
   }
 
   async function deleteVolunteer(id) {
     if (!confirm('Are you sure you want to delete this volunteer?')) return;
+    setDeletingId(id);
+    
     try {
       const res = await fetch(`/api/volunteers/${id}`, {
         method: 'DELETE'
       });
       const data = await res.json();
       if (data.success) {
-        fetchVolunteers();
+        setVolunteers(prev => prev.filter(v => v._id !== id));
       }
     } catch (error) {
       console.error('Error deleting volunteer:', error);
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -150,36 +170,68 @@ export default function AdminVolunteers() {
                       <>
                         <button
                           onClick={() => updateStatus(volunteer._id, 'approved')}
-                          className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200"
+                          disabled={processingId === volunteer._id}
+                          className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 disabled:opacity-50"
                           title="Approve"
                         >
-                          <Check className="w-4 h-4" />
+                          {processingId === volunteer._id ? (
+                            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                          ) : (
+                            <Check className="w-4 h-4" />
+                          )}
                         </button>
                         <button
                           onClick={() => updateStatus(volunteer._id, 'rejected')}
-                          className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200"
+                          disabled={processingId === volunteer._id}
+                          className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 disabled:opacity-50"
                           title="Reject"
                         >
-                          <X className="w-4 h-4" />
+                          {processingId === volunteer._id ? (
+                            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                          ) : (
+                            <X className="w-4 h-4" />
+                          )}
                         </button>
                       </>
                     )}
                     {volunteer.status === 'rejected' && (
                       <button
                         onClick={() => deleteVolunteer(volunteer._id)}
-                        className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200"
+                        disabled={deletingId === volunteer._id}
+                        className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 disabled:opacity-50"
                         title="Delete (Required to re-approve)"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {deletingId === volunteer._id ? (
+                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </button>
                     )}
                     {volunteer.status === 'approved' && (
                       <button
                         onClick={() => deleteVolunteer(volunteer._id)}
-                        className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200"
+                        disabled={deletingId === volunteer._id}
+                        className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 disabled:opacity-50"
                         title="Remove Volunteer"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {deletingId === volunteer._id ? (
+                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </button>
                     )}
                   </div>

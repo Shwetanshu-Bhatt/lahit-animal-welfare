@@ -24,7 +24,10 @@ export async function GET() {
       });
     }
     
-    return NextResponse.json({ success: true, data: settings });
+    // Cache settings for 60 seconds
+    return NextResponse.json({ success: true, data: settings }, {
+      headers: { 'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300' }
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

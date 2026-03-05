@@ -12,7 +12,15 @@ export async function GET(request) {
     
     const query = includeAll ? {} : { published: true };
     const animals = await Animal.find(query).sort({ createdAt: -1 });
-    return NextResponse.json({ success: true, data: animals });
+    
+    // Cache public data for 60 seconds
+    const cacheControl = includeAll 
+      ? 'no-store, must-revalidate'  
+      : 'public, max-age=60, s-maxage=60, stale-while-revalidate=300';
+    
+    return NextResponse.json({ success: true, data: animals }, {
+      headers: { 'Cache-Control': cacheControl }
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

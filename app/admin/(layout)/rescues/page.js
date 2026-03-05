@@ -19,6 +19,9 @@ export default function AdminRescues() {
     published: true
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
 
   useEffect(() => {
     fetchRescues();
@@ -49,6 +52,7 @@ export default function AdminRescues() {
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage({ type: '', text: '' });
+    setSubmitting(true);
 
     try {
       const url = editingRescue ? `/api/rescues/${editingRescue._id}` : '/api/rescues';
@@ -70,11 +74,14 @@ export default function AdminRescues() {
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Error saving rescue.' });
+    } finally {
+      setSubmitting(false);
     }
   }
 
   async function handleDelete(id) {
     if (!confirm('Are you sure you want to delete this rescue story?')) return;
+    setDeletingId(id);
 
     try {
       const res = await fetch(`/api/rescues/${id}`, { method: 'DELETE' });
@@ -88,10 +95,19 @@ export default function AdminRescues() {
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Error deleting rescue.' });
+    } finally {
+      setDeletingId(null);
     }
   }
 
   async function togglePublish(rescue) {
+    // Optimistic update
+    setTogglingId(rescue._id);
+    const previousPublished = rescue.published;
+    setRescues(prev => prev.map(r => 
+      r._id === rescue._id ? { ...r, published: !rescue.published } : r
+    ));
+
     try {
       const res = await fetch(`/api/rescues/${rescue._id}`, {
         method: 'PUT',
@@ -100,11 +116,18 @@ export default function AdminRescues() {
       });
       const data = await res.json();
       
-      if (data.success) {
-        fetchRescues();
+      if (!data.success) {
+        setRescues(prev => prev.map(r => 
+          r._id === rescue._id ? { ...r, published: previousPublished } : r
+        ));
       }
     } catch (error) {
       console.error('Error toggling publish:', error);
+      setRescues(prev => prev.map(r => 
+        r._id === rescue._id ? { ...r, published: previousPublished } : r
+      ));
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -270,8 +293,15 @@ export default function AdminRescues() {
             <div className="mt-8 flex gap-4">
               <button
                 type="submit"
-                className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors"
+                disabled={submitting}
+                className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
+                {submitting && (
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                )}
                 {editingRescue ? 'Update Rescue' : 'Add Rescue'}
               </button>
               <button
@@ -331,9 +361,15 @@ export default function AdminRescues() {
                   <td className="px-6 py-4">
                     <button
                       onClick={() => togglePublish(rescue)}
-                      className={`p-2 rounded-lg ${rescue.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}
+                      disabled={togglingId === rescue._id}
+                      className={`p-2 rounded-lg disabled:opacity-50 ${rescue.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}
                     >
-                      {rescue.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      {togglingId === rescue._id ? (
+                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                      ) : rescue.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                     </button>
                   </td>
                   <td className="px-6 py-4">
@@ -346,9 +382,17 @@ export default function AdminRescues() {
                       </button>
                       <button
                         onClick={() => handleDelete(rescue._id)}
-                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                        disabled={deletingId === rescue._id}
+                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 disabled:opacity-50"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {deletingId === rescue._id ? (
+                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </td>

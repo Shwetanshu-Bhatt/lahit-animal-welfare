@@ -12,6 +12,7 @@ export default function EmergencyRescue() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const {
     register,
@@ -20,14 +21,36 @@ export default function EmergencyRescue() {
     reset,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log('Emergency report:', data);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setIsFormOpen(false);
-      reset();
-    }, 3000);
+  const onSubmit = async (data) => {
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/rescues', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          type: data.type || 'Other',
+          location: data.location,
+          story: data.description,
+          date: new Date().toISOString().split('T')[0],
+          beforeImage: data.image || '',
+          published: false
+        })
+      });
+      
+      if (res.ok) {
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setIsFormOpen(false);
+          reset();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error submitting:', error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const whatsappNumber = '+919876543210'; // Replace with actual number
@@ -288,9 +311,9 @@ export default function EmergencyRescue() {
                     variant="accent"
                     size="lg"
                     className="w-full"
-                    icon={Send}
+                    loading={submitting}
                   >
-                    Submit Report
+                    {submitting ? 'Submitting...' : 'Submit Report'}
                   </Button>
                 </form>
               </>

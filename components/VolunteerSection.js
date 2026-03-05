@@ -313,8 +313,7 @@ export default function VolunteerSection() {
                     variant="primary"
                     size="lg"
                     className="w-full"
-                    icon={submitting ? Loader2 : Send}
-                    disabled={submitting}
+                    loading={submitting}
                   >
                     {submitting ? 'Submitting...' : 'Submit Application'}
                   </Button>

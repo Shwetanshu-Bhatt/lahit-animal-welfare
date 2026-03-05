@@ -472,8 +472,14 @@ export default function AdminSettings() {
           <button
             type="submit"
             disabled={saving}
-            className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50"
+            className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50 flex items-center gap-2"
           >
+            {saving && (
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            )}
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

@@ -31,7 +31,10 @@ export async function GET() {
     const statsData = stats.toObject();
     statsData.volunteers = volunteerCount || stats.volunteers;
     
-    return NextResponse.json({ success: true, data: statsData });
+    // Cache stats for 60 seconds
+    return NextResponse.json({ success: true, data: statsData }, {
+      headers: { 'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300' }
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

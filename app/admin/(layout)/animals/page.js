@@ -22,6 +22,9 @@ export default function AdminAnimals() {
     published: true
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
 
   useEffect(() => {
     fetchAnimals();
@@ -52,6 +55,7 @@ export default function AdminAnimals() {
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage({ type: '', text: '' });
+    setSubmitting(true);
 
     try {
       const url = editingAnimal ? `/api/animals/${editingAnimal._id}` : '/api/animals';
@@ -73,11 +77,14 @@ export default function AdminAnimals() {
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Error saving animal.' });
+    } finally {
+      setSubmitting(false);
     }
   }
 
   async function handleDelete(id) {
     if (!confirm('Are you sure you want to delete this animal?')) return;
+    setDeletingId(id);
 
     try {
       const res = await fetch(`/api/animals/${id}`, { method: 'DELETE' });
@@ -91,10 +98,19 @@ export default function AdminAnimals() {
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Error deleting animal.' });
+    } finally {
+      setDeletingId(null);
     }
   }
 
   async function togglePublish(animal) {
+    // Optimistic update - immediately update UI
+    setTogglingId(animal._id);
+    const previousPublished = animal.published;
+    setAnimals(prev => prev.map(a => 
+      a._id === animal._id ? { ...a, published: !animal.published } : a
+    ));
+
     try {
       const res = await fetch(`/api/animals/${animal._id}`, {
         method: 'PUT',
@@ -103,11 +119,20 @@ export default function AdminAnimals() {
       });
       const data = await res.json();
       
-      if (data.success) {
-        fetchAnimals();
+      if (!data.success) {
+        // Revert on failure
+        setAnimals(prev => prev.map(a => 
+          a._id === animal._id ? { ...a, published: previousPublished } : a
+        ));
       }
     } catch (error) {
       console.error('Error toggling publish:', error);
+      // Revert on error
+      setAnimals(prev => prev.map(a => 
+        a._id === animal._id ? { ...a, published: previousPublished } : a
+      ));
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -150,7 +175,13 @@ export default function AdminAnimals() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-[#401E01]">Loading...</div>
+        <div className="flex flex-col items-center gap-3">
+          <svg className="animate-spin h-8 w-8 text-[#164020]" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          <p className="text-[#401E01]/60">Loading animals...</p>
+        </div>
       </div>
     );
   }
@@ -317,8 +348,15 @@ export default function AdminAnimals() {
             <div className="mt-8 flex gap-4">
               <button
                 type="submit"
-                className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors"
+                disabled={submitting}
+                className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
+                {submitting && (
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                )}
                 {editingAnimal ? 'Update Animal' : 'Add Animal'}
               </button>
               <button
@@ -378,9 +416,15 @@ export default function AdminAnimals() {
                   <td className="px-6 py-4">
                     <button
                       onClick={() => togglePublish(animal)}
-                      className={`p-2 rounded-lg ${animal.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}
+                      disabled={togglingId === animal._id}
+                      className={`p-2 rounded-lg disabled:opacity-50 ${animal.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}
                     >
-                      {animal.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      {togglingId === animal._id ? (
+                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                      ) : animal.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                     </button>
                   </td>
                   <td className="px-6 py-4">
@@ -393,9 +437,17 @@ export default function AdminAnimals() {
                       </button>
                       <button
                         onClick={() => handleDelete(animal._id)}
-                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                        disabled={deletingId === animal._id}
+                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 disabled:opacity-50"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {deletingId === animal._id ? (
+                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </td>
