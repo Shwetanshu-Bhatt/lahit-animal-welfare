@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Dog, Heart, Menu, Siren, X } from 'lucide-react';
 import Image from 'next/image';
@@ -19,14 +19,27 @@ const navLinks = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const scrollFrame = useRef(null);
   const pathname = usePathname();
   const useSolidNav = isScrolled || pathname !== '/';
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 40);
+    const handleScroll = () => {
+      if (scrollFrame.current !== null) return;
+
+      scrollFrame.current = window.requestAnimationFrame(() => {
+        const nextIsScrolled = window.scrollY > 40;
+        setIsScrolled((current) => current === nextIsScrolled ? current : nextIsScrolled);
+        scrollFrame.current = null;
+      });
+    };
+
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollFrame.current !== null) window.cancelAnimationFrame(scrollFrame.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -36,23 +49,18 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.header
-      initial={{ y: -80 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5"
-    >
-      <Container
-        size="xl"
-        className={`relative rounded-full border px-4 transition-all duration-300 sm:px-5 ${
-          useSolidNav
-            ? 'border-primary/10 bg-base-100/95 py-2 text-primary shadow-[0_16px_50px_rgba(11,51,36,0.12)] backdrop-blur-xl'
-            : 'border-white/20 bg-primary/20 py-3 text-white backdrop-blur-md'
-        }`}
-      >
+      <header className="mobile-site-header fixed inset-x-0 top-0 z-50">
+        <Container
+          size="xl"
+          className={`relative w-full !px-3 py-2.5 sm:!px-5 rounded-full border transition-[background-color,border-color,box-shadow,color] duration-200 sm:backdrop-blur-xl ${
+            useSolidNav
+              ? 'border-primary/10 bg-base-100 text-primary shadow-[0_12px_36px_rgba(11,51,36,0.12)] sm:bg-base-100/95'
+              : 'border-white/20 bg-primary/90 text-white sm:bg-primary/25'
+          }`}
+        >
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3" aria-label="LAHIT home">
-            <span className="relative h-10 w-10 overflow-hidden rounded-full border border-white/30 bg-white shadow-sm">
+          <Link href="/" className="flex min-w-0 items-center gap-2.5" aria-label="LAHIT home">
+            <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-white/30 bg-white shadow-sm sm:h-10 sm:w-10">
               <Image src="/lahit.png" alt="" fill className="object-cover" priority />
             </span>
             <span className="leading-none">
@@ -77,7 +85,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className={`flex h-10 w-10 items-center justify-center rounded-full border lg:hidden ${useSolidNav ? 'border-primary/15 bg-primary text-white' : 'border-white/25 bg-white/10 text-white'}`}
+            className={`flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full border transition-colors duration-200 lg:hidden ${useSolidNav ? 'border-primary/15 bg-primary text-white' : 'border-white/25 bg-white/10 text-white'}`}
             onClick={() => setIsMobileMenuOpen((open) => !open)}
             aria-label="Toggle menu"
             aria-expanded={isMobileMenuOpen}
@@ -91,35 +99,35 @@ export default function Navbar() {
           {isMobileMenuOpen && (
             <motion.nav
               id="mobile-navigation"
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              initial={{ opacity: 0, y: -8, scale: 0.985 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              className="absolute inset-x-0 top-[calc(100%+0.65rem)] overflow-hidden rounded-[1.75rem] border border-white/10 bg-primary p-3 text-white shadow-2xl lg:hidden"
+              exit={{ opacity: 0, y: -6, scale: 0.99 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="mobile-navigation-panel absolute inset-x-0 top-[calc(100%+0.55rem)] origin-top overflow-x-hidden overflow-y-auto overscroll-contain rounded-[1.5rem] border border-white/10 bg-primary p-2.5 text-white shadow-2xl lg:hidden"
             >
               {navLinks.map((link) => (
-                <Link key={link.name} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between rounded-2xl px-4 py-3.5 font-semibold hover:bg-white/10">
+                <Link key={link.name} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="flex touch-manipulation items-center justify-between rounded-2xl px-4 py-3 font-semibold transition-colors duration-150 hover:bg-white/10 active:bg-white/10">
                   {link.name}<ArrowUpRight className="h-4 w-4 text-white/45" />
                 </Link>
               ))}
-              <Link href="/#donate" onClick={() => setIsMobileMenuOpen(false)} className="mt-2 flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-4 font-bold text-primary">
+              <Link href="/#donate" onClick={() => setIsMobileMenuOpen(false)} className="mt-1.5 flex touch-manipulation items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3.5 font-bold text-primary">
                 <Heart className="h-4 w-4" /> Donate to the mission
               </Link>
             </motion.nav>
           )}
         </AnimatePresence>
-      </Container>
+        </Container>
+      </header>
 
-      </motion.header>
-
-      <nav aria-label="Quick actions" className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/10 bg-base-100/95 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-10px_35px_rgba(11,51,36,0.12)] backdrop-blur-xl lg:hidden">
-        <div className="mx-auto grid max-w-md grid-cols-3 gap-2">
-          <Link href="/#emergency" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl bg-secondary text-[0.65rem] font-black uppercase tracking-[0.06em] text-white">
+      <nav aria-label="Quick actions" className={`mobile-action-bar fixed inset-x-0 bottom-0 z-50 border-t border-primary/10 bg-base-100 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-8px_28px_rgba(11,51,36,0.12)] transition-[transform,opacity] duration-200 sm:bg-base-100/95 sm:backdrop-blur-xl lg:hidden ${isMobileMenuOpen ? 'pointer-events-none translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
+        <div className="mx-auto grid w-full max-w-md grid-cols-3 gap-2">
+          <Link href="/#emergency" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-secondary text-[0.65rem] font-black uppercase tracking-[0.06em] text-white">
             <Siren className="h-4 w-4" /> Report
           </Link>
-          <Link href="/animals" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl bg-primary/7 text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
+          <Link href="/animals" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-primary/7 text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
             <Dog className="h-4 w-4" /> Adopt
           </Link>
-          <Link href="/#donate" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl bg-accent text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
+          <Link href="/#donate" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-accent text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
             <Heart className="h-4 w-4" /> Donate
           </Link>
         </div>

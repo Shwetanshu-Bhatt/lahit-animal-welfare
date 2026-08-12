@@ -1,36 +1,43 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, Heart, Home, Stethoscope, Utensils } from 'lucide-react';
 import Container from './ui/Container';
 
 const iconMap = { Heart, Utensils, Stethoscope, Home };
 
-function AnimatedCounter({ value, suffix = '' }) {
+function AnimatedCounter({ value, suffix = '', start }) {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!isInView) return;
-    const duration = 1400;
-    const steps = 45;
-    const increment = value / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= value) {
-        setCount(value);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(current));
-      }
-    }, duration / steps);
-    return () => clearInterval(timer);
-  }, [isInView, value]);
+    if (!start) return;
 
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
+    const target = Math.max(0, Number(value) || 0);
+    let frame;
+
+    if (reduceMotion || target === 0) {
+      frame = window.requestAnimationFrame(() => setCount(target));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    const duration = 1200;
+    const startedAt = performance.now();
+
+    const updateCount = (now) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(target * easedProgress));
+
+      if (progress < 1) frame = window.requestAnimationFrame(updateCount);
+    };
+
+    frame = window.requestAnimationFrame(updateCount);
+    return () => window.cancelAnimationFrame(frame);
+  }, [reduceMotion, start, value]);
+
+  return <span>{count.toLocaleString()}{suffix}</span>;
 }
 
 export default function ImpactStats() {
@@ -43,7 +50,8 @@ export default function ImpactStats() {
       try {
         const res = await fetch('/api/stats');
         const data = await res.json();
-        if (data.success) setStats(data.data);
+        if (!res.ok || !data.success) throw new Error(data.error || 'Unable to load statistics');
+        setStats(data.data);
       } catch (error) {
         console.error('Error fetching stats:', error);
         setStats({ animalsRescued: 1200, mealsServed: 30000, treatments: 500, adoptions: 200 });
@@ -92,7 +100,7 @@ export default function ImpactStats() {
                   </span>
                 </div>
                 <p className="text-[1.7rem] font-black tracking-[-0.06em] text-primary min-[380px]:text-3xl sm:text-5xl">
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} start={isInView} />
                 </p>
                 <p className="mt-2 text-[0.62rem] font-bold uppercase leading-tight tracking-[0.08em] text-primary/55 sm:mt-3 sm:text-sm">{stat.label}</p>
               </motion.div>
