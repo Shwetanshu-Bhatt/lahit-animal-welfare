@@ -261,14 +261,14 @@ export default function EmergencyRescue() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[70] flex items-end bg-black/60 p-0 sm:items-center sm:justify-center sm:p-4"
+          className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden bg-black/60 p-0 sm:items-center sm:p-4"
           onClick={() => setIsFormOpen(false)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="w-full max-h-[94svh] overflow-y-auto rounded-t-[1.75rem] bg-base-100 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[1.75rem] sm:p-8"
+            className="rescue-report-sheet overflow-x-hidden overflow-y-auto overscroll-contain rounded-t-[1.5rem] bg-base-100 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-xl sm:rounded-[1.75rem] sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (
@@ -285,19 +285,21 @@ export default function EmergencyRescue() {
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-6">
+                <div className="mb-4 flex items-center justify-between gap-3 sm:mb-6">
                   <h3 className="text-2xl font-bold text-primary">
                     Report Injured Animal
                   </h3>
                   <button
+                    type="button"
                     onClick={() => setIsFormOpen(false)}
                     className="btn btn-ghost btn-circle btn-sm"
+                    aria-label="Close rescue report form"
                   >
                     <X className="w-6 h-6" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="min-w-0 space-y-3 sm:space-y-4">
                   {submitError && <div className="alert alert-error text-sm"><span>{submitError}</span></div>}
                   <div>
                     <label className="block text-sm font-medium text-primary mb-1">
@@ -356,7 +358,7 @@ export default function EmergencyRescue() {
                     </label>
                     <textarea
                       {...register('description', { required: 'Description is required' })}
-                      rows={3}
+                      rows={2}
                       className="textarea textarea-bordered w-full"
                       placeholder="Describe the animal and its condition"
                     />
@@ -373,7 +375,7 @@ export default function EmergencyRescue() {
                       <Camera className="h-4 w-4" /> {reportImage ? 'Replace photo' : 'Take or upload a photo'}
                       <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(event) => handleImageUpload(event.target.files?.[0])} />
                     </label>
-                    {reportImage && <Image src={reportImage} alt="Rescue report preview" width={600} height={240} unoptimized className="mt-3 h-28 w-full rounded-xl object-cover" />}
+                    {reportImage && <Image src={reportImage} alt="Rescue report preview" width={600} height={240} unoptimized className="mt-3 h-24 w-full rounded-xl object-cover sm:h-28" />}
                     {imageError && <p className="text-error text-sm mt-1">{imageError}</p>}
                   </div>
 

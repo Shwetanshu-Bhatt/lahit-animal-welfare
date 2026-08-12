@@ -250,12 +250,28 @@ button {
   transform: translateZ(0);
 }
 
+.rescue-report-sheet {
+  width: calc(100vw - 0.75rem);
+  width: calc(100dvw - 0.75rem);
+  min-width: 0;
+  max-width: calc(100vw - 0.75rem);
+  max-height: calc(100vh - 0.5rem);
+  max-height: calc(100dvh - 0.5rem);
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (min-width: 640px) {
   .mobile-site-header {
     right: max(1.25rem, env(safe-area-inset-right));
     left: max(1.25rem, env(safe-area-inset-left));
     max-width: calc(100dvw - 2.5rem);
     padding-top: max(1.25rem, env(safe-area-inset-top));
+  }
+
+  .rescue-report-sheet {
+    width: 100%;
+    max-width: 32rem;
+    max-height: 94svh;
   }
 }
 
@@ -266,6 +282,11 @@ button {
 }
 
 @media (max-width: 767px) {
+  html,
+  body {
+    touch-action: pan-x pan-y;
+  }
+
   :where(input, select, textarea) {
     font-size: 16px !important;
   }
