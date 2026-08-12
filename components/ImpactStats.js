@@ -68,13 +68,13 @@ export default function ImpactStats() {
             <p className="mt-5 text-sm font-bold uppercase tracking-[0.12em] text-primary/45">Our impact / 2020—today</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.08 }}>
-            <h2 className="display-title text-5xl uppercase text-primary sm:text-6xl lg:text-7xl">
+            <h2 className="display-title text-[2.75rem] uppercase text-primary sm:text-6xl lg:text-7xl">
               Compassion is only powerful when it <span className="text-secondary">moves.</span>
             </h2>
           </motion.div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4">
           {impactStats.map((stat, index) => {
             const Icon = iconMap[stat.icon];
             return (
@@ -83,18 +83,18 @@ export default function ImpactStats() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.12 + index * 0.08 }}
-                className="group border-b border-primary/15 py-9 sm:border-r sm:px-7 lg:border-b-0 lg:py-12 first:pl-0 last:border-r-0"
+                className="group border-b border-primary/15 px-3 py-7 odd:border-r sm:px-7 lg:border-r lg:border-b-0 lg:py-12 lg:odd:border-r first:pl-0 last:border-r-0"
               >
-                <div className="mb-10 flex items-center justify-between">
+                <div className="mb-6 flex items-center justify-between sm:mb-10">
                   <span className="text-xs font-black tracking-[0.16em] text-primary/35">0{index + 1}</span>
                   <span className="flex h-11 w-11 items-center justify-center rounded-full border border-primary/15 transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-white">
                     <Icon className="h-5 w-5" />
                   </span>
                 </div>
-                <p className="text-4xl font-black tracking-[-0.06em] text-primary sm:text-5xl">
+                <p className="text-[1.7rem] font-black tracking-[-0.06em] text-primary min-[380px]:text-3xl sm:text-5xl">
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </p>
-                <p className="mt-3 text-sm font-bold uppercase tracking-[0.08em] text-primary/55">{stat.label}</p>
+                <p className="mt-2 text-[0.62rem] font-bold uppercase leading-tight tracking-[0.08em] text-primary/55 sm:mt-3 sm:text-sm">{stat.label}</p>
               </motion.div>
             );
           })}
@@ -104,11 +104,11 @@ export default function ImpactStats() {
           initial={{ opacity: 0, y: 35 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-14 grid overflow-hidden rounded-[2rem] bg-primary text-white lg:grid-cols-[1.25fr_0.75fr]"
+          className="mt-10 grid overflow-hidden rounded-[1.5rem] bg-primary text-white sm:mt-14 sm:rounded-[2rem] lg:grid-cols-[1.25fr_0.75fr]"
         >
-          <div className="p-8 sm:p-12 lg:p-16">
+          <div className="p-6 sm:p-12 lg:p-16">
             <span className="eyebrow text-accent">Why LAHIT exists</span>
-            <h3 className="mt-7 max-w-2xl text-3xl font-black tracking-[-0.045em] sm:text-5xl">No animal should be left behind because help was too far away.</h3>
+            <h3 className="mt-5 max-w-2xl text-[1.75rem] font-black tracking-[-0.045em] sm:mt-7 sm:text-5xl">No animal should be left behind because help was too far away.</h3>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/68 sm:text-lg">
               Our volunteer network connects reports, field responders, medical care and adopters across Uttarakhand. One coordinated path from crisis to safety.
             </p>
@@ -123,8 +123,8 @@ export default function ImpactStats() {
               [stats?.partnerVets || 10, 'Partner vets'],
               [stats?.yearsActive || 4, 'Years active'],
             ].map(([value, label]) => (
-              <div key={label} className="flex min-h-36 flex-col justify-end border-r border-b border-white/15 p-6 even:border-r-0 last:border-b-0 sm:min-h-44 sm:p-8 [&:nth-last-child(2)]:border-b-0">
-                <p className="text-4xl font-black tracking-[-0.06em] text-accent">{value}+</p>
+              <div key={label} className="flex min-h-28 flex-col justify-end border-r border-b border-white/15 p-5 even:border-r-0 last:border-b-0 sm:min-h-44 sm:p-8 [&:nth-last-child(2)]:border-b-0">
+                <p className="text-3xl font-black tracking-[-0.06em] text-accent sm:text-4xl">{value}+</p>
                 <p className="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-white/55">{label}</p>
               </div>
             ))}

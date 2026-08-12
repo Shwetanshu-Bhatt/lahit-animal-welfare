@@ -183,8 +183,8 @@ button {
 
 /* Section padding */
 .section-padding {
-  padding-top: 5.5rem;
-  padding-bottom: 5.5rem;
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
 }
 
 @media (min-width: 768px) {
@@ -222,6 +222,39 @@ button {
   font-weight: 900;
   letter-spacing: -0.065em;
   line-height: 0.91;
+}
+
+.public-page {
+  padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px) {
+  .public-page {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  :where(input, select, textarea) {
+    font-size: 16px !important;
+  }
+
+  .section-padding h2 {
+    text-wrap: balance;
+  }
+
+  .mobile-scroll-row {
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .mobile-scroll-row::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

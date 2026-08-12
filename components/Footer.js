@@ -61,9 +61,9 @@ export default function Footer() {
       {/* Main Footer */}
       <div className="section-padding">
         <Container>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             {/* Brand Column */}
-            <div className="sm:col-span-2 lg:col-span-1">
+            <div className="col-span-2 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center gap-2 mb-6">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden bg-base-100 shadow-md">
                   <Image
@@ -99,7 +99,7 @@ export default function Footer() {
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
               <ul className="space-y-3">
                 {quickLinks.map((link) => (
@@ -116,7 +116,7 @@ export default function Footer() {
             </div>
 
             {/* Services */}
-            <div>
+            <div className="min-w-0">
               <h4 className="text-lg font-semibold mb-6">Our Services</h4>
               <ul className="space-y-3">
                 {services.map((service) => (
@@ -133,19 +133,19 @@ export default function Footer() {
             </div>
 
             {/* Contact Info */}
-            <div>
+            <div className="col-span-2 min-w-0 sm:col-span-1">
               <h4 className="text-lg font-semibold mb-6">Contact Us</h4>
               <ul className="space-y-4">
-                {contactPhone && <li>
+                <li>
                   <a
                     href={`mailto:${contactEmail}`}
                     className="flex items-start gap-3 text-primary-content/70 hover:text-primary-content transition-colors"
                   >
                     <Mail className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>{contactEmail}</span>
+                    <span className="break-all">{contactEmail}</span>
                   </a>
-                </li>}
-                <li>
+                </li>
+                {contactPhone && <li>
                   <a
                     href={`tel:${contactPhone}`}
                     className="flex items-start gap-3 text-primary-content/70 hover:text-primary-content transition-colors"
@@ -156,7 +156,7 @@ export default function Footer() {
                       <p className="text-sm text-primary-content/50">Emergency Hotline</p>
                     </div>
                   </a>
-                </li>
+                </li>}
                 <li className="flex items-start gap-3 text-primary-content/70">
                   <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
                   <span>{address}</span>

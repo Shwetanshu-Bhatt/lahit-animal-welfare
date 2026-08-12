@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Heart, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Dog, Heart, Menu, Siren, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Container from './ui/Container';
 
 const navLinks = [
@@ -18,6 +19,8 @@ const navLinks = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const useSolidNav = isScrolled || pathname !== '/';
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -26,8 +29,14 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobileMenuOpen]);
+
   return (
-    <motion.header
+    <>
+      <motion.header
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -36,7 +45,7 @@ export default function Navbar() {
       <Container
         size="xl"
         className={`relative rounded-full border px-4 transition-all duration-300 sm:px-5 ${
-          isScrolled
+          useSolidNav
             ? 'border-primary/10 bg-base-100/95 py-2 text-primary shadow-[0_16px_50px_rgba(11,51,36,0.12)] backdrop-blur-xl'
             : 'border-white/20 bg-primary/20 py-3 text-white backdrop-blur-md'
         }`}
@@ -48,7 +57,7 @@ export default function Navbar() {
             </span>
             <span className="leading-none">
               <span className="block text-lg font-black tracking-[-0.04em]">LAHIT</span>
-              <span className={`mt-1 hidden text-[0.55rem] font-bold uppercase tracking-[0.17em] sm:block ${isScrolled ? 'text-primary/55' : 'text-white/55'}`}>
+              <span className={`mt-1 hidden text-[0.55rem] font-bold uppercase tracking-[0.17em] sm:block ${useSolidNav ? 'text-primary/55' : 'text-white/55'}`}>
                 Animal welfare
               </span>
             </span>
@@ -56,19 +65,19 @@ export default function Navbar() {
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
             {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} className={`text-[0.78rem] font-bold transition-colors ${isScrolled ? 'text-primary/70 hover:text-primary' : 'text-white/72 hover:text-white'}`}>
+              <Link key={link.name} href={link.href} className={`text-[0.78rem] font-bold transition-colors ${useSolidNav ? 'text-primary/70 hover:text-primary' : 'text-white/72 hover:text-white'}`}>
                 {link.name}
               </Link>
             ))}
           </nav>
 
-          <Link href="/#donate" className={`hidden min-h-11 items-center gap-2 rounded-full px-5 text-sm font-bold transition-all hover:-translate-y-0.5 lg:flex ${isScrolled ? 'bg-primary text-white hover:bg-[#164a36]' : 'bg-accent text-primary hover:bg-white'}`}>
+          <Link href="/#donate" className={`hidden min-h-11 items-center gap-2 rounded-full px-5 text-sm font-bold transition-all hover:-translate-y-0.5 lg:flex ${useSolidNav ? 'bg-primary text-white hover:bg-[#164a36]' : 'bg-accent text-primary hover:bg-white'}`}>
             <Heart className="h-4 w-4" /> Donate <ArrowUpRight className="h-4 w-4" />
           </Link>
 
           <button
             type="button"
-            className={`flex h-10 w-10 items-center justify-center rounded-full border lg:hidden ${isScrolled ? 'border-primary/15 bg-primary text-white' : 'border-white/25 bg-white/10 text-white'}`}
+            className={`flex h-10 w-10 items-center justify-center rounded-full border lg:hidden ${useSolidNav ? 'border-primary/15 bg-primary text-white' : 'border-white/25 bg-white/10 text-white'}`}
             onClick={() => setIsMobileMenuOpen((open) => !open)}
             aria-label="Toggle menu"
             aria-expanded={isMobileMenuOpen}
@@ -99,6 +108,22 @@ export default function Navbar() {
           )}
         </AnimatePresence>
       </Container>
-    </motion.header>
+
+      </motion.header>
+
+      <nav aria-label="Quick actions" className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/10 bg-base-100/95 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-10px_35px_rgba(11,51,36,0.12)] backdrop-blur-xl lg:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-3 gap-2">
+          <Link href="/#emergency" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl bg-secondary text-[0.65rem] font-black uppercase tracking-[0.06em] text-white">
+            <Siren className="h-4 w-4" /> Report
+          </Link>
+          <Link href="/animals" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl bg-primary/7 text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
+            <Dog className="h-4 w-4" /> Adopt
+          </Link>
+          <Link href="/#donate" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl bg-accent text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
+            <Heart className="h-4 w-4" /> Donate
+          </Link>
+        </div>
+      </nav>
+    </>
   );
 }

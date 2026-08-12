@@ -86,7 +86,7 @@ export default function VolunteerSection() {
   return (
     <section id="volunteer" className="section-padding bg-base-200" ref={sectionRef}>
       <Container>
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Left Content - Image */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -94,7 +94,7 @@ export default function VolunteerSection() {
             transition={{ duration: 0.6 }}
             className="relative"
           >
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] sm:rounded-3xl">
               <Image
                 src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=600&fit=crop"
                 alt="LAHIT Volunteers"
@@ -109,7 +109,7 @@ export default function VolunteerSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="absolute -bottom-6 -right-6 bg-base-100 rounded-2xl p-6 shadow-xl max-w-xs"
+              className="absolute right-3 bottom-3 max-w-[230px] rounded-2xl bg-base-100 p-4 shadow-xl sm:-right-6 sm:-bottom-6 sm:max-w-xs sm:p-6"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -135,12 +135,12 @@ export default function VolunteerSection() {
             <span className="badge badge-primary badge-outline badge-lg mb-4">
               Join Our Team
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-6">
+            <h2 className="mb-5 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:mb-6 lg:text-5xl">
               Become a Volunteer
             </h2>
             <p className="text-lg text-primary/70 mb-8 leading-relaxed">
               Join our mission to help animals in Uttarakhand. Whether you have 
-              an hour a week or can dedicate more time, there's a place for you 
+              an hour a week or can dedicate more time, there&apos;s a place for you
               in our volunteer team.
             </p>
 
@@ -184,14 +184,14 @@ export default function VolunteerSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[70] flex items-end bg-black/60 p-0 sm:items-center sm:justify-center sm:p-4"
           onClick={() => setIsFormOpen(false)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-base-100 rounded-box shadow-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="w-full max-h-[94svh] overflow-y-auto rounded-t-[1.75rem] bg-base-100 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[1.75rem] sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (
@@ -203,7 +203,7 @@ export default function VolunteerSection() {
                   Application Submitted!
                 </h3>
                 <p className="text-primary/70">
-                  We'll contact you soon with next steps.
+                  We&apos;ll contact you soon with next steps.
                 </p>
               </div>
             ) : (

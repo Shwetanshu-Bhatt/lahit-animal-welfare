@@ -20,13 +20,13 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-base-200">
+    <main className="public-page min-h-screen bg-base-200">
       <Navbar />
-      <section className="bg-primary pt-40 pb-20 text-white lg:pt-48 lg:pb-28">
+      <section className="bg-primary pt-32 pb-14 text-white sm:pt-40 sm:pb-20 lg:pt-48 lg:pb-28">
         <Container>
           <span className="eyebrow text-accent">From the field</span>
-          <h1 className="display-title mt-7 max-w-5xl text-6xl uppercase sm:text-8xl lg:text-9xl">Stories of rescue, recovery and hope.</h1>
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/62">Updates from the people and animals at the heart of LAHIT.</p>
+          <h1 className="display-title mt-5 max-w-5xl text-[2.9rem] uppercase sm:mt-7 sm:text-8xl lg:text-9xl">Stories of rescue, recovery and hope.</h1>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 sm:mt-8 sm:text-lg">Updates from the people and animals at the heart of LAHIT.</p>
         </Container>
       </section>
       <section className="section-padding">

@@ -51,14 +51,14 @@ export default function HelpCards() {
         <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
           <motion.div initial={{ opacity: 0, y: 25 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55 }}>
             <span className="eyebrow text-accent">Make your move</span>
-            <h2 className="display-title mt-7 text-5xl uppercase sm:text-7xl lg:text-8xl">Care is a verb.</h2>
+            <h2 className="display-title mt-5 text-[2.85rem] uppercase sm:mt-7 sm:text-7xl lg:text-8xl">Care is a verb.</h2>
           </motion.div>
           <motion.p initial={{ opacity: 0, y: 25 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.08 }} className="max-w-xl text-base leading-relaxed text-white/62 sm:text-lg lg:pb-2">
             Whether you have five minutes, a spare room or the means to fund a treatment, there is a direct way to change an animal’s life today.
           </motion.p>
         </div>
 
-        <div className="mt-14 grid overflow-hidden rounded-[2rem] border border-white/15 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+        <div className="mt-10 grid overflow-hidden rounded-[1.5rem] border border-white/15 sm:mt-14 sm:grid-cols-2 sm:rounded-[2rem] lg:mt-20 lg:grid-cols-4">
           {helpOptions.map((option, index) => {
             const Icon = option.icon;
             return (
@@ -68,14 +68,14 @@ export default function HelpCards() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.12 + index * 0.08 }}
-                className={`group flex min-h-[390px] flex-col border-b border-white/15 p-7 transition-colors sm:border-r lg:border-b-0 lg:p-8 ${option.featured ? 'bg-accent text-primary' : 'hover:bg-white/[0.06]'} sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0`}
+                className={`group flex min-h-[300px] flex-col border-b border-white/15 p-6 transition-colors sm:min-h-[390px] sm:border-r sm:p-7 lg:border-b-0 lg:p-8 ${option.featured ? 'bg-accent text-primary' : 'hover:bg-white/[0.06]'} sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0`}
               >
                 <div className="flex items-center justify-between">
                   <span className={`text-xs font-black tracking-[0.18em] ${option.featured ? 'text-primary/45' : 'text-white/38'}`}>{option.number}</span>
                   <span className={`flex h-12 w-12 items-center justify-center rounded-full border ${option.featured ? 'border-primary/20' : 'border-white/18'}`}><Icon className="h-5 w-5" /></span>
                 </div>
-                <div className="mt-auto pt-16">
-                  <h3 className="text-4xl font-black tracking-[-0.055em]">{option.title}</h3>
+                <div className="mt-auto pt-10 sm:pt-16">
+                  <h3 className="text-3xl font-black tracking-[-0.055em] sm:text-4xl">{option.title}</h3>
                   <p className={`mt-4 min-h-20 text-sm leading-relaxed ${option.featured ? 'text-primary/68' : 'text-white/58'}`}>{option.description}</p>
                   <span className={`mt-8 flex items-center justify-between border-t pt-5 text-sm font-bold ${option.featured ? 'border-primary/20' : 'border-white/15'}`}>
                     {option.cta}<ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />

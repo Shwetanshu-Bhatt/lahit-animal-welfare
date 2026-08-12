@@ -78,12 +78,12 @@ export default function DonationSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-16"
         >
           <span className="badge badge-secondary badge-outline badge-lg mb-4">
             Support Our Cause
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
+          <h2 className="mb-4 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:text-5xl">
             Make a Donation
           </h2>
           <p className="text-lg text-primary/70 max-w-2xl mx-auto">
@@ -99,7 +99,7 @@ export default function DonationSection() {
           </div>
         ) : (
           <>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            <div className="mb-10 grid grid-cols-2 gap-3 sm:mb-16 sm:gap-6 lg:grid-cols-4">
               {donationTiers.map((tier, index) => {
                 const Icon = iconMap[tier.icon];
                 return (
@@ -109,28 +109,28 @@ export default function DonationSection() {
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <Card className="h-full text-center group" padding="xl">
-                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary transition-colors duration-300">
-                        {Icon && <Icon className="w-8 h-8 text-primary group-hover:text-primary-content transition-colors duration-300" />}
+                    <Card className="h-full text-center group !p-4 sm:!p-8 lg:!p-10" padding="xl">
+                      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary sm:mb-4 sm:h-16 sm:w-16 sm:rounded-2xl">
+                        {Icon && <Icon className="h-5 w-5 text-primary transition-colors duration-300 group-hover:text-primary-content sm:h-8 sm:w-8" />}
                       </div>
 
                       <div className="mb-4">
                         <span className="text-sm text-primary/60">₹</span>
-                        <span className="text-4xl font-bold text-primary">
+                        <span className="text-2xl font-bold text-primary sm:text-4xl">
                           {tier.amount.toLocaleString()}
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-primary mb-2">
+                      <h3 className="mb-2 text-sm font-bold text-primary sm:text-lg">
                         {tier.title}
                       </h3>
-                      <p className="text-primary/70 text-sm mb-4">
+                      <p className="mb-3 text-xs text-primary/70 sm:mb-4 sm:text-sm">
                         {tier.description}
                       </p>
 
                       <div className="pt-4 border-t border-base-300">
                         <p className="text-xs text-primary/60 mb-1">Impact:</p>
-                        <p className="text-sm text-primary font-medium">
+                        <p className="text-xs font-medium text-primary sm:text-sm">
                           {tier.impact}
                         </p>
                       </div>
@@ -145,10 +145,10 @@ export default function DonationSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid md:grid-cols-2 gap-8"
+              className="grid gap-5 md:grid-cols-2 md:gap-8"
             >
               {/* UPI Payment */}
-              <div className="bg-base-200 rounded-3xl p-8">
+              <div className="rounded-[1.5rem] bg-base-200 p-5 sm:rounded-3xl sm:p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                     <Wallet className="w-6 h-6 text-primary-content" />
@@ -162,7 +162,7 @@ export default function DonationSection() {
                 {upiId ? <div className="bg-base-100 rounded-2xl p-6 mb-6">
                   <p className="text-sm text-primary/60 mb-2">UPI ID</p>
                   <div className="flex items-center justify-between">
-                    <code className="text-lg font-mono text-primary font-semibold">
+                    <code className="break-all pr-3 text-sm font-mono font-semibold text-primary sm:text-lg">
                       {upiId}
                     </code>
                     <button
@@ -190,7 +190,7 @@ export default function DonationSection() {
               </div>
 
               {/* Bank Transfer */}
-              <div className="bg-base-200 rounded-3xl p-8">
+              <div className="rounded-[1.5rem] bg-base-200 p-5 sm:rounded-3xl sm:p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-primary-content" />
@@ -203,12 +203,12 @@ export default function DonationSection() {
 
                 <div className="bg-base-100 rounded-2xl p-6 space-y-4">
                   {bankConfigured ? Object.entries(bankDetails).filter(([, value]) => value).map(([key, value]) => (
-                    <div key={key} className="flex items-center justify-between">
-                      <div>
+                    <div key={key} className="flex min-w-0 items-center justify-between gap-3">
+                      <div className="min-w-0">
                         <p className="text-xs text-primary/60 uppercase">
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </p>
-                        <p className="text-sm font-semibold text-primary">{value}</p>
+                        <p className="break-all text-sm font-semibold text-primary">{value}</p>
                       </div>
                       <button
                         onClick={() => handleCopy(value, key)}

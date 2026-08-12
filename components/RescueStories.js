@@ -112,12 +112,12 @@ export default function RescueStories() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-16"
         >
           <span className="badge badge-secondary badge-outline badge-lg mb-4">
             Success Stories
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
+          <h2 className="mb-4 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:text-5xl">
             Rescue & Recovery Stories
           </h2>
           <p className="text-lg text-primary/70 max-w-2xl mx-auto">
@@ -140,7 +140,7 @@ export default function RescueStories() {
             No rescue stories available yet.
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="grid gap-4 mb-10 sm:grid-cols-2 sm:gap-6 sm:mb-12 lg:grid-cols-3">
             {rescues.map((story, index) => (
               <RescueCard key={story._id || index} story={story} index={index} />
             ))}

@@ -46,8 +46,11 @@ function MapComponent({ locations }) {
   const [customIcon, setCustomIcon] = useState(null);
 
   useEffect(() => {
-    setMounted(true);
-    setCustomIcon(createCustomIcon());
+    const timeoutId = window.setTimeout(() => {
+      setMounted(true);
+      setCustomIcon(createCustomIcon());
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   if (!mounted) {
@@ -70,7 +73,7 @@ function MapComponent({ locations }) {
       zoom={8}
       scrollWheelZoom={false}
       className="w-full h-full rounded-3xl z-0"
-      style={{ height: '100%', minHeight: '500px' }}
+      style={{ height: '100%' }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -140,7 +143,7 @@ export default function RescueMap() {
             <Navigation className="w-4 h-4" />
             Our Reach
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#401E01] mb-4">
+          <h2 className="mb-4 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:text-5xl">
             Rescue Locations
           </h2>
           <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
@@ -154,7 +157,7 @@ export default function RescueMap() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative h-[500px] rounded-3xl overflow-hidden shadow-xl"
+          className="relative h-[380px] overflow-hidden rounded-[1.5rem] shadow-xl sm:h-[500px] sm:rounded-3xl"
         >
           {/* Import Leaflet CSS */}
           <link
@@ -173,7 +176,7 @@ export default function RescueMap() {
 
           {/* Map Legend */}
           {!loading && (
-            <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 shadow-lg z-[400]">
+            <div className="absolute bottom-3 left-3 z-[400] max-w-[calc(100%-1.5rem)] rounded-xl bg-white p-3 shadow-lg sm:bottom-4 sm:left-4 sm:p-4">
               <h4 className="font-semibold text-[#401E01] mb-2 text-sm">Our Locations</h4>
               <div className="space-y-2">
                 {locations.slice(0, 3).map((location) => (
@@ -198,7 +201,7 @@ export default function RescueMap() {
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8"
+            className="mobile-scroll-row mt-6 flex gap-3 sm:mt-8 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-5"
           >
             {locations.map((location, index) => (
               <motion.div
@@ -206,7 +209,7 @@ export default function RescueMap() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                className="bg-[#F2CDAC] rounded-xl p-4 hover:bg-[#164020]/10 transition-colors cursor-pointer"
+                className="min-w-[75vw] snap-start cursor-pointer rounded-xl bg-base-200 p-4 transition-colors hover:bg-primary/10 sm:min-w-0"
               >
                 <div className="flex items-start gap-2">
                   <MapPin className="w-5 h-5 text-[#164020] flex-shrink-0 mt-0.5" />

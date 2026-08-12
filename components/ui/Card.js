@@ -13,8 +13,8 @@ export default function Card({
     none: '',
     sm: 'p-4',
     md: 'p-6',
-    lg: 'p-8',
-    xl: 'p-10',
+    lg: 'p-6 sm:p-8',
+    xl: 'p-6 sm:p-8 lg:p-10',
   };
 
   const combinedClasses = `card bg-base-100 rounded-[1.75rem] border border-primary/10 shadow-[0_12px_50px_rgba(11,51,36,0.06)] ${paddings[padding]} ${className}`;

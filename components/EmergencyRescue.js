@@ -82,7 +82,7 @@ export default function EmergencyRescue() {
       </div>
 
       <Container className="relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12 lg:items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -94,17 +94,17 @@ export default function EmergencyRescue() {
               24/7 Emergency Service
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h2 className="mb-5 text-[2rem] font-bold tracking-[-0.04em] text-white sm:text-4xl lg:mb-6 lg:text-5xl">
               Found an Injured Animal?
             </h2>
 
-            <p className="text-lg text-white/90 mb-8 leading-relaxed">
+            <p className="mb-7 text-base leading-relaxed text-white/90 sm:mb-8 sm:text-lg">
               If you come across an injured, sick, or distressed animal, 
               please report it immediately. Our rescue team is available 
               around the clock to help animals in need across Uttarakhand.
             </p>
 
-            <div className="space-y-4 mb-8">
+            <div className="mb-7 space-y-3 sm:mb-8 sm:space-y-4">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Camera className="w-6 h-6 text-white" />
@@ -168,7 +168,7 @@ export default function EmergencyRescue() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative bg-base-100 rounded-3xl p-8 shadow-2xl">
+            <div className="relative rounded-[1.5rem] bg-base-100 p-6 shadow-2xl sm:rounded-3xl sm:p-8">
               {/* Emergency Contact Card */}
               <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -181,7 +181,7 @@ export default function EmergencyRescue() {
                   Available 24/7 for animal emergencies
                 </p>
                 {contactPhone ? (
-                  <a href={`tel:${contactPhone}`} className="text-3xl font-bold text-secondary hover:text-secondary/80 transition-colors">{contactPhone}</a>
+                  <a href={`tel:${contactPhone}`} className="break-all text-2xl font-bold text-secondary transition-colors hover:text-secondary/80 sm:text-3xl">{contactPhone}</a>
                 ) : (
                   <p className="text-sm font-semibold text-secondary">Submit the rescue form for a callback</p>
                 )}
@@ -205,7 +205,7 @@ export default function EmergencyRescue() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="absolute -top-4 -right-4 bg-primary text-primary-content px-4 py-2 rounded-full shadow-lg"
+              className="absolute -top-4 right-3 hidden rounded-full bg-primary px-4 py-2 text-primary-content shadow-lg sm:block lg:-right-4"
             >
               <span className="font-semibold">We are here to help!</span>
             </motion.div>
@@ -219,14 +219,14 @@ export default function EmergencyRescue() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[70] flex items-end bg-black/60 p-0 sm:items-center sm:justify-center sm:p-4"
           onClick={() => setIsFormOpen(false)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-base-100 rounded-box shadow-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="w-full max-h-[94svh] overflow-y-auto rounded-t-[1.75rem] bg-base-100 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl sm:max-w-lg sm:rounded-[1.75rem] sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (

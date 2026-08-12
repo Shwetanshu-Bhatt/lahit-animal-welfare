@@ -91,13 +91,13 @@ export default function InstagramFeed() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-9 sm:mb-12"
         >
           <span className="badge badge-primary badge-outline badge-lg mb-4">
             <Instagram className="w-4 h-4" />
             Instagram updates
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
+          <h2 className="mb-4 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:text-5xl">
             Follow Our Journey
           </h2>
           <p className="text-lg text-primary/70 max-w-2xl mx-auto">
@@ -112,7 +112,7 @@ export default function InstagramFeed() {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : validPosts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+          <div className="grid grid-cols-2 gap-3 mb-8 sm:gap-4 sm:mb-10 md:grid-cols-3">
             {validPosts.map((post, index) => (
               <InstagramCard key={post.id || index} post={post} index={index} instagramUrl={instagramUrl} />
             ))}
@@ -131,7 +131,7 @@ export default function InstagramFeed() {
             href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white font-semibold rounded-full hover:shadow-xl transition-all duration-300 hover:scale-105"
+            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:shadow-xl hover:scale-105 sm:px-8 sm:py-4 sm:text-base"
           >
             <Instagram className="w-5 h-5" />
             Follow Us on Instagram

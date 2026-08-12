@@ -37,62 +37,62 @@ export default function AnimalsPage() {
     : animals.filter(a => a.type === filter);
 
   return (
-    <main className="min-h-screen bg-[#F2CDAC]">
+    <main className="public-page min-h-screen bg-base-200">
       <Navbar />
       
-      <div className="pt-24 pb-16">
+      <div className="pt-28 pb-14 sm:pt-32 sm:pb-16">
         <Container>
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-2 bg-[#164020]/10 text-[#164020] rounded-full text-sm font-medium mb-4">
+          <div className="mb-8 text-center sm:mb-12">
+            <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               Find a Friend
             </span>
-            <h1 className="text-4xl sm:text-5xl font-bold text-[#401E01] mb-4">
+            <h1 className="mb-4 text-[2.4rem] font-black tracking-[-0.055em] text-primary sm:text-5xl">
               Animals for Adoption
             </h1>
-            <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-primary/65 sm:text-lg">
               Give a loving home to a rescued animal. These furry friends are waiting for their forever families.
             </p>
           </div>
 
           {/* Filter */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="mobile-scroll-row mb-8 flex gap-2 sm:mb-12 sm:flex-wrap sm:justify-center sm:gap-4">
             <button
               onClick={() => setFilter('all')}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
                 filter === 'all'
-                  ? 'bg-[#164020] text-white'
-                  : 'bg-white text-[#401E01] hover:bg-[#164020]/10'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-primary hover:bg-primary/10'
               }`}
             >
               All
             </button>
             <button
               onClick={() => setFilter('Dog')}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
                 filter === 'Dog'
-                  ? 'bg-[#164020] text-white'
-                  : 'bg-white text-[#401E01] hover:bg-[#164020]/10'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-primary hover:bg-primary/10'
               }`}
             >
               Dogs
             </button>
             <button
               onClick={() => setFilter('Cat')}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
                 filter === 'Cat'
-                  ? 'bg-[#164020] text-white'
-                  : 'bg-white text-[#401E01] hover:bg-[#164020]/10'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-primary hover:bg-primary/10'
               }`}
             >
               Cats
             </button>
             <button
               onClick={() => setFilter('Other')}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
                 filter === 'Other'
-                  ? 'bg-[#164020] text-white'
-                  : 'bg-white text-[#401E01] hover:bg-[#164020]/10'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-primary hover:bg-primary/10'
               }`}
             >
               Other
@@ -110,7 +110,7 @@ export default function AnimalsPage() {
               <p className="text-[#401E01]/40 mt-2">Check back soon!</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
               {filteredAnimals.map((animal, index) => (
                 <Card key={animal._id} className="overflow-hidden" padding="none">
                   <div className="relative aspect-square">
@@ -130,16 +130,16 @@ export default function AnimalsPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="p-5">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg font-bold text-[#401E01]">{animal.name}</h3>
-                      <span className="text-sm text-[#401E01]/60">{animal.type}</span>
+                  <div className="p-3 sm:p-5">
+                    <div className="mb-2 flex items-start justify-between gap-2">
+                      <h3 className="text-base font-bold text-primary sm:text-lg">{animal.name}</h3>
+                      <span className="text-xs text-primary/60 sm:text-sm">{animal.type}</span>
                     </div>
-                    <p className="text-sm text-[#401E01]/70 mb-3">{animal.breed} • {animal.age}</p>
-                    <p className="text-sm text-[#401E01]/60 line-clamp-2 mb-4">
+                    <p className="mb-3 text-xs text-primary/70 sm:text-sm">{animal.breed} • {animal.age}</p>
+                    <p className="mb-4 hidden text-sm text-primary/60 line-clamp-2 sm:block">
                       {animal.description}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="hidden flex-wrap gap-2 sm:flex">
                       {animal.vaccinated && (
                         <span className="px-2 py-1 bg-[#164020]/10 text-[#164020] text-xs rounded-full">
                           ✓ Vaccinated
