@@ -34,11 +34,11 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 navbar transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'bg-base-100/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'
       }`}
     >
-      <Container>
+      <Container className="w-full">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <motion.a
@@ -87,12 +87,18 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="dropdown lg:hidden">
+          <div className="relative lg:hidden">
             <button
-              tabIndex={0}
-              className="btn btn-ghost btn-circle"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              type="button"
+              className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-colors ${
+                isMobileMenuOpen
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-primary/20 bg-base-100/80 text-primary'
+              }`}
+              onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
               aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -103,41 +109,44 @@ export default function Navbar() {
 
             <AnimatePresence>
               {isMobileMenuOpen && (
-                <motion.ul
+                <motion.nav
+                  id="mobile-navigation"
+                  aria-label="Mobile navigation"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  tabIndex={0}
-                  className="dropdown-content menu bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg border border-base-300"
+                  className="absolute right-0 top-full z-50 mt-3 w-64 overflow-hidden rounded-2xl border border-white/10 bg-primary p-2 text-white shadow-2xl"
                 >
-                  {navLinks.map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
+                  <ul className="flex flex-col">
+                    {navLinks.map((link, index) => (
+                      <motion.li
+                        key={link.name}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <a
+                          href={link.href}
+                          className="block rounded-xl px-4 py-3 font-medium text-white transition-colors hover:bg-white/10 focus:bg-white/10 focus:outline-none"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {link.name}
+                        </a>
+                      </motion.li>
+                    ))}
+                    <li className="mt-2 border-t border-white/15 pt-2">
                       <a
-                        href={link.href}
+                        href="#donate"
+                        className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 font-semibold text-primary transition-colors hover:bg-base-100"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        {link.name}
+                        <Heart className="h-4 w-4" />
+                        Donate Now
                       </a>
-                    </motion.li>
-                  ))}
-                  <li>
-                    <Button
-                      href="#donate"
-                      variant="primary"
-                      size="sm"
-                      icon={Heart}
-                      className="w-full mt-2"
-                    >
-                      Donate Now
-                    </Button>
-                  </li>
-                </motion.ul>
+                    </li>
+                  </ul>
+                </motion.nav>
               )}
             </AnimatePresence>
           </div>
