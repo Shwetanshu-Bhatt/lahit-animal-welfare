@@ -59,7 +59,7 @@ export default function EmergencyRescue() {
   return (
     <section
       id="emergency"
-      className="section-padding bg-[#BF7534] relative overflow-hidden"
+      className="section-padding bg-secondary relative overflow-hidden"
       ref={sectionRef}
     >
       {/* Background Pattern */}
@@ -160,35 +160,35 @@ export default function EmergencyRescue() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative bg-white rounded-3xl p-8 shadow-2xl">
+            <div className="relative bg-base-100 rounded-3xl p-8 shadow-2xl">
               {/* Emergency Contact Card */}
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-[#BF7534]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-10 h-10 text-[#BF7534]" />
+                <div className="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Phone className="w-10 h-10 text-secondary" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#401E01] mb-2">
+                <h3 className="text-2xl font-bold text-primary mb-2">
                   Emergency Hotline
                 </h3>
-                <p className="text-[#401E01]/70 mb-4">
+                <p className="text-primary/70 mb-4">
                   Available 24/7 for animal emergencies
                 </p>
                 <a
                   href="tel:+919876543210"
-                  className="text-3xl font-bold text-[#BF7534] hover:text-[#E65100] transition-colors"
+                  className="text-3xl font-bold text-secondary hover:text-secondary/80 transition-colors"
                 >
                   +91 98765 43210
                 </a>
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-[#401E01]/10">
+              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-base-300">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-[#164020]">{'<30'}</p>
-                  <p className="text-sm text-[#401E01]/70">Min Avg Response</p>
+                  <p className="text-3xl font-bold text-primary">{'<30'}</p>
+                  <p className="text-sm text-primary/70">Min Avg Response</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-[#164020]">50+</p>
-                  <p className="text-sm text-[#401E01]/70">Active Volunteers</p>
+                  <p className="text-3xl font-bold text-primary">50+</p>
+                  <p className="text-sm text-primary/70">Active Volunteers</p>
                 </div>
               </div>
             </div>
@@ -198,7 +198,7 @@ export default function EmergencyRescue() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="absolute -top-4 -right-4 bg-[#164020] text-white px-4 py-2 rounded-full shadow-lg"
+              className="absolute -top-4 -right-4 bg-primary text-primary-content px-4 py-2 rounded-full shadow-lg"
             >
               <span className="font-semibold">We are here to help!</span>
             </motion.div>
@@ -219,90 +219,90 @@ export default function EmergencyRescue() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-white rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="bg-base-100 rounded-box shadow-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-[#164020] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Send className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Send className="w-8 h-8 text-primary-content" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#401E01] mb-2">
+                <h3 className="text-2xl font-bold text-primary mb-2">
                   Report Submitted!
                 </h3>
-                <p className="text-[#401E01]/70">
+                <p className="text-primary/70">
                   Our team will contact you shortly.
                 </p>
               </div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-[#401E01]">
+                  <h3 className="text-2xl font-bold text-primary">
                     Report Injured Animal
                   </h3>
                   <button
                     onClick={() => setIsFormOpen(false)}
-                    className="p-2 hover:bg-[#401E01]/10 rounded-full transition-colors"
+                    className="btn btn-ghost btn-circle btn-sm"
                   >
-                    <X className="w-6 h-6 text-[#401E01]" />
+                    <X className="w-6 h-6" />
                   </button>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Your Name
                     </label>
                     <input
                       {...register('name', { required: 'Name is required' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter your name"
                     />
                     {errors.name && (
-                      <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.name.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Phone Number
                     </label>
                     <input
                       {...register('phone', { required: 'Phone is required' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter your phone number"
                     />
                     {errors.phone && (
-                      <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.phone.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Location
                     </label>
                     <input
                       {...register('location', { required: 'Location is required' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter the location"
                     />
                     {errors.location && (
-                      <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.location.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Description
                     </label>
                     <textarea
                       {...register('description', { required: 'Description is required' })}
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all resize-none"
+                      className="textarea textarea-bordered w-full"
                       placeholder="Describe the animal and its condition"
                     />
                     {errors.description && (
-                      <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.description.message}</p>
                     )}
                   </div>
 

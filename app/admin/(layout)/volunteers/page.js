@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Check, X, Trash2, Mail, Phone, MapPin, Heart } from 'lucide-react';
+import Button from '@/components/ui/Button';
 
 export default function AdminVolunteers() {
   const [volunteers, setVolunteers] = useState([]);
@@ -29,7 +30,6 @@ export default function AdminVolunteers() {
   }
 
   async function updateStatus(id, status) {
-    // Optimistic update
     setProcessingId(id);
     const previousStatus = volunteers.find(v => v._id === id)?.status;
     setVolunteers(prev => prev.map(v => 
@@ -82,33 +82,29 @@ export default function AdminVolunteers() {
     : volunteers.filter(v => v.status === filter);
 
   const statusColors = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    approved: 'bg-green-100 text-green-800',
-    rejected: 'bg-red-100 text-red-800'
+    pending: 'badge-warning',
+    approved: 'badge-success',
+    rejected: 'badge-error'
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-[#401E01]">Loading...</div>
+        <div className="text-primary">Loading...</div>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[#401E01]">Volunteer Applications</h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <h1 className="text-3xl font-bold text-primary">Volunteer Applications</h1>
+        <div className="join">
           {['all', 'pending', 'approved', 'rejected'].map(status => (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === status
-                  ? 'bg-[#164020] text-white'
-                  : 'bg-white text-[#401E01] hover:bg-[#164020]/10'
-              }`}
+              className={`join-item btn btn-sm ${filter === status ? 'btn-primary' : 'btn-ghost'}`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </button>
@@ -116,130 +112,106 @@ export default function AdminVolunteers() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        {filteredVolunteers.length === 0 ? (
-          <div className="p-8 text-center text-[#401E01]/60">
-            No volunteer applications found.
-          </div>
-        ) : (
-          <div className="divide-y divide-[#401E01]/10">
-            {filteredVolunteers.map((volunteer) => (
-              <div key={volunteer._id} className="p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-2">
-                      <h3 className="text-lg font-bold text-[#401E01]">{volunteer.name}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[volunteer.status]}`}>
-                        {volunteer.status}
-                      </span>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-4 text-sm text-[#401E01]/70">
-                      <span className="flex items-center gap-1">
-                        <Mail className="w-4 h-4" />
-                        {volunteer.email}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Phone className="w-4 h-4" />
-                        {volunteer.phone}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {volunteer.location}
-                      </span>
-                    </div>
+      <div className="card bg-base-100 shadow-sm">
+        <div className="card-body">
+          {filteredVolunteers.length === 0 ? (
+            <div className="text-center text-primary/60 py-8">
+              No volunteer applications found.
+            </div>
+          ) : (
+            <div className="divide-y divide-base-300">
+              {filteredVolunteers.map((volunteer) => (
+                <div key={volunteer._id} className="py-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-4 mb-2">
+                        <h3 className="text-lg font-bold text-primary">{volunteer.name}</h3>
+                        <span className={`badge ${statusColors[volunteer.status] || 'badge-neutral'} badge-sm`}>
+                          {volunteer.status}
+                        </span>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-4 text-sm text-primary/70">
+                        <span className="flex items-center gap-1">
+                          <Mail className="w-4 h-4" />
+                          {volunteer.email}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-4 h-4" />
+                          {volunteer.phone}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {volunteer.location}
+                        </span>
+                      </div>
 
-                    <div className="mt-2 flex items-center gap-2">
-                      <Heart className="w-4 h-4 text-[#164020]" />
-                      <span className="text-sm text-[#401E01]/70">{volunteer.interest}</span>
-                    </div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-primary" />
+                        <span className="text-sm text-primary/70">{volunteer.interest}</span>
+                      </div>
 
-                    {volunteer.message && (
-                      <p className="mt-2 text-sm text-[#401E01]/60 italic">
-                        "{volunteer.message}"
+                      {volunteer.message && (
+                        <p className="mt-2 text-sm text-primary/60 italic">
+                          &quot;{volunteer.message}&quot;
+                        </p>
+                      )}
+
+                      <p className="mt-2 text-xs text-primary/40">
+                        Applied on: {new Date(volunteer.createdAt).toLocaleDateString()}
                       </p>
-                    )}
+                    </div>
 
-                    <p className="mt-2 text-xs text-[#401E01]/40">
-                      Applied on: {new Date(volunteer.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {volunteer.status === 'pending' && (
-                      <>
+                    <div className="flex gap-2">
+                      {volunteer.status === 'pending' && (
+                        <>
+                          <button
+                            onClick={() => updateStatus(volunteer._id, 'approved')}
+                            disabled={processingId === volunteer._id}
+                            className="btn btn-sm btn-success"
+                            title="Approve"
+                          >
+                            {processingId === volunteer._id ? (
+                              <span className="loading loading-spinner loading-sm" />
+                            ) : (
+                              <Check className="w-4 h-4" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => updateStatus(volunteer._id, 'rejected')}
+                            disabled={processingId === volunteer._id}
+                            className="btn btn-sm btn-error"
+                            title="Reject"
+                          >
+                            {processingId === volunteer._id ? (
+                              <span className="loading loading-spinner loading-sm" />
+                            ) : (
+                              <X className="w-4 h-4" />
+                            )}
+                          </button>
+                        </>
+                      )}
+                      {(volunteer.status === 'rejected' || volunteer.status === 'approved') && (
                         <button
-                          onClick={() => updateStatus(volunteer._id, 'approved')}
-                          disabled={processingId === volunteer._id}
-                          className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 disabled:opacity-50"
-                          title="Approve"
+                          onClick={() => deleteVolunteer(volunteer._id)}
+                          disabled={deletingId === volunteer._id}
+                          className="btn btn-sm btn-error"
+                          title="Remove"
                         >
-                          {processingId === volunteer._id ? (
-                            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                            </svg>
+                          {deletingId === volunteer._id ? (
+                            <span className="loading loading-spinner loading-sm" />
                           ) : (
-                            <Check className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" />
                           )}
                         </button>
-                        <button
-                          onClick={() => updateStatus(volunteer._id, 'rejected')}
-                          disabled={processingId === volunteer._id}
-                          className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 disabled:opacity-50"
-                          title="Reject"
-                        >
-                          {processingId === volunteer._id ? (
-                            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                            </svg>
-                          ) : (
-                            <X className="w-4 h-4" />
-                          )}
-                        </button>
-                      </>
-                    )}
-                    {volunteer.status === 'rejected' && (
-                      <button
-                        onClick={() => deleteVolunteer(volunteer._id)}
-                        disabled={deletingId === volunteer._id}
-                        className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 disabled:opacity-50"
-                        title="Delete (Required to re-approve)"
-                      >
-                        {deletingId === volunteer._id ? (
-                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    )}
-                    {volunteer.status === 'approved' && (
-                      <button
-                        onClick={() => deleteVolunteer(volunteer._id)}
-                        disabled={deletingId === volunteer._id}
-                        className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 disabled:opacity-50"
-                        title="Remove Volunteer"
-                      >
-                        {deletingId === volunteer._id ? (
-                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

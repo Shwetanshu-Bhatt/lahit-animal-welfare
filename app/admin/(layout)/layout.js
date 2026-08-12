@@ -11,7 +11,7 @@ export default async function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F2CDAC] flex">
+    <div className="min-h-screen bg-base-200 flex">
       <AdminSidebar />
       <div className="flex-1 flex flex-col ml-64">
         <AdminHeader user={session.user} />

@@ -14,7 +14,7 @@ const helpOptions = [
     description: 'Give a loving home to a rescued animal. Browse our available pets ready for adoption.',
     icon: Heart,
     color: '#164020',
-    bgColor: 'bg-[#164020]/5',
+    bgColor: 'bg-primary/10',
     buttonText: 'Find a Pet',
     href: '#adopt',
     featured: false,
@@ -25,7 +25,7 @@ const helpOptions = [
     description: 'Join our team of dedicated volunteers. Help with rescues, feeding drives, and events.',
     icon: Users,
     color: '#401E01',
-    bgColor: 'bg-[#401E01]/5',
+    bgColor: 'bg-primary/10',
     buttonText: 'Join Us',
     href: '#volunteer',
     featured: false,
@@ -36,7 +36,7 @@ const helpOptions = [
     description: 'Your donations fund rescue operations, medical treatments, and daily care for animals.',
     icon: Wallet,
     color: '#BF7534',
-    bgColor: 'bg-[#BF7534]/5',
+    bgColor: 'bg-secondary/10',
     buttonText: 'Donate Now',
     href: '#donate',
     featured: true,
@@ -47,7 +47,7 @@ const helpOptions = [
     description: 'See an animal in distress? Report it to us and our team will respond quickly.',
     icon: AlertCircle,
     color: '#D32F2F',
-    bgColor: 'bg-[#D32F2F]/5',
+    bgColor: 'bg-error/10',
     buttonText: 'Report Now',
     href: '#emergency',
     featured: false,
@@ -59,7 +59,7 @@ export default function HelpCards() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section id="help" className="section-padding bg-white" ref={sectionRef}>
+    <section id="help" className="section-padding bg-base-100" ref={sectionRef}>
       <Container>
         {/* Section Header */}
         <motion.div
@@ -68,13 +68,13 @@ export default function HelpCards() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block px-4 py-2 bg-[#164020]/10 text-[#164020] rounded-full text-sm font-medium mb-4">
+          <span className="badge badge-primary badge-outline badge-lg mb-4">
             Get Involved
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#401E01] mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
             How You Can Help
           </h2>
-          <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
+          <p className="text-lg text-primary/70 max-w-2xl mx-auto">
             There are many ways to make a difference. Choose how you want to contribute 
             to our mission of helping animals in Uttarakhand.
           </p>
@@ -93,12 +93,12 @@ export default function HelpCards() {
                 className={`${option.featured ? 'sm:col-span-2 lg:col-span-1 lg:row-span-1' : ''}`}
               >
                 <Card
-                  className={`h-full group relative overflow-hidden ${option.featured ? 'ring-2 ring-[#BF7534]' : ''}`}
+                  className={`h-full group relative overflow-hidden ${option.featured ? 'border-2 border-secondary' : ''}`}
                   padding="xl"
                 >
                   {/* Featured Badge */}
                   {option.featured && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-[#BF7534] text-white text-xs font-bold rounded-full">
+                    <div className="absolute top-4 right-4 badge badge-secondary">
                       Most Needed
                     </div>
                   )}
@@ -111,10 +111,10 @@ export default function HelpCards() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-bold text-[#401E01] mb-3">
+                  <h3 className="text-xl font-bold text-primary mb-3">
                     {option.title}
                   </h3>
-                  <p className="text-[#401E01]/70 text-sm leading-relaxed mb-6">
+                  <p className="text-primary/70 text-sm leading-relaxed mb-6">
                     {option.description}
                   </p>
 

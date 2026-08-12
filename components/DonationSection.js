@@ -76,7 +76,7 @@ export default function DonationSection() {
   };
 
   return (
-    <section id="donate" className="section-padding bg-white" ref={sectionRef}>
+    <section id="donate" className="section-padding bg-base-100" ref={sectionRef}>
       <Container>
         {/* Section Header */}
         <motion.div
@@ -85,13 +85,13 @@ export default function DonationSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block px-4 py-2 bg-[#BF7534]/10 text-[#BF7534] rounded-full text-sm font-medium mb-4">
+          <span className="badge badge-secondary badge-outline badge-lg mb-4">
             Support Our Cause
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#401E01] mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
             Make a Donation
           </h2>
-          <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
+          <p className="text-lg text-primary/70 max-w-2xl mx-auto">
             Your contribution directly helps us rescue, treat, and care for animals in need. 
             Every donation, no matter the size, makes a difference.
           </p>
@@ -100,7 +100,7 @@ export default function DonationSection() {
         {/* Donation Tiers */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#401E01]" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <>
@@ -115,27 +115,27 @@ export default function DonationSection() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <Card className="h-full text-center group" padding="xl">
-                      <div className="w-16 h-16 bg-[#164020]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-[#164020] transition-colors duration-300">
-                        {Icon && <Icon className="w-8 h-8 text-[#164020] group-hover:text-white transition-colors duration-300" />}
+                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary transition-colors duration-300">
+                        {Icon && <Icon className="w-8 h-8 text-primary group-hover:text-primary-content transition-colors duration-300" />}
                       </div>
 
                       <div className="mb-4">
-                        <span className="text-sm text-[#401E01]/60">₹</span>
-                        <span className="text-4xl font-bold text-[#401E01]">
+                        <span className="text-sm text-primary/60">₹</span>
+                        <span className="text-4xl font-bold text-primary">
                           {tier.amount.toLocaleString()}
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-[#401E01] mb-2">
+                      <h3 className="text-lg font-bold text-primary mb-2">
                         {tier.title}
                       </h3>
-                      <p className="text-[#401E01]/70 text-sm mb-4">
+                      <p className="text-primary/70 text-sm mb-4">
                         {tier.description}
                       </p>
 
-                      <div className="pt-4 border-t border-[#401E01]/10">
-                        <p className="text-xs text-[#401E01]/60 mb-1">Impact:</p>
-                        <p className="text-sm text-[#164020] font-medium">
+                      <div className="pt-4 border-t border-base-300">
+                        <p className="text-xs text-primary/60 mb-1">Impact:</p>
+                        <p className="text-sm text-primary font-medium">
                           {tier.impact}
                         </p>
                       </div>
@@ -153,26 +153,26 @@ export default function DonationSection() {
               className="grid md:grid-cols-2 gap-8"
             >
               {/* UPI Payment */}
-              <div className="bg-[#F2CDAC] rounded-3xl p-8">
+              <div className="bg-base-200 rounded-3xl p-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-[#164020] rounded-xl flex items-center justify-center">
-                    <Wallet className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                    <Wallet className="w-6 h-6 text-primary-content" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-[#401E01]">Donate via UPI</h3>
-                    <p className="text-sm text-[#401E01]/60">Quick and easy payment</p>
+                    <h3 className="text-xl font-bold text-primary">Donate via UPI</h3>
+                    <p className="text-sm text-primary/60">Quick and easy payment</p>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 mb-6">
-                  <p className="text-sm text-[#401E01]/60 mb-2">UPI ID</p>
+                <div className="bg-base-100 rounded-2xl p-6 mb-6">
+                  <p className="text-sm text-primary/60 mb-2">UPI ID</p>
                   <div className="flex items-center justify-between">
-                    <code className="text-lg font-mono text-[#401E01] font-semibold">
+                    <code className="text-lg font-mono text-primary font-semibold">
                       {upiId}
                     </code>
                     <button
                       onClick={() => handleCopy(upiId, 'upi')}
-                      className="flex items-center gap-1 px-3 py-1 bg-[#164020]/10 text-[#164020] rounded-lg text-sm font-medium hover:bg-[#164020]/20 transition-colors"
+                      className="btn btn-sm btn-ghost gap-1"
                     >
                       {copiedText === 'upi' ? (
                         <>
@@ -189,40 +189,40 @@ export default function DonationSection() {
                   </div>
                 </div>
 
-                <p className="text-sm text-[#401E01]/70">
+                <p className="text-sm text-primary/70">
                   Open any UPI app (Google Pay, PhonePe, Paytm) and scan or enter the UPI ID to donate.
                 </p>
               </div>
 
               {/* Bank Transfer */}
-              <div className="bg-[#F2CDAC] rounded-3xl p-8">
+              <div className="bg-base-200 rounded-3xl p-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-[#401E01] rounded-xl flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-primary-content" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-[#401E01]">Bank Transfer</h3>
-                    <p className="text-sm text-[#401E01]/60">Direct bank donation</p>
+                    <h3 className="text-xl font-bold text-primary">Bank Transfer</h3>
+                    <p className="text-sm text-primary/60">Direct bank donation</p>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 space-y-4">
+                <div className="bg-base-100 rounded-2xl p-6 space-y-4">
                   {Object.entries(bankDetails).map(([key, value]) => (
                     <div key={key} className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-[#401E01]/60 uppercase">
+                        <p className="text-xs text-primary/60 uppercase">
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </p>
-                        <p className="text-sm font-semibold text-[#401E01]">{value}</p>
+                        <p className="text-sm font-semibold text-primary">{value}</p>
                       </div>
                       <button
                         onClick={() => handleCopy(value, key)}
-                        className="p-2 hover:bg-[#401E01]/10 rounded-lg transition-colors"
+                        className="btn btn-sm btn-ghost btn-circle"
                       >
                         {copiedText === key ? (
-                          <Check className="w-4 h-4 text-[#164020]" />
+                          <Check className="w-4 h-4 text-primary" />
                         ) : (
-                          <Copy className="w-4 h-4 text-[#401E01]/60" />
+                          <Copy className="w-4 h-4 text-primary/60" />
                         )}
                       </button>
                     </div>
@@ -238,7 +238,7 @@ export default function DonationSection() {
               transition={{ duration: 0.5, delay: 0.6 }}
               className="mt-12 text-center"
             >
-              <p className="text-sm text-[#401E01]/60">
+              <p className="text-sm text-primary/60">
                 All donations are eligible for tax benefits under Section 80G. 
                 Receipts will be sent to your email within 24 hours.
               </p>

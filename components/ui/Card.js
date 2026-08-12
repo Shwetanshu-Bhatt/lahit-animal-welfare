@@ -9,8 +9,6 @@ export default function Card({
   padding = 'lg',
   onClick,
 }) {
-  const baseStyles = 'bg-white rounded-2xl overflow-hidden';
-  
   const paddings = {
     none: '',
     sm: 'p-4',
@@ -19,7 +17,7 @@ export default function Card({
     xl: 'p-10',
   };
 
-  const combinedClasses = `${baseStyles} ${paddings[padding]} ${className}`;
+  const combinedClasses = `card bg-base-100 rounded-box shadow-sm ${paddings[padding]} ${className}`;
 
   if (hover) {
     return (
@@ -27,11 +25,9 @@ export default function Card({
         className={combinedClasses}
         onClick={onClick}
         whileHover={{ 
-          y: -8, 
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)' 
+          y: -4,
         }}
         transition={{ duration: 0.3 }}
-        style={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
       >
         {children}
       </motion.div>
@@ -42,7 +38,6 @@ export default function Card({
     <div 
       className={combinedClasses}
       onClick={onClick}
-      style={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
     >
       {children}
     </div>
@@ -59,7 +54,7 @@ export function CardHeader({ children, className = '' }) {
 
 export function CardTitle({ children, className = '' }) {
   return (
-    <h3 className={`text-xl font-bold text-[#401E01] ${className}`}>
+    <h3 className={`text-xl font-bold text-primary ${className}`}>
       {children}
     </h3>
   );
@@ -67,7 +62,7 @@ export function CardTitle({ children, className = '' }) {
 
 export function CardDescription({ children, className = '' }) {
   return (
-    <p className={`text-[#401E01]/70 mt-2 ${className}`}>
+    <p className={`text-primary/70 mt-2 ${className}`}>
       {children}
     </p>
   );
@@ -83,7 +78,7 @@ export function CardContent({ children, className = '' }) {
 
 export function CardFooter({ children, className = '' }) {
   return (
-    <div className={`mt-6 pt-4 border-t border-[#401E01]/10 ${className}`}>
+    <div className={`mt-6 pt-4 border-t border-base-300 ${className}`}>
       {children}
     </div>
   );

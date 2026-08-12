@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 :root {
   --background: #F2CDAC;
@@ -23,6 +24,42 @@
   --color-cream: var(--cream);
   --font-sans: 'Inter', sans-serif;
   --font-mono: var(--font-geist-mono);
+}
+
+/* DaisyUI custom theme matching brand colors */
+@plugin "daisyui/theme" {
+  name: "lahit";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: #FAF9F6;
+  --color-base-200: #F2CDAC;
+  --color-base-300: #D9B9A7;
+  --color-base-content: #401E01;
+  --color-primary: #164020;
+  --color-primary-content: #ffffff;
+  --color-secondary: #BF7534;
+  --color-secondary-content: #ffffff;
+  --color-accent: #401E01;
+  --color-accent-content: #ffffff;
+  --color-neutral: #3d4451;
+  --color-neutral-content: #ffffff;
+  --color-info: #3abff8;
+  --color-info-content: #000000;
+  --color-success: #36d399;
+  --color-success-content: #000000;
+  --color-warning: #fbbd23;
+  --color-warning-content: #000000;
+  --color-error: #f87272;
+  --color-error-content: #000000;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
 * {

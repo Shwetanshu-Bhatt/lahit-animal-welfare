@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Button from '@/components/ui/Button';
 
 export default function AdminStats() {
   const [stats, setStats] = useState({
@@ -71,140 +72,142 @@ export default function AdminStats() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-[#401E01]">Loading...</div>
+        <div className="text-primary">Loading...</div>
       </div>
     );
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-[#401E01] mb-8">Statistics</h1>
+      <h1 className="text-3xl font-bold text-primary mb-8">Statistics</h1>
       
       {message.text && (
         <div className={`mb-6 p-4 rounded-xl ${
           message.type === 'success' 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-red-100 text-red-800'
+            ? 'bg-success/10 text-success-content' 
+            : 'bg-error/10 text-error-content'
         }`}>
           {message.text}
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Animals Rescued
-            </label>
-            <input
-              type="number"
-              name="animalsRescued"
-              value={stats.animalsRescued}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
+      <form onSubmit={handleSubmit} className="card bg-base-100 shadow-sm">
+        <div className="card-body">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Animals Rescued
+              </label>
+              <input
+                type="number"
+                name="animalsRescued"
+                value={stats.animalsRescued}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Meals Served
+              </label>
+              <input
+                type="number"
+                name="mealsServed"
+                value={stats.mealsServed}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Treatments
+              </label>
+              <input
+                type="number"
+                name="treatments"
+                value={stats.treatments}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Adoptions
+              </label>
+              <input
+                type="number"
+                name="adoptions"
+                value={stats.adoptions}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Volunteers
+              </label>
+              <input
+                type="number"
+                name="volunteers"
+                value={stats.volunteers}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Cities Covered
+              </label>
+              <input
+                type="number"
+                name="citiesCovered"
+                value={stats.citiesCovered}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Partner Vets
+              </label>
+              <input
+                type="number"
+                name="partnerVets"
+                value={stats.partnerVets}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-primary mb-2">
+                Years Active
+              </label>
+              <input
+                type="number"
+                name="yearsActive"
+                value={stats.yearsActive}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Meals Served
-            </label>
-            <input
-              type="number"
-              name="mealsServed"
-              value={stats.mealsServed}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
+          <div className="mt-8">
+            <Button
+              type="submit"
+              variant="primary"
+              loading={saving}
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Treatments
-            </label>
-            <input
-              type="number"
-              name="treatments"
-              value={stats.treatments}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Adoptions
-            </label>
-            <input
-              type="number"
-              name="adoptions"
-              value={stats.adoptions}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Volunteers
-            </label>
-            <input
-              type="number"
-              name="volunteers"
-              value={stats.volunteers}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Cities Covered
-            </label>
-            <input
-              type="number"
-              name="citiesCovered"
-              value={stats.citiesCovered}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Partner Vets
-            </label>
-            <input
-              type="number"
-              name="partnerVets"
-              value={stats.partnerVets}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-[#401E01] mb-2">
-              Years Active
-            </label>
-            <input
-              type="number"
-              name="yearsActive"
-              value={stats.yearsActive}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-            />
-          </div>
-        </div>
-        
-        <div className="mt-8">
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
         </div>
       </form>
     </div>

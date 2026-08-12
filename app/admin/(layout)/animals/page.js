@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
+import Button from '@/components/ui/Button';
 
 export default function AdminAnimals() {
   const [animals, setAnimals] = useState([]);
@@ -104,7 +105,6 @@ export default function AdminAnimals() {
   }
 
   async function togglePublish(animal) {
-    // Optimistic update - immediately update UI
     setTogglingId(animal._id);
     const previousPublished = animal.published;
     setAnimals(prev => prev.map(a => 
@@ -120,14 +120,12 @@ export default function AdminAnimals() {
       const data = await res.json();
       
       if (!data.success) {
-        // Revert on failure
         setAnimals(prev => prev.map(a => 
           a._id === animal._id ? { ...a, published: previousPublished } : a
         ));
       }
     } catch (error) {
       console.error('Error toggling publish:', error);
-      // Revert on error
       setAnimals(prev => prev.map(a => 
         a._id === animal._id ? { ...a, published: previousPublished } : a
       ));
@@ -175,13 +173,7 @@ export default function AdminAnimals() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="flex flex-col items-center gap-3">
-          <svg className="animate-spin h-8 w-8 text-[#164020]" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          <p className="text-[#401E01]/60">Loading animals...</p>
-        </div>
+        <div className="text-primary">Loading...</div>
       </div>
     );
   }
@@ -189,273 +181,255 @@ export default function AdminAnimals() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[#401E01]">Animals for Adoption</h1>
-        <button 
+        <h1 className="text-3xl font-bold text-primary">Animals for Adoption</h1>
+        <Button 
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="bg-[#164020] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors"
+          variant="primary"
         >
           + Add New Animal
-        </button>
+        </Button>
       </div>
 
       {message.text && (
-        <div className={`mb-6 p-4 rounded-xl ${
-          message.type === 'success' 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-red-100 text-red-800'
-        }`}>
-          {message.text}
+        <div className={`alert mb-6 ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
+          <span>{message.text}</span>
         </div>
       )}
 
       {showForm && (
-        <div className="bg-white rounded-2xl p-8 shadow-sm mb-8">
-          <h2 className="text-xl font-bold text-[#401E01] mb-6">
-            {editingAnimal ? 'Edit Animal' : 'Add New Animal'}
-          </h2>
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Type</label>
-                <select
-                  name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                >
-                  <option value="Dog">Dog</option>
-                  <option value="Cat">Cat</option>
-                  <option value="Cow">Cow</option>
-                  <option value="Bird">Bird</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Breed</label>
-                <input
-                  type="text"
-                  name="breed"
-                  value={formData.breed}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Age</label>
-                <input
-                  type="text"
-                  name="age"
-                  value={formData.age}
-                  onChange={handleChange}
-                  required
-                  placeholder="e.g., 2 years"
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Gender</label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                >
-                  <option value="available">Available</option>
-                  <option value="adopted">Adopted</option>
-                  <option value="pending">Pending</option>
-                </select>
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Image URL</label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  required
-                  placeholder="/images/animal.jpg"
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div className="flex items-center gap-6">
-                <label className="flex items-center gap-2">
+        <div className="card bg-base-100 shadow-sm mb-8">
+          <div className="card-body">
+            <h2 className="card-title text-primary">
+              {editingAnimal ? 'Edit Animal' : 'Add New Animal'}
+            </h2>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Name</label>
                   <input
-                    type="checkbox"
-                    name="vaccinated"
-                    checked={formData.vaccinated}
+                    type="text"
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
-                    className="w-5 h-5"
+                    required
+                    className="input input-bordered w-full"
                   />
-                  <span className="text-[#401E01]">Vaccinated</span>
-                </label>
+                </div>
                 
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="neutered"
-                    checked={formData.neutered}
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Type</label>
+                  <select
+                    name="type"
+                    value={formData.type}
                     onChange={handleChange}
-                    className="w-5 h-5"
+                    className="select select-bordered w-full"
+                  >
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Cow">Cow</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Breed</label>
+                  <input
+                    type="text"
+                    name="breed"
+                    value={formData.breed}
+                    onChange={handleChange}
+                    required
+                    className="input input-bordered w-full"
                   />
-                  <span className="text-[#401E01]">Neutered</span>
-                </label>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Age</label>
+                  <input
+                    type="text"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g., 2 years"
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Gender</label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Status</label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="available">Available</option>
+                    <option value="adopted">Adopted</option>
+                    <option value="pending">Pending</option>
+                  </select>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-primary mb-2">Image URL</label>
+                  <input
+                    type="text"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleChange}
+                    required
+                    placeholder="/images/animal.jpg"
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-primary mb-2">Description</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                    rows={4}
+                    className="textarea textarea-bordered w-full"
+                  />
+                </div>
+                
+                <div className="flex items-center gap-6">
+                  <label className="label cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="vaccinated"
+                      checked={formData.vaccinated}
+                      onChange={handleChange}
+                      className="checkbox checkbox-primary"
+                    />
+                    <span className="label-text ml-2">Vaccinated</span>
+                  </label>
+                  
+                  <label className="label cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="neutered"
+                      checked={formData.neutered}
+                      onChange={handleChange}
+                      className="checkbox checkbox-primary"
+                    />
+                    <span className="label-text ml-2">Neutered</span>
+                  </label>
+                </div>
               </div>
-            </div>
-            
-            <div className="mt-8 flex gap-4">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {submitting && (
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                )}
-                {editingAnimal ? 'Update Animal' : 'Add Animal'}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="bg-gray-200 text-[#401E01] px-8 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+              
+              <div className="mt-8 flex gap-4">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  loading={submitting}
+                >
+                  {editingAnimal ? 'Update Animal' : 'Add Animal'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={resetForm}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-[#401E01]/5">
-            <tr>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Image</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Name</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Type</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Breed</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Status</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Published</th>
-              <th className="text-right px-6 py-4 text-[#401E01] font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {animals.length === 0 ? (
+      <div className="card bg-base-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead className="bg-base-200">
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-[#401E01]/60">
-                  No animals found. Add your first animal!
-                </td>
+                <th className="text-primary">Image</th>
+                <th className="text-primary">Name</th>
+                <th className="text-primary">Type</th>
+                <th className="text-primary">Breed</th>
+                <th className="text-primary">Status</th>
+                <th className="text-primary">Published</th>
+                <th className="text-right text-primary">Actions</th>
               </tr>
-            ) : (
-              animals.map((animal) => (
-                <tr key={animal._id} className="border-t border-[#401E01]/10">
-                  <td className="px-6 py-4">
-                    <div className="w-12 h-12 bg-[#401E01]/10 rounded-lg overflow-hidden">
-                      {animal.image && (
-                        <img src={animal.image} alt={animal.name} className="w-full h-full object-cover" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-[#401E01]">{animal.name}</td>
-                  <td className="px-6 py-4 text-[#401E01]/70">{animal.type}</td>
-                  <td className="px-6 py-4 text-[#401E01]/70">{animal.breed}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      animal.status === 'available' ? 'bg-green-100 text-green-800' :
-                      animal.status === 'adopted' ? 'bg-blue-100 text-blue-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {animal.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => togglePublish(animal)}
-                      disabled={togglingId === animal._id}
-                      className={`p-2 rounded-lg disabled:opacity-50 ${animal.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}
-                    >
-                      {togglingId === animal._id ? (
-                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                        </svg>
-                      ) : animal.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => editAnimal(animal)}
-                        className="p-2 bg-[#164020]/10 text-[#164020] rounded-lg hover:bg-[#164020]/20"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(animal._id)}
-                        disabled={deletingId === animal._id}
-                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 disabled:opacity-50"
-                      >
-                        {deletingId === animal._id ? (
-                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
+            </thead>
+            <tbody>
+              {animals.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center text-primary/60 py-8">
+                    No animals found. Add your first animal!
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                animals.map((animal) => (
+                  <tr key={animal._id} className="hover:bg-base-200/50">
+                    <td>
+                      <div className="w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                        {animal.image && (
+                          <img src={animal.image} alt={animal.name} className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="font-medium text-primary">{animal.name}</td>
+                    <td className="text-primary/70">{animal.type}</td>
+                    <td className="text-primary/70">{animal.breed}</td>
+                    <td>
+                      <span className={`badge badge-sm ${
+                        animal.status === 'available' ? 'badge-success' :
+                        animal.status === 'adopted' ? 'badge-primary' :
+                        'badge-warning'
+                      }`}>
+                        {animal.status}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => togglePublish(animal)}
+                        disabled={togglingId === animal._id}
+                        className={`btn btn-sm ${animal.published ? 'btn-success' : 'btn-ghost'}`}
+                      >
+                        {togglingId === animal._id ? '...' : animal.published ? 'Yes' : 'No'}
+                      </button>
+                    </td>
+                    <td>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => editAnimal(animal)}
+                          className="btn btn-sm btn-ghost text-primary"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(animal._id)}
+                          disabled={deletingId === animal._id}
+                          className="btn btn-sm btn-ghost text-error"
+                        >
+                          {deletingId === animal._id ? '...' : <Trash2 className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

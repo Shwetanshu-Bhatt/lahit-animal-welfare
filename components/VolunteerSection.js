@@ -76,7 +76,7 @@ export default function VolunteerSection() {
   };
 
   return (
-    <section id="volunteer" className="section-padding bg-[#F2CDAC]" ref={sectionRef}>
+    <section id="volunteer" className="section-padding bg-base-200" ref={sectionRef}>
       <Container>
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content - Image */}
@@ -93,7 +93,7 @@ export default function VolunteerSection() {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#401E01]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
             </div>
 
             {/* Floating Card */}
@@ -101,18 +101,18 @@ export default function VolunteerSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl max-w-xs"
+              className="absolute -bottom-6 -right-6 bg-base-100 rounded-2xl p-6 shadow-xl max-w-xs"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-[#164020]/10 rounded-full flex items-center justify-center">
-                  <Users className="w-6 h-6 text-[#164020]" />
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Users className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[#401E01]">{volunteerCount}+</p>
-                  <p className="text-sm text-[#401E01]/70">Active Volunteers</p>
+                  <p className="text-2xl font-bold text-primary">{volunteerCount}+</p>
+                  <p className="text-sm text-primary/70">Active Volunteers</p>
                 </div>
               </div>
-              <p className="text-sm text-[#401E01]/70">
+              <p className="text-sm text-primary/70">
                 Join our growing community of animal lovers making a difference.
               </p>
             </motion.div>
@@ -124,13 +124,13 @@ export default function VolunteerSection() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="inline-block px-4 py-2 bg-[#164020]/10 text-[#164020] rounded-full text-sm font-medium mb-4">
+            <span className="badge badge-primary badge-outline badge-lg mb-4">
               Join Our Team
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#401E01] mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-6">
               Become a Volunteer
             </h2>
-            <p className="text-lg text-[#401E01]/70 mb-8 leading-relaxed">
+            <p className="text-lg text-primary/70 mb-8 leading-relaxed">
               Join our mission to help animals in Uttarakhand. Whether you have 
               an hour a week or can dedicate more time, there's a place for you 
               in our volunteer team.
@@ -139,7 +139,7 @@ export default function VolunteerSection() {
             {/* Activities List */}
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-[#164020]" />
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 gap-3 mb-8">
@@ -151,8 +151,8 @@ export default function VolunteerSection() {
                     transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
                     className="flex items-center gap-2"
                   >
-                    <CheckCircle2 className="w-5 h-5 text-[#164020] flex-shrink-0" />
-                    <span className="text-[#401E01]">{activity}</span>
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-primary">{activity}</span>
                   </motion.div>
                 ))}
               </div>
@@ -183,52 +183,52 @@ export default function VolunteerSection() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-white rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="bg-base-100 rounded-box shadow-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-[#164020] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 className="w-8 h-8 text-primary-content" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#401E01] mb-2">
+                <h3 className="text-2xl font-bold text-primary mb-2">
                   Application Submitted!
                 </h3>
-                <p className="text-[#401E01]/70">
+                <p className="text-primary/70">
                   We'll contact you soon with next steps.
                 </p>
               </div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-[#401E01]">
+                  <h3 className="text-2xl font-bold text-primary">
                     Volunteer Application
                   </h3>
                   <button
                     onClick={() => setIsFormOpen(false)}
-                    className="p-2 hover:bg-[#401E01]/10 rounded-full transition-colors"
+                    className="btn btn-ghost btn-circle btn-sm"
                   >
-                    <X className="w-6 h-6 text-[#401E01]" />
+                    <X className="w-6 h-6" />
                   </button>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Full Name
                     </label>
                     <input
                       {...register('name', { required: 'Name is required' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter your full name"
                     />
                     {errors.name && (
-                      <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.name.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Email Address
                     </label>
                     <input
@@ -240,49 +240,49 @@ export default function VolunteerSection() {
                           message: 'Invalid email address',
                         },
                       })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter your email"
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.email.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Phone Number
                     </label>
                     <input
                       {...register('phone', { required: 'Phone is required' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter your phone number"
                     />
                     {errors.phone && (
-                      <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.phone.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       City/Location
                     </label>
                     <input
                       {...register('location', { required: 'Location is required' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all"
+                      className="input input-bordered w-full"
                       placeholder="Enter your city"
                     />
                     {errors.location && (
-                      <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.location.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Areas of Interest
                     </label>
                     <select
                       {...register('interest', { required: 'Please select an area' })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all bg-white"
+                      className="select select-bordered w-full"
                     >
                       <option value="">Select an area</option>
                       {activities.map((activity) => (
@@ -292,18 +292,18 @@ export default function VolunteerSection() {
                       ))}
                     </select>
                     {errors.interest && (
-                      <p className="text-red-500 text-sm mt-1">{errors.interest.message}</p>
+                      <p className="text-error text-sm mt-1">{errors.interest.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#401E01] mb-1">
+                    <label className="block text-sm font-medium text-primary mb-1">
                       Message (Optional)
                     </label>
                     <textarea
                       {...register('message')}
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl border border-[#401E01]/20 focus:border-[#164020] focus:ring-2 focus:ring-[#164020]/20 outline-none transition-all resize-none"
+                      className="textarea textarea-bordered w-full"
                       placeholder="Tell us why you want to volunteer"
                     />
                   </div>

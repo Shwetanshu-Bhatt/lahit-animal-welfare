@@ -27,8 +27,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} font-sans antialiased bg-[#F5F5DC]`}>
+    <html lang="en" className="scroll-smooth" data-theme="lahit">
+      <body className={`${inter.variable} font-sans antialiased bg-base-200`}>
         {children}
       </body>
     </html>

@@ -20,7 +20,7 @@ function RescueCard({ story, index }) {
         {/* Before/After Images */}
         <div className="grid grid-cols-2 gap-1 p-4 pb-0">
           <div className="relative aspect-square rounded-xl overflow-hidden">
-            <div className="absolute top-2 left-2 z-10 px-2 py-1 bg-[#401E01]/80 text-white text-xs rounded-full">
+            <div className="absolute top-2 left-2 z-10 px-2 py-1 bg-primary/80 text-white text-xs rounded-full">
               Before
             </div>
             <Image
@@ -31,7 +31,7 @@ function RescueCard({ story, index }) {
             />
           </div>
           <div className="relative aspect-square rounded-xl overflow-hidden">
-            <div className="absolute top-2 left-2 z-10 px-2 py-1 bg-[#164020] text-white text-xs rounded-full">
+            <div className="absolute top-2 left-2 z-10 px-2 py-1 bg-primary text-white text-xs rounded-full">
               After
             </div>
             <Image
@@ -45,7 +45,7 @@ function RescueCard({ story, index }) {
 
         {/* Content */}
         <div className="p-6">
-          <div className="flex items-center gap-4 mb-3 text-sm text-[#401E01]/60">
+          <div className="flex items-center gap-4 mb-3 text-sm text-primary/60">
             <span className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
               {story.location}
@@ -56,18 +56,18 @@ function RescueCard({ story, index }) {
             </span>
           </div>
 
-          <h3 className="text-xl font-bold text-[#401E01] mb-2">
+          <h3 className="text-xl font-bold text-primary mb-2">
             Meet {story.name}
           </h3>
-          <p className="text-[#401E01]/70 text-sm leading-relaxed mb-4">
+          <p className="text-primary/70 text-sm leading-relaxed mb-4">
             {story.story}
           </p>
 
-          <div className="flex items-center justify-between pt-4 border-t border-[#401E01]/10">
-            <span className="inline-block px-3 py-1 bg-[#164020]/10 text-[#164020] text-sm rounded-full">
+          <div className="flex items-center justify-between pt-4 border-t border-base-300">
+            <span className="badge badge-primary badge-outline">
               {story.type}
             </span>
-            <button className="flex items-center gap-1 text-[#164020] font-medium text-sm hover:gap-2 transition-all">
+            <button className="flex items-center gap-1 text-primary font-medium text-sm hover:gap-2 transition-all">
               Read Story <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -105,7 +105,7 @@ export default function RescueStories() {
   }, []);
 
   return (
-    <section id="rescues" className="section-padding bg-[#F2CDAC]" ref={sectionRef}>
+    <section id="rescues" className="section-padding bg-base-200" ref={sectionRef}>
       <Container>
         {/* Section Header */}
         <motion.div
@@ -114,13 +114,13 @@ export default function RescueStories() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block px-4 py-2 bg-[#BF7534]/10 text-[#BF7534] rounded-full text-sm font-medium mb-4">
+          <span className="badge badge-secondary badge-outline badge-lg mb-4">
             Success Stories
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#401E01] mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
             Rescue & Recovery Stories
           </h2>
-          <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
+          <p className="text-lg text-primary/70 max-w-2xl mx-auto">
             Every rescue is a journey of hope. See how your support helps transform 
             injured and abandoned animals into healthy, happy companions.
           </p>
@@ -129,14 +129,14 @@ export default function RescueStories() {
         {/* Stories Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#401E01]" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : error ? (
-          <div className="text-center py-20 text-[#401E01]/60">
+          <div className="text-center py-20 text-primary/60">
             {error}
           </div>
         ) : rescues.length === 0 ? (
-          <div className="text-center py-20 text-[#401E01]/60">
+          <div className="text-center py-20 text-primary/60">
             No rescue stories available yet.
           </div>
         ) : (

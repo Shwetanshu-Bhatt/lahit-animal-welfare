@@ -30,14 +30,12 @@ export default function Navbar() {
   }, []);
 
   return (
-    <motion.nav
+    <motion.div
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/90 backdrop-blur-md shadow-lg py-3'
-          : 'bg-transparent py-5'
+      className={`fixed top-0 left-0 right-0 z-50 navbar transition-all duration-300 ${
+        isScrolled ? 'bg-base-100/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'
       }`}
     >
       <Container>
@@ -48,7 +46,7 @@ export default function Navbar() {
             className="flex items-center gap-2"
             whileHover={{ scale: 1.02 }}
           >
-            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white shadow-md">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-base-100 shadow-md">
               <Image
                 src="/lahit.png"
                 alt="LAHIT Animal Welfare Logo"
@@ -57,7 +55,7 @@ export default function Navbar() {
                 priority
               />
             </div>
-            <span className={`text-xl font-bold ${isScrolled ? 'text-[#401E01]' : 'text-[#401E01]'}`}>
+            <span className="text-xl font-bold text-primary">
               LAHIT
             </span>
           </motion.a>
@@ -68,9 +66,7 @@ export default function Navbar() {
               <motion.a
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-[#164020] ${
-                  isScrolled ? 'text-[#401E01]' : 'text-[#401E01]'
-                }`}
+                className="text-sm font-medium transition-colors hover:text-primary"
                 whileHover={{ y: -2 }}
               >
                 {link.name}
@@ -91,57 +87,62 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2 rounded-lg hover:bg-[#164020]/10 transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-[#401E01]" />
-            ) : (
-              <Menu className="w-6 h-6 text-[#401E01]" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden mt-4 pb-4"
+          <div className="dropdown lg:hidden">
+            <button
+              tabIndex={0}
+              className="btn btn-ghost btn-circle"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
             >
-              <div className="flex flex-col gap-4">
-                {navLinks.map((link, index) => (
-                  <motion.a
-                    key={link.name}
-                    href={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="text-[#401E01] font-medium py-2 border-b border-[#401E01]/10 hover:text-[#164020] transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </motion.a>
-                ))}
-                <Button
-                  href="#donate"
-                  variant="primary"
-                  size="md"
-                  icon={Heart}
-                  className="mt-2"
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+
+            <AnimatePresence>
+              {isMobileMenuOpen && (
+                <motion.ul
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  tabIndex={0}
+                  className="dropdown-content menu bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg border border-base-300"
                 >
-                  Donate Now
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  {navLinks.map((link, index) => (
+                    <motion.li
+                      key={link.name}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <a
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.name}
+                      </a>
+                    </motion.li>
+                  ))}
+                  <li>
+                    <Button
+                      href="#donate"
+                      variant="primary"
+                      size="sm"
+                      icon={Heart}
+                      className="w-full mt-2"
+                    >
+                      Donate Now
+                    </Button>
+                  </li>
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </Container>
-    </motion.nav>
+    </motion.div>
   );
 }

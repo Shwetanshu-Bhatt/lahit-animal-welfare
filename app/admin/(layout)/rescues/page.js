@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
+import Button from '@/components/ui/Button';
 
 export default function AdminRescues() {
   const [rescues, setRescues] = useState([]);
@@ -101,7 +102,6 @@ export default function AdminRescues() {
   }
 
   async function togglePublish(rescue) {
-    // Optimistic update
     setTogglingId(rescue._id);
     const previousPublished = rescue.published;
     setRescues(prev => prev.map(r => 
@@ -164,7 +164,7 @@ export default function AdminRescues() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-[#401E01]">Loading...</div>
+        <div className="text-primary">Loading...</div>
       </div>
     );
   }
@@ -172,235 +172,217 @@ export default function AdminRescues() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[#401E01]">Rescue Stories</h1>
-        <button 
+        <h1 className="text-3xl font-bold text-primary">Rescue Stories</h1>
+        <Button 
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="bg-[#164020] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors"
+          variant="primary"
         >
           + Add New Rescue
-        </button>
+        </Button>
       </div>
 
       {message.text && (
-        <div className={`mb-6 p-4 rounded-xl ${
-          message.type === 'success' 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-red-100 text-red-800'
-        }`}>
-          {message.text}
+        <div className={`alert mb-6 ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
+          <span>{message.text}</span>
         </div>
       )}
 
       {showForm && (
-        <div className="bg-white rounded-2xl p-8 shadow-sm mb-8">
-          <h2 className="text-xl font-bold text-[#401E01] mb-6">
-            {editingRescue ? 'Edit Rescue Story' : 'Add New Rescue Story'}
-          </h2>
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Animal Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
+        <div className="card bg-base-100 shadow-sm mb-8">
+          <div className="card-body">
+            <h2 className="card-title text-primary">
+              {editingRescue ? 'Edit Rescue Story' : 'Add New Rescue Story'}
+            </h2>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Animal Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Animal Type</label>
+                  <select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Cow">Cow</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Location</label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Date</label>
+                  <input
+                    type="text"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g., January 2024"
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">Before Image URL</label>
+                  <input
+                    type="text"
+                    name="beforeImage"
+                    value={formData.beforeImage}
+                    onChange={handleChange}
+                    required
+                    placeholder="/images/rescue-before.jpg"
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-2">After Image URL</label>
+                  <input
+                    type="text"
+                    name="afterImage"
+                    value={formData.afterImage}
+                    onChange={handleChange}
+                    required
+                    placeholder="/images/rescue-after.jpg"
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-primary mb-2">Story</label>
+                  <textarea
+                    name="story"
+                    value={formData.story}
+                    onChange={handleChange}
+                    required
+                    rows={6}
+                    className="textarea textarea-bordered w-full"
+                  />
+                </div>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Animal Type</label>
-                <select
-                  name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
+              <div className="mt-8 flex gap-4">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  loading={submitting}
                 >
-                  <option value="Dog">Dog</option>
-                  <option value="Cat">Cat</option>
-                  <option value="Cow">Cow</option>
-                  <option value="Bird">Bird</option>
-                  <option value="Other">Other</option>
-                </select>
+                  {editingRescue ? 'Update Rescue' : 'Add Rescue'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={resetForm}
+                >
+                  Cancel
+                </Button>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Date</label>
-                <input
-                  type="text"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  required
-                  placeholder="e.g., January 2024"
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Before Image URL</label>
-                <input
-                  type="text"
-                  name="beforeImage"
-                  value={formData.beforeImage}
-                  onChange={handleChange}
-                  required
-                  placeholder="/images/rescue-before.jpg"
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[#401E01] mb-2">After Image URL</label>
-                <input
-                  type="text"
-                  name="afterImage"
-                  value={formData.afterImage}
-                  onChange={handleChange}
-                  required
-                  placeholder="/images/rescue-after.jpg"
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[#401E01] mb-2">Story</label>
-                <textarea
-                  name="story"
-                  value={formData.story}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  className="w-full px-4 py-3 border border-[#401E01]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#164020]"
-                />
-              </div>
-            </div>
-            
-            <div className="mt-8 flex gap-4">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-[#164020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#0d2b16] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {submitting && (
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                )}
-                {editingRescue ? 'Update Rescue' : 'Add Rescue'}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="bg-gray-200 text-[#401E01] px-8 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-[#401E01]/5">
-            <tr>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Before</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">After</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Name</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Type</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Location</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Date</th>
-              <th className="text-left px-6 py-4 text-[#401E01] font-semibold">Published</th>
-              <th className="text-right px-6 py-4 text-[#401E01] font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rescues.length === 0 ? (
+      <div className="card bg-base-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead className="bg-base-200">
               <tr>
-                <td colSpan={8} className="px-6 py-8 text-center text-[#401E01]/60">
-                  No rescue stories found. Add your first rescue story!
-                </td>
+                <th className="text-primary">Before</th>
+                <th className="text-primary">After</th>
+                <th className="text-primary">Name</th>
+                <th className="text-primary">Type</th>
+                <th className="text-primary">Location</th>
+                <th className="text-primary">Date</th>
+                <th className="text-primary">Published</th>
+                <th className="text-right text-primary">Actions</th>
               </tr>
-            ) : (
-              rescues.map((rescue) => (
-                <tr key={rescue._id} className="border-t border-[#401E01]/10">
-                  <td className="px-6 py-4">
-                    <div className="w-12 h-12 bg-[#401E01]/10 rounded-lg overflow-hidden">
-                      {rescue.beforeImage && (
-                        <img src={rescue.beforeImage} alt="Before" className="w-full h-full object-cover" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="w-12 h-12 bg-[#401E01]/10 rounded-lg overflow-hidden">
-                      {rescue.afterImage && (
-                        <img src={rescue.afterImage} alt="After" className="w-full h-full object-cover" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-[#401E01]">{rescue.name}</td>
-                  <td className="px-6 py-4 text-[#401E01]/70">{rescue.type}</td>
-                  <td className="px-6 py-4 text-[#401E01]/70">{rescue.location}</td>
-                  <td className="px-6 py-4 text-[#401E01]/70">{rescue.date}</td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => togglePublish(rescue)}
-                      disabled={togglingId === rescue._id}
-                      className={`p-2 rounded-lg disabled:opacity-50 ${rescue.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}
-                    >
-                      {togglingId === rescue._id ? (
-                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                        </svg>
-                      ) : rescue.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => editRescue(rescue)}
-                        className="p-2 bg-[#164020]/10 text-[#164020] rounded-lg hover:bg-[#164020]/20"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(rescue._id)}
-                        disabled={deletingId === rescue._id}
-                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 disabled:opacity-50"
-                      >
-                        {deletingId === rescue._id ? (
-                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
+            </thead>
+            <tbody>
+              {rescues.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="text-center text-primary/60 py-8">
+                    No rescue stories found. Add your first rescue story!
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                rescues.map((rescue) => (
+                  <tr key={rescue._id} className="hover:bg-base-200/50">
+                    <td>
+                      <div className="w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                        {rescue.beforeImage && (
+                          <img src={rescue.beforeImage} alt="Before" className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                        {rescue.afterImage && (
+                          <img src={rescue.afterImage} alt="After" className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="font-medium text-primary">{rescue.name}</td>
+                    <td className="text-primary/70">{rescue.type}</td>
+                    <td className="text-primary/70">{rescue.location}</td>
+                    <td className="text-primary/70">{rescue.date}</td>
+                    <td>
+                      <button
+                        onClick={() => togglePublish(rescue)}
+                        disabled={togglingId === rescue._id}
+                        className={`btn btn-sm ${rescue.published ? 'btn-success' : 'btn-ghost'}`}
+                      >
+                        {togglingId === rescue._id ? '...' : rescue.published ? 'Yes' : 'No'}
+                      </button>
+                    </td>
+                    <td>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => editRescue(rescue)}
+                          className="btn btn-sm btn-ghost text-primary"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(rescue._id)}
+                          disabled={deletingId === rescue._id}
+                          className="btn btn-sm btn-ghost text-error"
+                        >
+                          {deletingId === rescue._id ? '...' : <Trash2 className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

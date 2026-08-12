@@ -16,7 +16,7 @@ function InstagramCard({ post, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 cursor-pointer"
+      className="group relative aspect-square rounded-2xl overflow-hidden bg-base-200 cursor-pointer"
     >
       <Image
         src={post.image}
@@ -46,7 +46,7 @@ function InstagramCard({ post, index }) {
 
       {/* Instagram Icon */}
       <div className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <ExternalLink className="w-4 h-4 text-[#401E01]" />
+        <ExternalLink className="w-4 h-4 text-primary" />
       </div>
     </motion.a>
   );
@@ -66,7 +66,6 @@ export default function InstagramFeed() {
         if (data.success && data.data.instagramPosts && data.data.instagramPosts.length > 0) {
           setInstagramPosts(data.data.instagramPosts);
         } else {
-          // Default posts if none in settings
           setInstagramPosts([
             { id: 1, image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop', caption: 'Bruno found his forever home today! 🐕❤️', likes: 245, comments: 18 },
             { id: 2, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=400&fit=crop', caption: 'Morning feeding drive in Dehradun 🍲', likes: 189, comments: 12 },
@@ -78,7 +77,6 @@ export default function InstagramFeed() {
         }
       } catch (error) {
         console.error('Error fetching settings:', error);
-        // Fallback to default posts
         setInstagramPosts([
           { id: 1, image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop', caption: 'Bruno found his forever home today! 🐕❤️', likes: 245, comments: 18 },
           { id: 2, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=400&fit=crop', caption: 'Morning feeding drive in Dehradun 🍲', likes: 189, comments: 12 },
@@ -95,7 +93,7 @@ export default function InstagramFeed() {
   }, []);
 
   return (
-    <section className="section-padding bg-[#F2CDAC]" ref={sectionRef}>
+    <section className="section-padding bg-base-200" ref={sectionRef}>
       <Container>
         {/* Section Header */}
         <motion.div
@@ -104,14 +102,14 @@ export default function InstagramFeed() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#E1306C]/10 text-[#E1306C] rounded-full text-sm font-medium mb-4">
+          <span className="badge badge-primary badge-outline badge-lg mb-4">
             <Instagram className="w-4 h-4" />
             @lahitanimalwelfare
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#401E01] mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
             Follow Our Journey
           </h2>
-          <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
+          <p className="text-lg text-primary/70 max-w-2xl mx-auto">
             See our daily rescue missions, success stories, and behind-the-scenes 
             moments on Instagram.
           </p>
@@ -120,7 +118,7 @@ export default function InstagramFeed() {
         {/* Instagram Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#401E01]" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">

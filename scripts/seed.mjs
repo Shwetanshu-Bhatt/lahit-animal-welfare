@@ -25,6 +25,8 @@ import Animal from '../models/Animal.js';
 import Rescue from '../models/Rescue.js';
 import Settings from '../models/Settings.js';
 import Volunteer from '../models/Volunteer.js';
+import Blog from '../models/Blog.js';
+import Media from '../models/Media.js';
 
 async function connectDB() {
   try {
@@ -371,7 +373,6 @@ async function createVolunteers() {
   console.log('\n🙋 Creating sample volunteers...');
 
   try {
-    // Check if volunteers already exist
     const existingVolunteers = await Volunteer.countDocuments();
     
     if (existingVolunteers > 0) {
@@ -435,6 +436,119 @@ async function createVolunteers() {
   }
 }
 
+async function createBlogs() {
+  console.log('\n📝 Creating sample blog posts...');
+
+  try {
+    const existingBlogs = await Blog.countDocuments();
+    
+    if (existingBlogs > 0) {
+      console.log('ℹ️  Blog posts already exist');
+      return;
+    }
+
+    const blogs = [
+      {
+        title: 'How LAHIT is Making a Difference in Uttarakhand',
+        excerpt: 'Learn about our journey rescuing and rehabilitating stray animals across Uttarakhand.',
+        content: '<p>LAHIT has been at the forefront of animal welfare in Uttarakhand since 2020. Our dedicated team of volunteers works tirelessly to rescue, treat, and rehome injured and abandoned animals.</p><p>From the bustling streets of Dehradun to the serene valleys of Mussoorie, our rescue teams respond to emergency calls 24/7. We have successfully rescued over 1200 animals and provided them with the care they need to recover and find loving homes.</p>',
+        coverImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=400&fit=crop',
+        author: 'Admin',
+        category: 'General',
+        tags: ['lahit', 'uttarakhand', 'animal welfare'],
+        published: true,
+        featured: true
+      },
+      {
+        title: 'Bruno\'s Journey: From Rescue to Forever Home',
+        excerpt: 'Meet Bruno, a dog who was found injured on the roadside and is now living his best life.',
+        content: '<p>Bruno was found injured on a roadside in Dehradun with a severe leg wound and was severely malnourished. Our volunteers rushed him to the vet where he underwent surgery and intensive care.</p><p>After 3 months of physiotherapy and lots of love, Bruno made a full recovery. He was adopted by a loving family who now take him on adventures every weekend.</p>',
+        coverImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=400&fit=crop',
+        author: 'Admin',
+        category: 'Rescue Stories',
+        tags: ['rescue', 'dog', 'dehradun', 'success story'],
+        published: true,
+        featured: false
+      },
+      {
+        title: 'Volunteer Drive: Join Our Weekend Feeding Program',
+        excerpt: 'We are expanding our feeding drives and need more volunteers to help us reach more animals.',
+        content: '<p>Our feeding drives have been a huge success, but we need more hands to help us cover more areas. We are looking for volunteers who can dedicate a few hours on weekends to help us distribute food to stray animals across Dehradun, Mussoorie, and Rishikesh.</p><p>No prior experience is needed - just a love for animals and a willingness to help. We provide all the food and supplies.</p>',
+        coverImage: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=400&fit=crop',
+        author: 'Admin',
+        category: 'Volunteer Events',
+        tags: ['volunteer', 'feeding', 'community'],
+        published: true,
+        featured: false
+      }
+    ];
+
+    await Blog.insertMany(blogs);
+    console.log('✅ Sample blog posts created successfully');
+  } catch (error) {
+    console.error('❌ Error creating blogs:', error.message);
+    throw error;
+  }
+}
+
+async function createMedia() {
+  console.log('\n🖼️  Creating sample media library...');
+
+  try {
+    const existingMedia = await Media.countDocuments();
+    
+    if (existingMedia > 0) {
+      console.log('ℹ️  Media already exists');
+      return;
+    }
+
+    const media = [
+      {
+        filename: 'hero-dog.jpg',
+        url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=400&fit=crop',
+        type: 'image',
+        category: 'general',
+        alt: 'Rescued dog receiving care',
+        caption: 'Hero image for homepage',
+        uploadedBy: 'Admin'
+      },
+      {
+        filename: 'rescue-bruno.jpg',
+        url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=400&fit=crop',
+        type: 'image',
+        category: 'rescue',
+        alt: 'Bruno rescue story',
+        caption: 'Bruno before rescue',
+        uploadedBy: 'Admin'
+      },
+      {
+        filename: 'volunteers.jpg',
+        url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop',
+        type: 'image',
+        category: 'event',
+        alt: 'LAHIT volunteers',
+        caption: 'Volunteer team at work',
+        uploadedBy: 'Admin'
+      },
+      {
+        filename: 'feeding-drive.jpg',
+        url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=400&fit=crop',
+        type: 'image',
+        category: 'event',
+        alt: 'Feeding drive',
+        caption: 'Morning feeding drive in Dehradun',
+        uploadedBy: 'Admin'
+      }
+    ];
+
+    await Media.insertMany(media);
+    console.log('✅ Sample media created successfully');
+  } catch (error) {
+    console.error('❌ Error creating media:', error.message);
+    throw error;
+  }
+}
+
 async function seed() {
   console.log('🌱 Starting database seed...\n');
 
@@ -458,6 +572,12 @@ async function seed() {
 
     // Create sample volunteers
     await createVolunteers();
+
+    // Create sample blogs
+    await createBlogs();
+
+    // Create sample media
+    await createMedia();
 
     console.log('\n✨ Database seed completed successfully!');
     console.log('\n📝 Login Credentials:');
