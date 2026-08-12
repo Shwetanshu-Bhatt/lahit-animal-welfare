@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Volunteer from '@/models/Volunteer';
+import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const volunteer = await Volunteer.findById(id);
@@ -20,10 +22,11 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const body = await request.json();
-    const volunteer = await Volunteer.findByIdAndUpdate(id, body, { returnDocument: 'after' });
+    const volunteer = await Volunteer.findByIdAndUpdate(id, body, { new: true, runValidators: true });
     if (!volunteer) {
       return NextResponse.json({ success: false, error: 'Volunteer not found' }, { status: 404 });
     }
@@ -35,6 +38,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const volunteer = await Volunteer.findByIdAndDelete(id);

@@ -1,19 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart } from 'lucide-react';
-import Container from './ui/Container';
-import Button from './ui/Button';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUpRight, Heart, Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import Container from './ui/Container';
 
 const navLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Rescues', href: '#rescues' },
+  { name: 'Our impact', href: '/#about' },
+  { name: 'Rescues', href: '/#rescues' },
   { name: 'Adopt', href: '/animals' },
-  { name: 'Volunteer', href: '#volunteer' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Stories', href: '/blog' },
+  { name: 'Volunteer', href: '/#volunteer' },
 ];
 
 export default function Navbar() {
@@ -21,137 +20,85 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <motion.div
-      initial={{ y: -100 }}
+    <motion.header
+      initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-base-100/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'
-      }`}
+      className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5"
     >
-      <Container className="w-full">
+      <Container
+        size="xl"
+        className={`relative rounded-full border px-4 transition-all duration-300 sm:px-5 ${
+          isScrolled
+            ? 'border-primary/10 bg-base-100/95 py-2 text-primary shadow-[0_16px_50px_rgba(11,51,36,0.12)] backdrop-blur-xl'
+            : 'border-white/20 bg-primary/20 py-3 text-white backdrop-blur-md'
+        }`}
+      >
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <motion.a
-            href="#home"
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-base-100 shadow-md">
-              <Image
-                src="/lahit.png"
-                alt="LAHIT Animal Welfare Logo"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-            <span className="text-xl font-bold text-primary">
-              LAHIT
+          <Link href="/" className="flex items-center gap-3" aria-label="LAHIT home">
+            <span className="relative h-10 w-10 overflow-hidden rounded-full border border-white/30 bg-white shadow-sm">
+              <Image src="/lahit.png" alt="" fill className="object-cover" priority />
             </span>
-          </motion.a>
+            <span className="leading-none">
+              <span className="block text-lg font-black tracking-[-0.04em]">LAHIT</span>
+              <span className={`mt-1 hidden text-[0.55rem] font-bold uppercase tracking-[0.17em] sm:block ${isScrolled ? 'text-primary/55' : 'text-white/55'}`}>
+                Animal welfare
+              </span>
+            </span>
+          </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
             {navLinks.map((link) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium transition-colors hover:text-primary"
-                whileHover={{ y: -2 }}
-              >
+              <Link key={link.name} href={link.href} className={`text-[0.78rem] font-bold transition-colors ${isScrolled ? 'text-primary/70 hover:text-primary' : 'text-white/72 hover:text-white'}`}>
                 {link.name}
-              </motion.a>
+              </Link>
             ))}
-          </div>
+          </nav>
 
-          {/* CTA Button */}
-          <div className="hidden lg:block">
-            <Button
-              href="#donate"
-              variant="primary"
-              size="sm"
-              icon={Heart}
-            >
-              Donate
-            </Button>
-          </div>
+          <Link href="/#donate" className={`hidden min-h-11 items-center gap-2 rounded-full px-5 text-sm font-bold transition-all hover:-translate-y-0.5 lg:flex ${isScrolled ? 'bg-primary text-white hover:bg-[#164a36]' : 'bg-accent text-primary hover:bg-white'}`}>
+            <Heart className="h-4 w-4" /> Donate <ArrowUpRight className="h-4 w-4" />
+          </Link>
 
-          {/* Mobile Menu Button */}
-          <div className="relative lg:hidden">
-            <button
-              type="button"
-              className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-colors ${
-                isMobileMenuOpen
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-primary/20 bg-base-100/80 text-primary'
-              }`}
-              onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
-              aria-label="Toggle menu"
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-navigation"
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-
-            <AnimatePresence>
-              {isMobileMenuOpen && (
-                <motion.nav
-                  id="mobile-navigation"
-                  aria-label="Mobile navigation"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-full z-50 mt-3 w-64 overflow-hidden rounded-2xl border border-white/10 bg-primary p-2 text-white shadow-2xl"
-                >
-                  <ul className="flex flex-col">
-                    {navLinks.map((link, index) => (
-                      <motion.li
-                        key={link.name}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <a
-                          href={link.href}
-                          className="block rounded-xl px-4 py-3 font-medium text-white transition-colors hover:bg-white/10 focus:bg-white/10 focus:outline-none"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {link.name}
-                        </a>
-                      </motion.li>
-                    ))}
-                    <li className="mt-2 border-t border-white/15 pt-2">
-                      <a
-                        href="#donate"
-                        className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 font-semibold text-primary transition-colors hover:bg-base-100"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <Heart className="h-4 w-4" />
-                        Donate Now
-                      </a>
-                    </li>
-                  </ul>
-                </motion.nav>
-              )}
-            </AnimatePresence>
-          </div>
+          <button
+            type="button"
+            className={`flex h-10 w-10 items-center justify-center rounded-full border lg:hidden ${isScrolled ? 'border-primary/15 bg-primary text-white' : 'border-white/25 bg-white/10 text-white'}`}
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+            aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.nav
+              id="mobile-navigation"
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              className="absolute inset-x-0 top-[calc(100%+0.65rem)] overflow-hidden rounded-[1.75rem] border border-white/10 bg-primary p-3 text-white shadow-2xl lg:hidden"
+            >
+              {navLinks.map((link) => (
+                <Link key={link.name} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between rounded-2xl px-4 py-3.5 font-semibold hover:bg-white/10">
+                  {link.name}<ArrowUpRight className="h-4 w-4 text-white/45" />
+                </Link>
+              ))}
+              <Link href="/#donate" onClick={() => setIsMobileMenuOpen(false)} className="mt-2 flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-4 font-bold text-primary">
+                <Heart className="h-4 w-4" /> Donate to the mission
+              </Link>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </Container>
-    </motion.div>
+    </motion.header>
   );
 }

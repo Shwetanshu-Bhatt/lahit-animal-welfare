@@ -14,6 +14,7 @@ export default function VolunteerSection() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [volunteerCount, setVolunteerCount] = useState(50);
   const [activities, setActivities] = useState([
     'Animal Rescue Operations',
@@ -42,6 +43,10 @@ export default function VolunteerSection() {
       }
     }
     fetchSettings();
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => { if (data.success) setVolunteerCount(data.data.volunteers || 0); })
+      .catch(() => {});
   }, []);
 
   const {
@@ -53,6 +58,7 @@ export default function VolunteerSection() {
 
   const onSubmit = async (data) => {
     setSubmitting(true);
+    setSubmitError('');
     try {
       const res = await fetch('/api/volunteers', {
         method: 'POST',
@@ -60,16 +66,18 @@ export default function VolunteerSection() {
         body: JSON.stringify(data)
       });
       
-      if (res.ok) {
+      const result = await res.json();
+      if (result.success) {
         setSubmitted(true);
         setTimeout(() => {
           setSubmitted(false);
           setIsFormOpen(false);
           reset();
         }, 3000);
-      }
+      } else setSubmitError(result.error || 'Could not submit your application.');
     } catch (error) {
       console.error('Error submitting:', error);
+      setSubmitError('Could not submit your application. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -213,6 +221,7 @@ export default function VolunteerSection() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  {submitError && <div className="alert alert-error text-sm"><span>{submitError}</span></div>}
                   <div>
                     <label className="block text-sm font-medium text-primary mb-1">
                       Full Name

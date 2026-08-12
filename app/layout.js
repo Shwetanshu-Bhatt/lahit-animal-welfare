@@ -1,11 +1,4 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata = {
   title: "LAHIT Animal Welfare | Helping Stray Animals in Uttarakhand",
@@ -28,7 +21,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth" data-theme="lahit">
-      <body className={`${inter.variable} font-sans antialiased bg-base-200`}>
+      <body className="font-sans antialiased bg-base-200">
         {children}
       </body>
     </html>

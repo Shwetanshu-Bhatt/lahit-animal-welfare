@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Mail, 
@@ -7,37 +8,50 @@ import {
   MapPin, 
   Instagram, 
   Facebook, 
-  Twitter,
+  Youtube,
   ArrowUp,
 } from 'lucide-react';
 import Container from './ui/Container';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const quickLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About Us', href: '#about' },
-  { name: 'Rescue Stories', href: '#rescues' },
-  { name: 'Adopt', href: '#adopt' },
-  { name: 'Volunteer', href: '#volunteer' },
-  { name: 'Donate', href: '#donate' },
+  { name: 'Home', href: '/' },
+  { name: 'About Us', href: '/#about' },
+  { name: 'Rescue Stories', href: '/#rescues' },
+  { name: 'Adopt', href: '/animals' },
+  { name: 'Field Notes', href: '/blog' },
+  { name: 'Volunteer', href: '/#volunteer' },
+  { name: 'Donate', href: '/#donate' },
 ];
 
 const services = [
-  { name: 'Animal Rescue', href: '#emergency' },
-  { name: 'Medical Treatment', href: '#about' },
-  { name: 'Adoption', href: '#adopt' },
-  { name: 'Feeding Programs', href: '#about' },
-  { name: 'Sterilization', href: '#about' },
-  { name: 'Awareness Camps', href: '#volunteer' },
-];
-
-const socialLinks = [
-  { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/lahitanimalwelfare' },
-  { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/lahitanimalwelfare' },
-  { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/lahitanimal' },
+  { name: 'Animal Rescue', href: '/#emergency' },
+  { name: 'Medical Treatment', href: '/#about' },
+  { name: 'Adoption', href: '/animals' },
+  { name: 'Feeding Programs', href: '/#about' },
+  { name: 'Sterilization', href: '/#about' },
+  { name: 'Awareness Camps', href: '/#volunteer' },
 ];
 
 export default function Footer() {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => { if (data.success) setSettings(data.data); })
+      .catch(() => {});
+  }, []);
+
+  const socialLinks = [
+    { name: 'Instagram', icon: Instagram, href: settings?.instagram },
+    { name: 'Facebook', icon: Facebook, href: settings?.facebook },
+    { name: 'YouTube', icon: Youtube, href: settings?.youtube },
+  ].filter((social) => social.href);
+  const contactEmail = settings?.contactEmail || 'contact@lahitanimalwelfare.org';
+  const contactPhone = settings?.contactPhone || '';
+  const address = settings?.address || 'Dehradun, Uttarakhand, India';
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -62,8 +76,7 @@ export default function Footer() {
                 <span className="text-2xl font-bold">LAHIT</span>
               </div>
               <p className="text-primary-content/70 mb-6 leading-relaxed">
-                A volunteer-led animal rescue initiative dedicated to helping 
-                stray and injured animals across Uttarakhand, India.
+                {settings?.siteDescription || 'A volunteer-led animal rescue initiative dedicated to helping stray and injured animals across Uttarakhand, India.'}
               </p>
               {/* Social Links */}
               <div className="flex gap-3">
@@ -91,12 +104,12 @@ export default function Footer() {
               <ul className="space-y-3">
                 {quickLinks.map((link) => (
                   <li key={link.name}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-primary-content/70 hover:text-primary-content hover:translate-x-1 inline-block transition-all"
                     >
                       {link.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -108,12 +121,12 @@ export default function Footer() {
               <ul className="space-y-3">
                 {services.map((service) => (
                   <li key={service.name}>
-                    <a
+                    <Link
                       href={service.href}
                       className="text-primary-content/70 hover:text-primary-content hover:translate-x-1 inline-block transition-all"
                     >
                       {service.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -123,33 +136,30 @@ export default function Footer() {
             <div>
               <h4 className="text-lg font-semibold mb-6">Contact Us</h4>
               <ul className="space-y-4">
-                <li>
+                {contactPhone && <li>
                   <a
-                    href="mailto:contact@lahitanimalwelfare.org"
+                    href={`mailto:${contactEmail}`}
                     className="flex items-start gap-3 text-primary-content/70 hover:text-primary-content transition-colors"
                   >
                     <Mail className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>contact@lahitanimalwelfare.org</span>
+                    <span>{contactEmail}</span>
                   </a>
-                </li>
+                </li>}
                 <li>
                   <a
-                    href="tel:+919876543210"
+                    href={`tel:${contactPhone}`}
                     className="flex items-start gap-3 text-primary-content/70 hover:text-primary-content transition-colors"
                   >
                     <Phone className="w-5 h-5 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p>+91 98765 43210</p>
+                      <p>{contactPhone}</p>
                       <p className="text-sm text-primary-content/50">Emergency Hotline</p>
                     </div>
                   </a>
                 </li>
                 <li className="flex items-start gap-3 text-primary-content/70">
                   <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                  <span>
-                    Rajpur Road, Dehradun<br />
-                    Uttarakhand, India 248001
-                  </span>
+                  <span>{address}</span>
                 </li>
               </ul>
             </div>

@@ -1,73 +1,115 @@
 'use client';
 
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Heart, Dog, BarChart3, Settings, LogOut, Users, FileText, Image as ImageIcon, User } from 'lucide-react';
+import { BarChart3, Dog, FileText, Heart, Image as ImageIcon, LayoutDashboard, LogOut, Settings, Siren, User, Users, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
-import NextImage from 'next/image';
+import Image from 'next/image';
 
-const menuItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/profile', label: 'Profile', icon: User },
-  { href: '/admin/blogs', label: 'Blogs', icon: FileText },
-  { href: '/admin/rescues', label: 'Rescue Stories', icon: Heart },
-  { href: '/admin/animals', label: 'Animals', icon: Dog },
-  { href: '/admin/media', label: 'Media Library', icon: ImageIcon },
-  { href: '/admin/volunteers', label: 'Volunteers', icon: Users },
-  { href: '/admin/stats', label: 'Statistics', icon: BarChart3 },
-  { href: '/admin/settings', label: 'Settings', icon: Settings },
+const menuGroups = [
+  {
+    label: 'Overview',
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/admin/rescue-reports', label: 'Rescue inbox', icon: Siren },
+    ],
+  },
+  {
+    label: 'Content',
+    items: [
+      { href: '/admin/animals', label: 'Animals', icon: Dog },
+      { href: '/admin/rescues', label: 'Rescue stories', icon: Heart },
+      { href: '/admin/blogs', label: 'Blog', icon: FileText },
+      { href: '/admin/media', label: 'Media library', icon: ImageIcon },
+    ],
+  },
+  {
+    label: 'Community & site',
+    items: [
+      { href: '/admin/volunteers', label: 'Volunteers', icon: Users },
+      { href: '/admin/stats', label: 'Impact statistics', icon: BarChart3 },
+      { href: '/admin/settings', label: 'Site settings', icon: Settings },
+      { href: '/admin/profile', label: 'Profile', icon: User },
+    ],
+  },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ open, onClose }) {
   const pathname = usePathname();
+  const [newReportCount, setNewReportCount] = useState(0);
+
+  const fetchReportCount = useCallback(async () => {
+    try {
+      const response = await fetch('/api/rescue-reports', { cache: 'no-store' });
+      const data = await response.json();
+      if (data.success) {
+        setNewReportCount(data.data.filter((report) => report.status === 'new').length);
+      }
+    } catch {
+      setNewReportCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(fetchReportCount, 0);
+    window.addEventListener('rescue-reports-changed', fetchReportCount);
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.removeEventListener('rescue-reports-changed', fetchReportCount);
+    };
+  }, [fetchReportCount, pathname]);
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-primary text-primary-content flex flex-col">
-      <div className="p-6 border-b border-primary-content/10">
-        <Link href="/admin" className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-base-100">
-            <NextImage src="/lahit.png" alt="LAHIT" fill className="object-cover" />
-          </div>
-          <div>
-            <p className="font-bold text-lg">LAHIT</p>
-            <p className="text-xs text-primary-content/60">Admin Panel</p>
-          </div>
-        </Link>
-      </div>
+    <>
+      {open && <button type="button" aria-label="Close navigation" onClick={onClose} className="fixed inset-0 z-40 bg-primary/55 backdrop-blur-sm lg:hidden" />}
+      <aside className={`fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col bg-primary text-white transition-transform duration-300 lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex min-h-24 items-center justify-between border-b border-white/10 px-6">
+          <Link href="/admin" onClick={onClose} className="flex items-center gap-3">
+            <span className="relative h-11 w-11 overflow-hidden rounded-full border border-white/20 bg-white">
+              <Image src="/lahit.png" alt="LAHIT" fill className="object-cover" />
+            </span>
+            <span>
+              <span className="block text-xl font-black tracking-[-0.04em]">LAHIT</span>
+              <span className="block text-[0.58rem] font-bold uppercase tracking-[0.18em] text-white/48">Mission control</span>
+            </span>
+          </Link>
+          <button type="button" onClick={onClose} aria-label="Close menu" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 lg:hidden"><X className="h-4 w-4" /></button>
+        </div>
 
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                    isActive
-                      ? 'bg-primary-content/20 text-primary-content'
-                      : 'text-primary-content/70 hover:bg-primary-content/10 hover:text-primary-content'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+        <nav className="flex-1 overflow-y-auto px-4 py-5">
+          {menuGroups.map((group) => (
+            <div key={group.label} className="mb-6">
+              <p className="mb-2 px-3 text-[0.6rem] font-black uppercase tracking-[0.18em] text-white/35">{group.label}</p>
+              <ul className="space-y-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href);
+                  return (
+                    <li key={item.href}>
+                      <Link href={item.href} onClick={onClose} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${isActive ? 'bg-accent text-primary' : 'text-white/65 hover:bg-white/[0.07] hover:text-white'}`}>
+                        <Icon className="h-[1.1rem] w-[1.1rem]" />
+                        <span>{item.label}</span>
+                        {item.href === '/admin/rescue-reports' && newReportCount > 0 && (
+                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-secondary px-1 text-[0.62rem] font-black text-white">
+                            {newReportCount > 99 ? '99+' : newReportCount}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
 
-      <div className="p-4 border-t border-primary-content/10">
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-primary-content/70 hover:bg-primary-content/10 hover:text-primary-content transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Logout</span>
-        </button>
-      </div>
-    </aside>
+        <div className="border-t border-white/10 p-4">
+          <button onClick={() => signOut({ callbackUrl: '/' })} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.07] hover:text-white">
+            <LogOut className="h-[1.1rem] w-[1.1rem]" /> Sign out
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

@@ -17,7 +17,7 @@ export default function Card({
     xl: 'p-10',
   };
 
-  const combinedClasses = `card bg-base-100 rounded-box shadow-sm ${paddings[padding]} ${className}`;
+  const combinedClasses = `card bg-base-100 rounded-[1.75rem] border border-primary/10 shadow-[0_12px_50px_rgba(11,51,36,0.06)] ${paddings[padding]} ${className}`;
 
   if (hover) {
     return (

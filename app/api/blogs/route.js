@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
+import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,8 +10,10 @@ export async function GET(request) {
     await connectDB();
     const { searchParams } = new URL(request.url);
     const includeAll = searchParams.get('all') === 'true';
+    if (includeAll && !(await requireAdmin())) return unauthorizedResponse();
     const category = searchParams.get('category');
     const featured = searchParams.get('featured');
+    const slug = searchParams.get('slug');
     
     let query = {};
     if (!includeAll) {
@@ -22,15 +25,14 @@ export async function GET(request) {
     if (featured === 'true') {
       query.featured = true;
     }
+    if (slug) {
+      query.slug = slug;
+    }
     
     const blogs = await Blog.find(query).sort({ createdAt: -1 });
     
-    const cacheControl = includeAll 
-      ? 'no-store, must-revalidate'  
-      : 'public, max-age=60, s-maxage=60, stale-while-revalidate=300';
-    
     return NextResponse.json({ success: true, data: blogs }, {
-      headers: { 'Cache-Control': cacheControl }
+      headers: { 'Cache-Control': 'no-store' }
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -39,6 +41,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const body = await request.json();
     const blog = await Blog.create(body);

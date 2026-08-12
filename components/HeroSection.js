@@ -1,196 +1,109 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Phone, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Heart, MapPin, Phone } from 'lucide-react';
+import Image from 'next/image';
 import Container from './ui/Container';
 import Button from './ui/Button';
-import Image from 'next/image';
 
 export default function HeroSection() {
+  const [stats, setStats] = useState({ animalsRescued: 1200, volunteers: 50 });
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => { if (data.success) setStats(data.data); })
+      .catch(() => {});
+  }, []);
+
+  const heroStats = [
+    { value: `${Number(stats.animalsRescued || 0).toLocaleString()}+`, label: 'lives rescued' },
+    { value: `${Number(stats.volunteers || 0).toLocaleString()}+`, label: 'active volunteers' },
+    { value: '24/7', label: 'rescue response' },
+  ];
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-20 bg-base-200">
-      {/* Background Gradient Orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5 }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/15 rounded-full blur-3xl animate-float-delayed"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, delay: 0.3 }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/3 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, delay: 0.6 }}
-          style={{ animationDelay: '-3s' }}
-        />
-      </div>
+    <section id="home" className="relative min-h-[860px] overflow-hidden bg-primary text-white lg:min-h-screen">
+      <Image
+        src="/images/rescue-hero-v2.webp"
+        alt="A LAHIT volunteer caring for a rescued dog in Uttarakhand"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-[68%_center]"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,28,19,0.96)_0%,rgba(4,28,19,0.87)_38%,rgba(4,28,19,0.24)_72%,rgba(4,28,19,0.12)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,28,19,0.9)_0%,transparent_40%)]" />
+      <div className="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(#fff_0.7px,transparent_0.7px)] [background-size:7px_7px]" />
 
-      <Container className="relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Content */}
+      <Container className="relative z-10 flex min-h-[860px] flex-col pt-36 pb-8 lg:min-h-screen lg:pt-44">
+        <div className="my-auto max-w-4xl pb-16 lg:pb-24">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="text-center lg:text-left"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="eyebrow mb-7 text-accent"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
-            >
-              <Heart className="w-4 h-4 text-primary" fill="#164020" />
-              <span className="text-sm font-medium text-primary">
-                Serving Uttarakhand since 2020
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-tight mb-6"
-            >
-              Helping Stray Animals in{' '}
-              <span className="text-primary">Uttarakhand</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-lg sm:text-xl text-primary/80 mb-4 font-medium"
-            >
-              Rescue • Treatment • Feeding • Adoption
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-base text-primary/70 mb-8 max-w-lg mx-auto lg:mx-0"
-            >
-              We are a volunteer-led initiative dedicated to rescuing, rehabilitating, 
-              and rehoming injured and abandoned animals across Uttarakhand.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-            >
-              <Button
-                href="#emergency"
-                variant="accent"
-                size="lg"
-                icon={Phone}
-                className="w-full sm:w-auto"
-              >
-                Report Injured Animal
-              </Button>
-              <Button
-                href="#donate"
-                variant="outline"
-                size="lg"
-                icon={ArrowRight}
-                className="w-full sm:w-auto"
-              >
-                Support the Mission
-              </Button>
-            </motion.div>
-
-            {/* Quick Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="flex flex-wrap justify-center lg:justify-start gap-6 mt-10 pt-8 border-t border-primary/10"
-            >
-              <div>
-                <p className="text-2xl font-bold text-primary">1200+</p>
-                <p className="text-sm text-primary/70">Animals Rescued</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-primary">50+</p>
-                <p className="text-sm text-primary/70">Active Volunteers</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-primary">24/7</p>
-                <p className="text-sm text-primary/70">Emergency Support</p>
-              </div>
-            </motion.div>
+            Animal rescue · Uttarakhand
           </motion.div>
 
-          {/* Right Content - Hero Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
-            className="relative"
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="display-title max-w-4xl text-[3.9rem] uppercase sm:text-[5.7rem] lg:text-[7.6rem] xl:text-[8.4rem]"
           >
-            <div className="relative aspect-square max-w-lg mx-auto">
-              {/* Main Image Container */}
-              <motion.div
-                className="relative rounded-3xl overflow-hidden shadow-2xl"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent z-10" />
-                <Image
-                  src="/images/hero-dog.jpg"
-                  alt="Rescued dog receiving care"
-                  width={600}
-                  height={600}
-                  className="w-full h-full object-cover"
-                  priority
-                />
-              </motion.div>
+            Every life
+            <span className="block text-accent">deserves</span>
+            a rescue.
+          </motion.h1>
 
-              {/* Floating Card 1 */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.5 }}
-                className="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-xl z-20"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Heart className="w-6 h-6 text-primary" fill="#164020" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-primary">Bruno Rescued</p>
-                    <p className="text-xs text-primary/60">3 days ago in Dehradun</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Floating Card 2 */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.2, duration: 0.5 }}
-                className="absolute top-8 -right-4 bg-white rounded-2xl p-4 shadow-xl z-20"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 bg-secondary rounded-full border-2 border-white" />
-                    <div className="w-8 h-8 bg-primary rounded-full border-2 border-white" />
-                    <div className="w-8 h-8 bg-primary rounded-full border-2 border-white" />
-                  </div>
-                  <p className="text-sm font-medium text-primary">+50 Volunteers</p>
-                </div>
-              </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.25 }}
+            className="mt-8 flex max-w-3xl flex-col gap-7 border-t border-white/25 pt-7 lg:flex-row lg:items-end lg:justify-between"
+          >
+            <p className="max-w-xl text-base leading-relaxed text-white/78 sm:text-lg">
+              LAHIT brings emergency rescue, treatment, feeding and adoption together—so animals in distress get a real second chance.
+            </p>
+            <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+              <Button href="#emergency" variant="accent" size="lg" icon={Phone}>
+                Report a rescue
+              </Button>
+              <Button href="#donate" variant="outlineWhite" size="lg" icon={Heart}>
+                Give support
+              </Button>
             </div>
           </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.45 }}
+          className="grid overflow-hidden rounded-[1.6rem] border border-white/20 bg-white/10 backdrop-blur-xl md:grid-cols-[1.4fr_1fr_1fr_1fr]"
+        >
+          <a href="#about" className="group flex min-h-28 items-center justify-between gap-5 border-b border-white/15 px-6 py-5 md:border-r md:border-b-0 lg:px-8">
+            <div>
+              <span className="eyebrow text-[0.64rem] text-white/55">Our impact</span>
+              <p className="mt-2 font-bold">See what compassion can do</p>
+            </div>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-primary transition-transform group-hover:translate-y-1">
+              <ArrowDown className="h-5 w-5" />
+            </span>
+          </a>
+          {heroStats.map((stat) => (
+            <div key={stat.label} className="flex min-h-24 items-center gap-4 border-b border-white/15 px-6 py-5 last:border-b-0 md:border-r md:border-b-0 md:last:border-r-0 lg:px-8">
+              <p className="text-2xl font-black tracking-[-0.05em] text-accent sm:text-3xl">{stat.value}</p>
+              <p className="max-w-20 text-xs font-semibold uppercase leading-tight tracking-[0.08em] text-white/60">{stat.label}</p>
+            </div>
+          ))}
+        </motion.div>
+
+        <div className="mt-5 flex items-center justify-between text-xs font-bold uppercase tracking-[0.12em] text-white/55">
+          <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-accent" /> Dehradun, Uttarakhand</span>
+          <a href="/animals" className="hidden items-center gap-2 transition-colors hover:text-accent sm:flex">Meet animals waiting for home <ArrowUpRight className="h-4 w-4" /></a>
         </div>
       </Container>
     </section>

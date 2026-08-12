@@ -48,20 +48,15 @@ export default function DonationSection() {
     fetchSettings();
   }, []);
 
-  const upiId = settings?.upiId || 'lahit@upi';
-  const bankDetails = settings ? {
-    accountName: settings.bankAccountName || 'LAHIT Animal Welfare',
-    accountNumber: settings.bankAccountNumber || '1234567890',
-    ifscCode: settings.bankIfscCode || 'HDFC0001234',
-    bankName: settings.bankName || 'HDFC Bank',
-    branch: settings.bankBranch || 'Dehradun Main Branch',
-  } : {
-    accountName: 'LAHIT Animal Welfare',
-    accountNumber: '1234567890',
-    ifscCode: 'HDFC0001234',
-    bankName: 'HDFC Bank',
-    branch: 'Dehradun Main Branch',
+  const upiId = settings?.upiId && settings.upiId !== 'lahit@upi' ? settings.upiId : '';
+  const bankDetails = {
+    accountName: settings?.bankAccountName || '',
+    accountNumber: settings?.bankAccountNumber || '',
+    ifscCode: settings?.bankIfscCode || '',
+    bankName: settings?.bankName || '',
+    branch: settings?.bankBranch || '',
   };
+  const bankConfigured = Boolean(bankDetails.accountNumber && bankDetails.ifscCode);
   const donationTiers = settings?.donationTiers || [
     { id: 1, amount: 500, title: 'Daily Meals', description: 'Feed stray dogs for a day', icon: 'Utensils', impact: 'Provides nutritious meals for 10 street dogs' },
     { id: 2, amount: 1500, title: 'Vaccination', description: 'Vaccination for one animal', icon: 'Syringe', impact: 'Complete vaccination course for a rescued animal' },
@@ -164,7 +159,7 @@ export default function DonationSection() {
                   </div>
                 </div>
 
-                <div className="bg-base-100 rounded-2xl p-6 mb-6">
+                {upiId ? <div className="bg-base-100 rounded-2xl p-6 mb-6">
                   <p className="text-sm text-primary/60 mb-2">UPI ID</p>
                   <div className="flex items-center justify-between">
                     <code className="text-lg font-mono text-primary font-semibold">
@@ -187,7 +182,7 @@ export default function DonationSection() {
                       )}
                     </button>
                   </div>
-                </div>
+                </div> : <div className="bg-base-100 rounded-2xl p-6 mb-6 text-sm font-semibold text-primary/60">UPI donations are being configured. Please use bank transfer for now.</div>}
 
                 <p className="text-sm text-primary/70">
                   Open any UPI app (Google Pay, PhonePe, Paytm) and scan or enter the UPI ID to donate.
@@ -207,7 +202,7 @@ export default function DonationSection() {
                 </div>
 
                 <div className="bg-base-100 rounded-2xl p-6 space-y-4">
-                  {Object.entries(bankDetails).map(([key, value]) => (
+                  {bankConfigured ? Object.entries(bankDetails).filter(([, value]) => value).map(([key, value]) => (
                     <div key={key} className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-primary/60 uppercase">
@@ -226,7 +221,7 @@ export default function DonationSection() {
                         )}
                       </button>
                     </div>
-                  ))}
+                  )) : <p className="text-sm font-semibold text-primary/60">Bank transfer details are being configured. Please contact the team before donating.</p>}
                 </div>
               </div>
             </motion.div>
@@ -239,8 +234,7 @@ export default function DonationSection() {
               className="mt-12 text-center"
             >
               <p className="text-sm text-primary/60">
-                All donations are eligible for tax benefits under Section 80G. 
-                Receipts will be sent to your email within 24 hours.
+                Please contact LAHIT after donating so the team can confirm receipt and share an acknowledgement.
               </p>
             </motion.div>
           </>

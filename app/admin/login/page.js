@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -16,112 +15,75 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
     setLoading(true);
     setError('');
-
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result.error) {
-        setError('Invalid email or password');
-      } else {
+      const result = await signIn('credentials', { email, password, redirect: false });
+      if (result?.error) setError('Invalid email or password.');
+      else {
         router.push('/admin');
         router.refresh();
       }
-    } catch (error) {
-      setError('Something went wrong');
+    } catch {
+      setError('Unable to sign in right now. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="card bg-base-100 shadow-xl w-full max-w-md"
-      >
-        <div className="card-body">
-          <div className="text-center mb-6">
-            <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden bg-base-200">
-              <Image
-                src="/lahit.png"
-                alt="LAHIT Logo"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <h1 className="text-2xl font-bold text-primary">Admin Login</h1>
-            <p className="text-primary/60 mt-1">LAHIT Animal Welfare</p>
+    <main className="grid min-h-screen bg-primary lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="relative hidden overflow-hidden p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
+        <Image src="/images/rescue-hero-v2.webp" alt="LAHIT animal rescue in Uttarakhand" fill priority className="object-cover opacity-50" />
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(4,28,19,0.92),rgba(4,28,19,0.28))]" />
+        <div className="relative z-10 flex items-center gap-3">
+          <span className="relative h-12 w-12 overflow-hidden rounded-full border border-white/25 bg-white"><Image src="/lahit.png" alt="LAHIT" fill className="object-cover" /></span>
+          <span><strong className="block text-xl tracking-[-0.04em]">LAHIT</strong><small className="font-bold uppercase tracking-[0.18em] text-white/50">Mission control</small></span>
+        </div>
+        <div className="relative z-10 max-w-2xl">
+          <span className="eyebrow text-accent">For the people who act</span>
+          <h1 className="display-title mt-7 text-6xl uppercase xl:text-8xl">Every update moves a life forward.</h1>
+          <p className="mt-7 max-w-lg text-lg leading-relaxed text-white/68">Manage rescue requests, animal profiles, volunteers, donations and public impact from one connected workspace.</p>
+        </div>
+      </section>
+
+      <section className="flex items-center justify-center bg-[#f3f0e8] px-5 py-12 sm:px-10">
+        <div className="w-full max-w-md">
+          <div className="mb-10 flex items-center gap-3 lg:hidden">
+            <span className="relative h-11 w-11 overflow-hidden rounded-full bg-white"><Image src="/lahit.png" alt="LAHIT" fill className="object-cover" /></span>
+            <strong className="text-xl tracking-[-0.04em] text-primary">LAHIT</strong>
           </div>
+          <span className="admin-eyebrow">Secure workspace</span>
+          <h2 className="text-4xl font-black tracking-[-0.055em] text-primary sm:text-5xl">Welcome back.</h2>
+          <p className="mt-3 text-primary/52">Sign in to manage the LAHIT mission.</p>
 
-          {error && (
-            <div className="alert alert-error">
-              <span>{error}</span>
-            </div>
-          )}
+          {error && <div className="mt-7 rounded-2xl border border-error/20 bg-error/10 px-4 py-3 text-sm font-semibold text-error">{error}</div>}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="form-control">
-              <label className="block text-sm font-medium text-primary mb-2">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/40" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input input-bordered w-full pl-10"
-                  placeholder="admin@lahit.org"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="block text-sm font-medium text-primary mb-2">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/40" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input input-bordered w-full pl-10 pr-12"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-full"
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <label className="block">
+              <span className="mb-2 block text-xs font-black uppercase tracking-[0.1em] text-primary/55">Email</span>
+              <span className="relative block">
+                <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/35" />
+                <input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="h-14 w-full rounded-2xl border border-primary/15 bg-white pr-4 pl-12 text-primary outline-none transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/8" placeholder="admin@lahit.org" required />
+              </span>
+            </label>
+            <label className="block">
+              <span className="mb-2 block text-xs font-black uppercase tracking-[0.1em] text-primary/55">Password</span>
+              <span className="relative block">
+                <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/35" />
+                <input type={showPassword ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} className="h-14 w-full rounded-2xl border border-primary/15 bg-white pr-12 pl-12 text-primary outline-none transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/8" placeholder="Enter your password" required />
+                <button type="button" onClick={() => setShowPassword((visible) => !visible)} className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40" aria-label={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}</button>
+              </span>
+            </label>
+            <button type="submit" disabled={loading} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 font-bold text-white transition-colors hover:bg-[#164a36] disabled:opacity-50">
+              <ShieldCheck className="h-5 w-5" /> {loading ? 'Signing in…' : 'Enter mission control'}
             </button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-primary/60">
-            <Link href="/" className="link link-primary">
-              ← Back to website
-            </Link>
-          </div>
+          <Link href="/" className="mt-8 inline-flex text-sm font-bold text-primary/55 hover:text-primary">← Return to public website</Link>
         </div>
-      </motion.div>
-    </div>
+      </section>
+    </main>
   );
 }

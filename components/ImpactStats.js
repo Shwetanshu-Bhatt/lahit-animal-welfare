@@ -1,17 +1,11 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Heart, Utensils, Stethoscope, Home } from 'lucide-react';
+import { ArrowUpRight, Heart, Home, Stethoscope, Utensils } from 'lucide-react';
 import Container from './ui/Container';
-import Card from './ui/Card';
 
-const iconMap = {
-  Heart,
-  Utensils,
-  Stethoscope,
-  Home,
-};
+const iconMap = { Heart, Utensils, Stethoscope, Home };
 
 function AnimatedCounter({ value, suffix = '' }) {
   const [count, setCount] = useState(0);
@@ -19,31 +13,24 @@ function AnimatedCounter({ value, suffix = '' }) {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   useEffect(() => {
-    if (isInView) {
-      const duration = 2000;
-      const steps = 60;
-      const increment = value / steps;
-      let current = 0;
-
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= value) {
-          setCount(value);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(current));
-        }
-      }, duration / steps);
-
-      return () => clearInterval(timer);
-    }
+    if (!isInView) return;
+    const duration = 1400;
+    const steps = 45;
+    const increment = value / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= value) {
+        setCount(value);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current));
+      }
+    }, duration / steps);
+    return () => clearInterval(timer);
   }, [isInView, value]);
 
-  return (
-    <span ref={ref}>
-      {count.toLocaleString()}{suffix}
-    </span>
-  );
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
 export default function ImpactStats() {
@@ -56,147 +43,91 @@ export default function ImpactStats() {
       try {
         const res = await fetch('/api/stats');
         const data = await res.json();
-        if (data.success) {
-          setStats(data.data);
-        }
+        if (data.success) setStats(data.data);
       } catch (error) {
         console.error('Error fetching stats:', error);
-        setStats({
-          animalsRescued: 1200,
-          mealsServed: 30000,
-          treatments: 500,
-          adoptions: 200
-        });
+        setStats({ animalsRescued: 1200, mealsServed: 30000, treatments: 500, adoptions: 200 });
       }
     }
     fetchStats();
   }, []);
 
-  const impactStats = stats ? [
-    {
-      id: 1,
-      value: stats.animalsRescued || 0,
-      suffix: '+',
-      label: 'Animals Rescued',
-      icon: 'Heart'
-    },
-    {
-      id: 2,
-      value: stats.mealsServed || 0,
-      suffix: '+',
-      label: 'Meals Served',
-      icon: 'Utensils'
-    },
-    {
-      id: 3,
-      value: stats.treatments || 0,
-      suffix: '+',
-      label: 'Treatments',
-      icon: 'Stethoscope'
-    },
-    {
-      id: 4,
-      value: stats.adoptions || 0,
-      suffix: '+',
-      label: 'Adoptions',
-      icon: 'Home'
-    }
-  ] : [
-    { id: 1, value: 0, suffix: '+', label: 'Animals Rescued', icon: 'Heart' },
-    { id: 2, value: 0, suffix: '+', label: 'Meals Served', icon: 'Utensils' },
-    { id: 3, value: 0, suffix: '+', label: 'Treatments', icon: 'Stethoscope' },
-    { id: 4, value: 0, suffix: '+', label: 'Adoptions', icon: 'Home' }
+  const impactStats = [
+    { id: 1, value: stats?.animalsRescued || 0, suffix: '+', label: 'Animals rescued', icon: 'Heart' },
+    { id: 2, value: stats?.mealsServed || 0, suffix: '+', label: 'Meals served', icon: 'Utensils' },
+    { id: 3, value: stats?.treatments || 0, suffix: '+', label: 'Treatments funded', icon: 'Stethoscope' },
+    { id: 4, value: stats?.adoptions || 0, suffix: '+', label: 'Forever homes', icon: 'Home' },
   ];
 
   return (
-    <section id="about" className="section-padding bg-base-100" ref={sectionRef}>
+    <section id="about" className="section-padding overflow-hidden bg-base-100" ref={sectionRef}>
       <Container>
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="badge badge-primary badge-outline badge-lg mb-4">
-            Our Impact
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
-            Making a Difference
-          </h2>
-          <p className="text-lg text-primary/70 max-w-2xl mx-auto">
-            Every number represents a life saved, a meal served, and a second chance given to animals in need.
-          </p>
-        </motion.div>
+        <div className="grid gap-10 border-b border-primary/15 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:pb-16">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+            <span className="eyebrow text-secondary">Built on action</span>
+            <p className="mt-5 text-sm font-bold uppercase tracking-[0.12em] text-primary/45">Our impact / 2020—today</p>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.08 }}>
+            <h2 className="display-title text-5xl uppercase text-primary sm:text-6xl lg:text-7xl">
+              Compassion is only powerful when it <span className="text-secondary">moves.</span>
+            </h2>
+          </motion.div>
+        </div>
 
-        {/* Stats Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4">
           {impactStats.map((stat, index) => {
             const Icon = iconMap[stat.icon];
             return (
               <motion.div
                 key={stat.id}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: 0.12 + index * 0.08 }}
+                className="group border-b border-primary/15 py-9 sm:border-r sm:px-7 lg:border-b-0 lg:py-12 first:pl-0 last:border-r-0"
               >
-                <Card className="text-center h-full" padding="xl">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <Icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-4xl sm:text-5xl font-bold text-primary mb-2">
-                    <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                  </h3>
-                  <p className="text-primary/70 font-medium">
-                    {stat.label}
-                  </p>
-                </Card>
+                <div className="mb-10 flex items-center justify-between">
+                  <span className="text-xs font-black tracking-[0.16em] text-primary/35">0{index + 1}</span>
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full border border-primary/15 transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-white">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                </div>
+                <p className="text-4xl font-black tracking-[-0.06em] text-primary sm:text-5xl">
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                </p>
+                <p className="mt-3 text-sm font-bold uppercase tracking-[0.08em] text-primary/55">{stat.label}</p>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Impact Story */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 35 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-16 bg-primary rounded-3xl p-8 sm:p-12"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-14 grid overflow-hidden rounded-[2rem] bg-primary text-white lg:grid-cols-[1.25fr_0.75fr]"
         >
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-primary-content mb-4">
-                Why We Do What We Do
-              </h3>
-              <p className="text-primary-content/90 mb-6 leading-relaxed">
-                Uttarakhand faces a significant challenge with stray animals. Many are injured, 
-                malnourished, or abandoned. LAHIT was born from a simple belief: every animal 
-                deserves compassion and care.
-              </p>
-              <p className="text-primary-content/90 leading-relaxed">
-                Our team of dedicated volunteers works around the clock to rescue animals in 
-                distress, provide medical treatment, ensure daily feeding, and find loving 
-                forever homes through adoption.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-primary-content/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-primary-content mb-1">{stats?.citiesCovered || 15}+</p>
-                <p className="text-primary-content/80 text-sm">Cities Covered</p>
+          <div className="p-8 sm:p-12 lg:p-16">
+            <span className="eyebrow text-accent">Why LAHIT exists</span>
+            <h3 className="mt-7 max-w-2xl text-3xl font-black tracking-[-0.045em] sm:text-5xl">No animal should be left behind because help was too far away.</h3>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/68 sm:text-lg">
+              Our volunteer network connects reports, field responders, medical care and adopters across Uttarakhand. One coordinated path from crisis to safety.
+            </p>
+            <a href="#help" className="mt-9 inline-flex items-center gap-2 border-b border-accent pb-1 text-sm font-bold text-accent transition-gap hover:gap-3">
+              Find your way to help <ArrowUpRight className="h-4 w-4" />
+            </a>
+          </div>
+          <div className="grid grid-cols-2 border-t border-white/15 lg:border-t-0 lg:border-l">
+            {[
+              [stats?.citiesCovered || 15, 'Cities covered'],
+              [stats?.volunteers || 50, 'Volunteers'],
+              [stats?.partnerVets || 10, 'Partner vets'],
+              [stats?.yearsActive || 4, 'Years active'],
+            ].map(([value, label]) => (
+              <div key={label} className="flex min-h-36 flex-col justify-end border-r border-b border-white/15 p-6 even:border-r-0 last:border-b-0 sm:min-h-44 sm:p-8 [&:nth-last-child(2)]:border-b-0">
+                <p className="text-4xl font-black tracking-[-0.06em] text-accent">{value}+</p>
+                <p className="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-white/55">{label}</p>
               </div>
-              <div className="bg-primary-content/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-primary-content mb-1">{stats?.volunteers || 50}+</p>
-                <p className="text-primary-content/80 text-sm">Volunteers</p>
-              </div>
-              <div className="bg-primary-content/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-primary-content mb-1">{stats?.partnerVets || 10}+</p>
-                <p className="text-primary-content/80 text-sm">Partner Vets</p>
-              </div>
-              <div className="bg-primary-content/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <p className="text-3xl font-bold text-primary-content mb-1">{stats?.yearsActive || 4}+</p>
-                <p className="text-primary-content/80 text-sm">Years Active</p>
-              </div>
-            </div>
+            ))}
           </div>
         </motion.div>
       </Container>

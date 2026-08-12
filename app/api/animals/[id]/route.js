@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Animal from '@/models/Animal';
+import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const animal = await Animal.findById(id);
@@ -20,11 +22,12 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const body = await request.json();
     body.updatedAt = new Date();
-    const animal = await Animal.findByIdAndUpdate(id, body, { returnDocument: 'after' });
+    const animal = await Animal.findByIdAndUpdate(id, body, { new: true, runValidators: true });
     if (!animal) {
       return NextResponse.json({ success: false, error: 'Animal not found' }, { status: 404 });
     }
@@ -36,6 +39,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const animal = await Animal.findByIdAndDelete(id);

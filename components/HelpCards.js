@@ -2,55 +2,42 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Heart, Users, Wallet, AlertCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle, ArrowUpRight, Heart, Users, Wallet } from 'lucide-react';
 import Container from './ui/Container';
-import Card from './ui/Card';
-import Button from './ui/Button';
 
 const helpOptions = [
   {
-    id: 1,
-    title: 'Adopt an Animal',
-    description: 'Give a loving home to a rescued animal. Browse our available pets ready for adoption.',
+    number: '01',
+    title: 'Adopt',
+    description: 'Open your home to a rescued animal ready for a safe, loving future.',
     icon: Heart,
-    color: '#164020',
-    bgColor: 'bg-primary/10',
-    buttonText: 'Find a Pet',
-    href: '#adopt',
-    featured: false,
+    href: '/animals',
+    cta: 'Meet the animals',
   },
   {
-    id: 2,
+    number: '02',
     title: 'Volunteer',
-    description: 'Join our team of dedicated volunteers. Help with rescues, feeding drives, and events.',
+    description: 'Put your time and skills where they matter—in rescues, feeding and field support.',
     icon: Users,
-    color: '#401E01',
-    bgColor: 'bg-primary/10',
-    buttonText: 'Join Us',
     href: '#volunteer',
-    featured: false,
+    cta: 'Join the team',
   },
   {
-    id: 3,
+    number: '03',
     title: 'Donate',
-    description: 'Your donations fund rescue operations, medical treatments, and daily care for animals.',
+    description: 'Fund medicines, meals, transport and the urgent care every rescue depends on.',
     icon: Wallet,
-    color: '#BF7534',
-    bgColor: 'bg-secondary/10',
-    buttonText: 'Donate Now',
     href: '#donate',
+    cta: 'Give today',
     featured: true,
   },
   {
-    id: 4,
-    title: 'Report Injured Animal',
-    description: 'See an animal in distress? Report it to us and our team will respond quickly.',
+    number: '04',
+    title: 'Report',
+    description: 'Found an animal in distress? Send the location and help our response team act fast.',
     icon: AlertCircle,
-    color: '#D32F2F',
-    bgColor: 'bg-error/10',
-    buttonText: 'Report Now',
     href: '#emergency',
-    featured: false,
+    cta: 'Start a rescue',
   },
 ];
 
@@ -59,82 +46,42 @@ export default function HelpCards() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section id="help" className="section-padding bg-base-100" ref={sectionRef}>
+    <section id="help" className="section-padding overflow-hidden bg-primary text-white" ref={sectionRef}>
       <Container>
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="badge badge-primary badge-outline badge-lg mb-4">
-            Get Involved
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
-            How You Can Help
-          </h2>
-          <p className="text-lg text-primary/70 max-w-2xl mx-auto">
-            There are many ways to make a difference. Choose how you want to contribute 
-            to our mission of helping animals in Uttarakhand.
-          </p>
-        </motion.div>
+        <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+          <motion.div initial={{ opacity: 0, y: 25 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55 }}>
+            <span className="eyebrow text-accent">Make your move</span>
+            <h2 className="display-title mt-7 text-5xl uppercase sm:text-7xl lg:text-8xl">Care is a verb.</h2>
+          </motion.div>
+          <motion.p initial={{ opacity: 0, y: 25 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.08 }} className="max-w-xl text-base leading-relaxed text-white/62 sm:text-lg lg:pb-2">
+            Whether you have five minutes, a spare room or the means to fund a treatment, there is a direct way to change an animal’s life today.
+          </motion.p>
+        </div>
 
-        {/* Help Cards Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-14 grid overflow-hidden rounded-[2rem] border border-white/15 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
           {helpOptions.map((option, index) => {
             const Icon = option.icon;
             return (
-              <motion.div
-                key={option.id}
-                initial={{ opacity: 0, y: 40 }}
+              <motion.a
+                key={option.number}
+                href={option.href}
+                initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`${option.featured ? 'sm:col-span-2 lg:col-span-1 lg:row-span-1' : ''}`}
+                transition={{ duration: 0.5, delay: 0.12 + index * 0.08 }}
+                className={`group flex min-h-[390px] flex-col border-b border-white/15 p-7 transition-colors sm:border-r lg:border-b-0 lg:p-8 ${option.featured ? 'bg-accent text-primary' : 'hover:bg-white/[0.06]'} sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0`}
               >
-                <Card
-                  className={`h-full group relative overflow-hidden ${option.featured ? 'border-2 border-secondary' : ''}`}
-                  padding="xl"
-                >
-                  {/* Featured Badge */}
-                  {option.featured && (
-                    <div className="absolute top-4 right-4 badge badge-secondary">
-                      Most Needed
-                    </div>
-                  )}
-
-                  {/* Icon */}
-                  <div
-                    className={`w-16 h-16 ${option.bgColor} rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
-                  >
-                    <Icon className="w-8 h-8" style={{ color: option.color }} />
-                  </div>
-
-                  {/* Content */}
-                  <h3 className="text-xl font-bold text-primary mb-3">
-                    {option.title}
-                  </h3>
-                  <p className="text-primary/70 text-sm leading-relaxed mb-6">
-                    {option.description}
-                  </p>
-
-                  {/* Button */}
-                  <Button
-                    href={option.href}
-                    variant="ghost"
-                    size="sm"
-                    className="p-0 hover:bg-transparent group/btn"
-                  >
-                    <span style={{ color: option.color }} className="font-semibold">
-                      {option.buttonText}
-                    </span>
-                    <ArrowRight
-                      className="w-4 h-4 transition-transform group-hover/btn:translate-x-1"
-                      style={{ color: option.color }}
-                    />
-                  </Button>
-                </Card>
-              </motion.div>
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-black tracking-[0.18em] ${option.featured ? 'text-primary/45' : 'text-white/38'}`}>{option.number}</span>
+                  <span className={`flex h-12 w-12 items-center justify-center rounded-full border ${option.featured ? 'border-primary/20' : 'border-white/18'}`}><Icon className="h-5 w-5" /></span>
+                </div>
+                <div className="mt-auto pt-16">
+                  <h3 className="text-4xl font-black tracking-[-0.055em]">{option.title}</h3>
+                  <p className={`mt-4 min-h-20 text-sm leading-relaxed ${option.featured ? 'text-primary/68' : 'text-white/58'}`}>{option.description}</p>
+                  <span className={`mt-8 flex items-center justify-between border-t pt-5 text-sm font-bold ${option.featured ? 'border-primary/20' : 'border-white/15'}`}>
+                    {option.cta}<ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </motion.a>
             );
           })}
         </div>

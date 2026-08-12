@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
+import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
@@ -31,6 +33,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const body = await request.json();
     const media = await Media.create(body);

@@ -2,14 +2,26 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Instagram, Heart, MessageCircle, ExternalLink, Loader2 } from 'lucide-react';
+import { Instagram, ExternalLink, Loader2 } from 'lucide-react';
 import Container from './ui/Container';
 import Image from 'next/image';
 
-function InstagramCard({ post, index }) {
+function isLikelyImageSource(value = '') {
+  if (value.startsWith('data:image/')) return true;
+  try {
+    const host = new URL(value).hostname.replace('www.', '');
+    return !['instagram.com', 'facebook.com', 'youtube.com'].includes(host);
+  } catch {
+    return false;
+  }
+}
+
+function InstagramCard({ post, index, instagramUrl }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
   return (
     <motion.a
-      href="https://instagram.com/lahitanimalwelfare"
+      href={post.postUrl || instagramUrl}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 30 }}
@@ -18,29 +30,18 @@ function InstagramCard({ post, index }) {
       transition={{ duration: 0.4, delay: index * 0.1 }}
       className="group relative aspect-square rounded-2xl overflow-hidden bg-base-200 cursor-pointer"
     >
-      <Image
-        src={post.image}
-        alt={post.caption}
-        fill
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-      />
+      {imageFailed ? (
+        <div className="flex h-full items-center justify-center bg-primary/8 px-5 text-center text-sm font-semibold text-primary/45">Display image unavailable</div>
+      ) : (
+        <Image src={post.image} alt={post.caption || 'LAHIT Instagram update'} fill unoptimized onError={() => setImageFailed(true)} className="object-cover transition-transform duration-500 group-hover:scale-110" />
+      )}
       
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <p className="text-white text-sm line-clamp-2 mb-3">
+          <p className="text-white text-sm line-clamp-3">
             {post.caption}
           </p>
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-white text-sm">
-              <Heart className="w-4 h-4" fill="white" />
-              {post.likes}
-            </span>
-            <span className="flex items-center gap-1 text-white text-sm">
-              <MessageCircle className="w-4 h-4" />
-              {post.comments}
-            </span>
-          </div>
         </div>
       </div>
 
@@ -57,40 +58,30 @@ export default function InstagramFeed() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [instagramPosts, setInstagramPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [instagramUrl, setInstagramUrl] = useState('https://instagram.com/lahitanimalwelfare');
 
   useEffect(() => {
     async function fetchSettings() {
       try {
         const res = await fetch('/api/settings');
         const data = await res.json();
+        if (data.success && data.data.instagram) setInstagramUrl(data.data.instagram);
         if (data.success && data.data.instagramPosts && data.data.instagramPosts.length > 0) {
           setInstagramPosts(data.data.instagramPosts);
         } else {
-          setInstagramPosts([
-            { id: 1, image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop', caption: 'Bruno found his forever home today! 🐕❤️', likes: 245, comments: 18 },
-            { id: 2, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=400&fit=crop', caption: 'Morning feeding drive in Dehradun 🍲', likes: 189, comments: 12 },
-            { id: 3, image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop', caption: 'Rescue mission success! Luna is recovering well 🐱', likes: 312, comments: 24 },
-            { id: 4, image: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=400&fit=crop', caption: 'Our amazing volunteers at work 💪', likes: 156, comments: 8 },
-            { id: 5, image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=400&fit=crop', caption: 'New puppies looking for homes 🐾', likes: 423, comments: 45 },
-            { id: 6, image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=400&fit=crop', caption: 'Thank you for your donations! 🙏', likes: 278, comments: 15 }
-          ]);
+          setInstagramPosts([]);
         }
       } catch (error) {
         console.error('Error fetching settings:', error);
-        setInstagramPosts([
-          { id: 1, image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop', caption: 'Bruno found his forever home today! 🐕❤️', likes: 245, comments: 18 },
-          { id: 2, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=400&fit=crop', caption: 'Morning feeding drive in Dehradun 🍲', likes: 189, comments: 12 },
-          { id: 3, image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop', caption: 'Rescue mission success! Luna is recovering well 🐱', likes: 312, comments: 24 },
-          { id: 4, image: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=400&fit=crop', caption: 'Our amazing volunteers at work 💪', likes: 156, comments: 8 },
-          { id: 5, image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=400&fit=crop', caption: 'New puppies looking for homes 🐾', likes: 423, comments: 45 },
-          { id: 6, image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=400&fit=crop', caption: 'Thank you for your donations! 🙏', likes: 278, comments: 15 }
-        ]);
+        setInstagramPosts([]);
       } finally {
         setLoading(false);
       }
     }
     fetchSettings();
   }, []);
+
+  const validPosts = instagramPosts.filter((post) => isLikelyImageSource(post.image));
 
   return (
     <section className="section-padding bg-base-200" ref={sectionRef}>
@@ -104,7 +95,7 @@ export default function InstagramFeed() {
         >
           <span className="badge badge-primary badge-outline badge-lg mb-4">
             <Instagram className="w-4 h-4" />
-            @lahitanimalwelfare
+            Instagram updates
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
             Follow Our Journey
@@ -120,13 +111,13 @@ export default function InstagramFeed() {
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : (
+        ) : validPosts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-            {instagramPosts.map((post, index) => (
-              <InstagramCard key={post.id || index} post={post} index={index} />
+            {validPosts.map((post, index) => (
+              <InstagramCard key={post.id || index} post={post} index={index} instagramUrl={instagramUrl} />
             ))}
           </div>
-        )}
+        ) : <div className="mx-auto mb-10 max-w-2xl rounded-[1.75rem] border border-primary/10 bg-base-100 p-8 text-center text-primary/55">New rescue updates are posted on Instagram. Follow LAHIT to see the latest from the field.</div>}
 
         {/* CTA */}
         <motion.div
@@ -137,7 +128,7 @@ export default function InstagramFeed() {
           className="text-center"
         >
           <a
-            href="https://instagram.com/lahitanimalwelfare"
+            href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white font-semibold rounded-full hover:shadow-xl transition-all duration-300 hover:scale-105"

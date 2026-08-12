@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Stat from '@/models/Stat';
 import Volunteer from '@/models/Volunteer';
+import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +21,7 @@ export async function GET() {
         mealsServed: 30000,
         treatments: 500,
         adoptions: 200,
-        volunteers: volunteerCount || 50,
+        volunteers: volunteerCount,
         citiesCovered: 15,
         partnerVets: 10,
         yearsActive: 4
@@ -29,11 +30,10 @@ export async function GET() {
     
     // Update stats with actual volunteer count
     const statsData = stats.toObject();
-    statsData.volunteers = volunteerCount || stats.volunteers;
+    statsData.volunteers = volunteerCount;
     
-    // Cache stats for 60 seconds
     return NextResponse.json({ success: true, data: statsData }, {
-      headers: { 'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300' }
+      headers: { 'Cache-Control': 'no-store' }
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -42,6 +42,7 @@ export async function GET() {
 
 export async function PUT(request) {
   try {
+    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const body = await request.json();
     body.updatedAt = new Date();
@@ -49,7 +50,7 @@ export async function PUT(request) {
     let stats = await Stat.findOne();
     
     if (stats) {
-      stats = await Stat.findByIdAndUpdate(stats._id, body, { new: true });
+      stats = await Stat.findByIdAndUpdate(stats._id, body, { new: true, runValidators: true });
     } else {
       stats = await Stat.create(body);
     }

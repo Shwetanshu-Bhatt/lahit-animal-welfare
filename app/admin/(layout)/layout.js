@@ -1,24 +1,18 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import AdminSidebar from '@/components/admin/AdminSidebar';
-import AdminHeader from '@/components/admin/AdminHeader';
+import AdminShell from '@/components/admin/AdminShell';
+import { authOptions } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({ children }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   if (!session) {
     redirect('/admin/login');
   }
 
   return (
-    <div className="min-h-screen bg-base-200 flex">
-      <AdminSidebar />
-      <div className="flex-1 flex flex-col ml-64">
-        <AdminHeader user={session.user} />
-        <main className="flex-1 p-8 overflow-auto">
-          {children}
-        </main>
-      </div>
-    </div>
+    <AdminShell user={session.user}>{children}</AdminShell>
   );
 }

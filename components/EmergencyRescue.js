@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Phone, Camera, MapPin, Send, MessageCircle, X } from 'lucide-react';
 import Container from './ui/Container';
@@ -13,6 +13,17 @@ export default function EmergencyRescue() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data.contactPhone) setContactPhone(data.data.contactPhone);
+      })
+      .catch(() => {});
+  }, []);
 
   const {
     register,
@@ -23,37 +34,38 @@ export default function EmergencyRescue() {
 
   const onSubmit = async (data) => {
     setSubmitting(true);
+    setSubmitError('');
     try {
-      const res = await fetch('/api/rescues', {
+      const res = await fetch('/api/rescue-reports', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: data.name,
-          type: data.type || 'Other',
+          reporterName: data.name,
+          phone: data.phone,
+          animalType: data.animalType || 'Other',
           location: data.location,
-          story: data.description,
-          date: new Date().toISOString().split('T')[0],
-          beforeImage: data.image || '',
-          published: false
+          description: data.description,
         })
       });
-      
-      if (res.ok) {
+      const result = await res.json();
+
+      if (result.success) {
         setSubmitted(true);
         setTimeout(() => {
           setSubmitted(false);
           setIsFormOpen(false);
           reset();
         }, 3000);
-      }
+      } else setSubmitError(result.error || 'Could not submit the report. Please call us instead.');
     } catch (error) {
       console.error('Error submitting:', error);
+      setSubmitError('Could not submit the report. Please call us instead.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const whatsappNumber = '+919876543210'; // Replace with actual number
+  const whatsappNumber = contactPhone.replace(/\D/g, '');
   const whatsappMessage = encodeURIComponent('Emergency: I found an injured animal that needs help. Please respond quickly.');
 
   return (
@@ -141,15 +153,11 @@ export default function EmergencyRescue() {
               >
                 Report Rescue
               </Button>
-              <Button
-                href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
-                variant="primary"
-                size="lg"
-                icon={MessageCircle}
-                className="bg-[#25D366] hover:bg-[#128C7E] border-none"
-              >
-                WhatsApp Rescue Team
-              </Button>
+              {whatsappNumber && (
+                <Button href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`} variant="primary" size="lg" icon={MessageCircle} className="bg-[#25D366] hover:bg-[#128C7E] border-none">
+                  WhatsApp Rescue Team
+                </Button>
+              )}
             </div>
           </motion.div>
 
@@ -172,12 +180,11 @@ export default function EmergencyRescue() {
                 <p className="text-primary/70 mb-4">
                   Available 24/7 for animal emergencies
                 </p>
-                <a
-                  href="tel:+919876543210"
-                  className="text-3xl font-bold text-secondary hover:text-secondary/80 transition-colors"
-                >
-                  +91 98765 43210
-                </a>
+                {contactPhone ? (
+                  <a href={`tel:${contactPhone}`} className="text-3xl font-bold text-secondary hover:text-secondary/80 transition-colors">{contactPhone}</a>
+                ) : (
+                  <p className="text-sm font-semibold text-secondary">Submit the rescue form for a callback</p>
+                )}
               </div>
 
               {/* Quick Stats */}
@@ -249,6 +256,7 @@ export default function EmergencyRescue() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  {submitError && <div className="alert alert-error text-sm"><span>{submitError}</span></div>}
                   <div>
                     <label className="block text-sm font-medium text-primary mb-1">
                       Your Name
@@ -275,6 +283,15 @@ export default function EmergencyRescue() {
                     {errors.phone && (
                       <p className="text-error text-sm mt-1">{errors.phone.message}</p>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-primary mb-1">
+                      Animal Type
+                    </label>
+                    <select {...register('animalType')} className="select select-bordered w-full" defaultValue="Other">
+                      {['Dog', 'Cat', 'Cow', 'Bird', 'Other'].map((type) => <option key={type}>{type}</option>)}
+                    </select>
                   </div>
 
                   <div>

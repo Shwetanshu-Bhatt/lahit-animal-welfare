@@ -12,12 +12,12 @@ const SettingsSchema = new mongoose.Schema({
   maintenanceMode: { type: Boolean, default: false },
   
   // Donation settings
-  upiId: { type: String, default: 'lahit@upi' },
+  upiId: { type: String, default: '' },
   bankAccountName: { type: String, default: 'LAHIT Animal Welfare' },
-  bankAccountNumber: { type: String, default: '1234567890' },
-  bankIfscCode: { type: String, default: 'HDFC0001234' },
-  bankName: { type: String, default: 'HDFC Bank' },
-  bankBranch: { type: String, default: 'Dehradun Main Branch' },
+  bankAccountNumber: { type: String, default: '' },
+  bankIfscCode: { type: String, default: '' },
+  bankName: { type: String, default: '' },
+  bankBranch: { type: String, default: '' },
   
   // Donation tiers
   donationTiers: { type: Array, default: [

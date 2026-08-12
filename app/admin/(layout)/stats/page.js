@@ -148,14 +148,14 @@ export default function AdminStats() {
             
             <div>
               <label className="block text-sm font-medium text-primary mb-2">
-                Volunteers
+                Approved Volunteers (automatic)
               </label>
               <input
                 type="number"
                 name="volunteers"
                 value={stats.volunteers}
-                onChange={handleChange}
-                className="input input-bordered w-full"
+                readOnly
+                className="input input-bordered w-full opacity-65"
               />
             </div>
             
