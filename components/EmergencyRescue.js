@@ -6,6 +6,7 @@ import { Phone, Camera, MapPin, Send, MessageCircle, X } from 'lucide-react';
 import Container from './ui/Container';
 import Button from './ui/Button';
 import { useForm } from 'react-hook-form';
+import Image from 'next/image';
 
 export default function EmergencyRescue() {
   const sectionRef = useRef(null);
@@ -15,6 +16,8 @@ export default function EmergencyRescue() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [reportImage, setReportImage] = useState('');
+  const [imageError, setImageError] = useState('');
 
   useEffect(() => {
     fetch('/api/settings')
@@ -24,6 +27,13 @@ export default function EmergencyRescue() {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!isFormOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isFormOpen]);
 
   const {
     register,
@@ -45,6 +55,7 @@ export default function EmergencyRescue() {
           animalType: data.animalType || 'Other',
           location: data.location,
           description: data.description,
+          image: reportImage,
         })
       });
       const result = await res.json();
@@ -55,6 +66,7 @@ export default function EmergencyRescue() {
           setSubmitted(false);
           setIsFormOpen(false);
           reset();
+          setReportImage('');
         }, 3000);
       } else setSubmitError(result.error || 'Could not submit the report. Please call us instead.');
     } catch (error) {
@@ -64,6 +76,36 @@ export default function EmergencyRescue() {
       setSubmitting(false);
     }
   };
+
+  function handleImageUpload(file) {
+    setImageError('');
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setImageError('Please choose an image file.');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      setImageError('Photo must be smaller than 8 MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const sourceImage = new window.Image();
+      sourceImage.onload = () => {
+        const maxSide = 1200;
+        const scale = Math.min(1, maxSide / Math.max(sourceImage.width, sourceImage.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(sourceImage.width * scale);
+        canvas.height = Math.round(sourceImage.height * scale);
+        canvas.getContext('2d').drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+        setReportImage(canvas.toDataURL('image/webp', 0.78));
+      };
+      sourceImage.onerror = () => setImageError('Could not read this photo. Please choose another one.');
+      sourceImage.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
 
   const whatsappNumber = contactPhone.replace(/\D/g, '');
   const whatsappMessage = encodeURIComponent('Emergency: I found an injured animal that needs help. Please respond quickly.');
@@ -321,6 +363,18 @@ export default function EmergencyRescue() {
                     {errors.description && (
                       <p className="text-error text-sm mt-1">{errors.description.message}</p>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-primary mb-1">
+                      Photo <span className="font-normal text-primary/45">(recommended)</span>
+                    </label>
+                    <label className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-primary/25 bg-primary/[0.03] px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/[0.07]">
+                      <Camera className="h-4 w-4" /> {reportImage ? 'Replace photo' : 'Take or upload a photo'}
+                      <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(event) => handleImageUpload(event.target.files?.[0])} />
+                    </label>
+                    {reportImage && <Image src={reportImage} alt="Rescue report preview" width={600} height={240} unoptimized className="mt-3 h-28 w-full rounded-xl object-cover" />}
+                    {imageError && <p className="text-error text-sm mt-1">{imageError}</p>}
                   </div>
 
                   <Button

@@ -83,6 +83,7 @@ export default function AdminVolunteers() {
 
   const statusColors = {
     pending: 'badge-warning',
+    contacted: 'badge-info',
     approved: 'badge-success',
     rejected: 'badge-error'
   };
@@ -100,7 +101,7 @@ export default function AdminVolunteers() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <h1 className="text-3xl font-bold text-primary">Volunteer Applications</h1>
         <div className="join">
-          {['all', 'pending', 'approved', 'rejected'].map(status => (
+          {['all', 'pending', 'contacted', 'approved', 'rejected'].map(status => (
             <button
               key={status}
               onClick={() => setFilter(status)}
@@ -132,14 +133,14 @@ export default function AdminVolunteers() {
                       </div>
                       
                       <div className="flex flex-wrap gap-4 text-sm text-primary/70">
-                        <span className="flex items-center gap-1">
+                        <a href={`mailto:${volunteer.email}`} className="flex items-center gap-1 hover:text-primary">
                           <Mail className="w-4 h-4" />
                           {volunteer.email}
-                        </span>
-                        <span className="flex items-center gap-1">
+                        </a>
+                        <a href={`tel:${volunteer.phone}`} className="flex items-center gap-1 hover:text-primary">
                           <Phone className="w-4 h-4" />
                           {volunteer.phone}
-                        </span>
+                        </a>
                         <span className="flex items-center gap-1">
                           <MapPin className="w-4 h-4" />
                           {volunteer.location}
@@ -164,6 +165,16 @@ export default function AdminVolunteers() {
 
                     <div className="flex gap-2">
                       {volunteer.status === 'pending' && (
+                        <button
+                          onClick={() => updateStatus(volunteer._id, 'contacted')}
+                          disabled={processingId === volunteer._id}
+                          className="btn btn-sm btn-info"
+                          title="Mark contacted"
+                        >
+                          <Phone className="w-4 h-4" />
+                        </button>
+                      )}
+                      {(volunteer.status === 'pending' || volunteer.status === 'contacted') && (
                         <>
                           <button
                             onClick={() => updateStatus(volunteer._id, 'approved')}
@@ -191,7 +202,7 @@ export default function AdminVolunteers() {
                           </button>
                         </>
                       )}
-                      {(volunteer.status === 'rejected' || volunteer.status === 'approved') && (
+                      {(volunteer.status === 'contacted' || volunteer.status === 'rejected' || volunteer.status === 'approved') && (
                         <button
                           onClick={() => deleteVolunteer(volunteer._id)}
                           disabled={deletingId === volunteer._id}

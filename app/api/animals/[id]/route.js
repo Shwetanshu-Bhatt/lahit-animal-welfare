@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Animal from '@/models/Animal';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
+import { apiErrorResponse } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ export async function GET(request, { params }) {
     }
     return NextResponse.json({ success: true, data: animal });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
 
@@ -27,13 +28,13 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const body = await request.json();
     body.updatedAt = new Date();
-    const animal = await Animal.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+    const animal = await Animal.findByIdAndUpdate(id, body, { returnDocument: 'after', runValidators: true });
     if (!animal) {
       return NextResponse.json({ success: false, error: 'Animal not found' }, { status: 404 });
     }
     return NextResponse.json({ success: true, data: animal });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
 
@@ -48,6 +49,6 @@ export async function DELETE(request, { params }) {
     }
     return NextResponse.json({ success: true, data: {} });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }

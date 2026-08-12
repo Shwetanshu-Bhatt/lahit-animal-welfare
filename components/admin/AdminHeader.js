@@ -7,6 +7,7 @@ import { ArrowUpRight, Menu, User } from 'lucide-react';
 const titles = {
   '/admin': ['Dashboard', 'A live view of the LAHIT mission'],
   '/admin/rescue-reports': ['Rescue inbox', 'Triage incoming emergency reports'],
+  '/admin/adoption-inquiries': ['Adoption inbox', 'Review and progress adoption applications'],
   '/admin/animals': ['Animals', 'Manage adoption profiles'],
   '/admin/rescues': ['Rescue stories', 'Publish impact and recovery stories'],
   '/admin/blogs': ['Blog', 'Manage news and field updates'],

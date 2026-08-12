@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import RescueReport from '@/models/RescueReport';
+import AdoptionInquiry from '@/models/AdoptionInquiry';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
 
@@ -12,9 +12,9 @@ export async function PUT(request, { params }) {
     await connectDB();
     const { id } = await params;
     const { status } = await request.json();
-    const report = await RescueReport.findByIdAndUpdate(id, { status, updatedAt: new Date() }, { returnDocument: 'after', runValidators: true });
-    if (!report) return NextResponse.json({ success: false, error: 'Report not found' }, { status: 404 });
-    return NextResponse.json({ success: true, data: report });
+    const inquiry = await AdoptionInquiry.findByIdAndUpdate(id, { status, updatedAt: new Date() }, { returnDocument: 'after', runValidators: true });
+    if (!inquiry) return NextResponse.json({ success: false, error: 'Adoption inquiry not found' }, { status: 404 });
+    return NextResponse.json({ success: true, data: inquiry });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -25,8 +25,8 @@ export async function DELETE(request, { params }) {
     if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
-    const report = await RescueReport.findByIdAndDelete(id);
-    if (!report) return NextResponse.json({ success: false, error: 'Report not found' }, { status: 404 });
+    const inquiry = await AdoptionInquiry.findByIdAndDelete(id);
+    if (!inquiry) return NextResponse.json({ success: false, error: 'Adoption inquiry not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: {} });
   } catch (error) {
     return apiErrorResponse(error);

@@ -7,6 +7,7 @@ import { ArrowUpRight, BookOpen, Loader2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Container from '@/components/ui/Container';
+import PublicSiteGate from '@/components/PublicSiteGate';
 
 export default function BlogPage() {
   const [posts, setPosts] = useState([]);
@@ -20,7 +21,7 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <main className="public-page min-h-screen bg-base-200">
+    <PublicSiteGate><main className="public-page min-h-screen bg-base-200">
       <Navbar />
       <section className="bg-primary pt-32 pb-14 text-white sm:pt-40 sm:pb-20 lg:pt-48 lg:pb-28">
         <Container>
@@ -56,6 +57,6 @@ export default function BlogPage() {
         </Container>
       </section>
       <Footer />
-    </main>
+    </main></PublicSiteGate>
   );
 }

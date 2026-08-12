@@ -7,22 +7,24 @@ import Rescue from '@/models/Rescue';
 import RescueReport from '@/models/RescueReport';
 import Stat from '@/models/Stat';
 import Volunteer from '@/models/Volunteer';
+import AdoptionInquiry from '@/models/AdoptionInquiry';
 
 export const dynamic = 'force-dynamic';
 
 async function getDashboardData() {
   await connectDB();
-  const [rescues, animals, blogs, volunteers, pendingVolunteers, urgentReports, stats, recentReports] = await Promise.all([
+  const [rescues, animals, blogs, volunteers, pendingVolunteers, urgentReports, newAdoptions, stats, recentReports] = await Promise.all([
     Rescue.countDocuments(),
     Animal.countDocuments(),
     Blog.countDocuments(),
     Volunteer.countDocuments(),
     Volunteer.countDocuments({ status: 'pending' }),
     RescueReport.countDocuments({ status: { $in: ['new', 'reviewing'] } }),
+    AdoptionInquiry.countDocuments({ status: 'new' }),
     Stat.findOne().lean(),
     RescueReport.find().sort({ createdAt: -1 }).limit(4).lean(),
   ]);
-  return { rescues, animals, blogs, volunteers, pendingVolunteers, urgentReports, stats: stats || {}, recentReports };
+  return { rescues, animals, blogs, volunteers, pendingVolunteers, urgentReports, newAdoptions, stats: stats || {}, recentReports };
 }
 
 const cards = [
@@ -88,9 +90,10 @@ export default async function AdminDashboard() {
         <div className="grid gap-5">
           <section className="admin-panel bg-primary text-white">
             <div className="flex items-center justify-between"><span className="admin-eyebrow text-accent">Needs attention</span><Siren className="h-5 w-5 text-accent" /></div>
-            <div className="mt-7 grid grid-cols-2 gap-4">
+            <div className="mt-7 grid gap-4 sm:grid-cols-3">
               <div><p className="text-4xl font-black tracking-[-0.06em] text-accent">{data.urgentReports}</p><p className="mt-2 text-xs font-bold uppercase tracking-[0.08em] text-white/45">Open rescues</p></div>
               <div><p className="text-4xl font-black tracking-[-0.06em] text-accent">{data.pendingVolunteers}</p><p className="mt-2 text-xs font-bold uppercase tracking-[0.08em] text-white/45">New volunteers</p></div>
+              <div><p className="text-4xl font-black tracking-[-0.06em] text-accent">{data.newAdoptions}</p><p className="mt-2 text-xs font-bold uppercase tracking-[0.08em] text-white/45">Adoption requests</p></div>
             </div>
           </section>
 

@@ -8,6 +8,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Container from '@/components/ui/Container';
+import PublicSiteGate from '@/components/PublicSiteGate';
 
 export default function BlogDetailPage() {
   const { slug } = useParams();
@@ -23,7 +24,7 @@ export default function BlogDetailPage() {
   }, [slug]);
 
   return (
-    <main className="public-page min-h-screen bg-base-100">
+    <PublicSiteGate><main className="public-page min-h-screen bg-base-100">
       <Navbar />
       {loading ? (
         <div className="flex min-h-screen items-center justify-center bg-primary"><Loader2 className="h-9 w-9 animate-spin text-accent" /></div>
@@ -47,6 +48,6 @@ export default function BlogDetailPage() {
         </article>
       )}
       <Footer />
-    </main>
+    </main></PublicSiteGate>
   );
 }

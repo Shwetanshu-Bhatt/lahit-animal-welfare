@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Edit, Copy, Check, Image as ImageIcon, Search } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import Image from 'next/image';
 
 export default function AdminMedia() {
   const [media, setMedia] = useState([]);
@@ -135,7 +136,7 @@ export default function AdminMedia() {
 
   const filteredMedia = media.filter(item => {
     const matchesSearch = item.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.caption.toLowerCase().includes(searchQuery.toLowerCase());
+                          (item.caption || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !filterCategory || item.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
@@ -150,7 +151,7 @@ export default function AdminMedia() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-3xl font-bold text-primary">Media Library</h1>
         <Button 
           onClick={() => { resetForm(); setShowForm(true); }}
@@ -320,11 +321,7 @@ export default function AdminMedia() {
                 <div key={item._id} className="card bg-base-200 shadow-sm">
                   <div className="aspect-square bg-base-300 relative">
                     {item.type === 'image' ? (
-                      <img 
-                        src={item.url} 
-                        alt={item.alt || item.filename}
-                        className="w-full h-full object-cover"
-                      />
+                      <Image src={item.url} alt={item.alt || item.filename} fill unoptimized className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <ImageIcon className="w-12 h-12 text-primary/40" />

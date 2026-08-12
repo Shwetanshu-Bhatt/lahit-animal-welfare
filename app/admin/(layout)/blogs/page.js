@@ -179,7 +179,7 @@ export default function AdminBlogs() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-3xl font-bold text-primary">Blog Posts</h1>
         <Button 
           onClick={() => { resetForm(); setShowForm(true); }}

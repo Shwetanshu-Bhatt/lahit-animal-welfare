@@ -229,9 +229,12 @@ button {
 }
 
 .mobile-site-header {
+  right: max(0.75rem, env(safe-area-inset-right));
+  left: max(0.75rem, env(safe-area-inset-left));
+  width: auto;
+  max-width: calc(100dvw - 1.5rem);
   padding-top: max(0.75rem, env(safe-area-inset-top));
-  padding-right: max(0.75rem, env(safe-area-inset-right));
-  padding-left: max(0.75rem, env(safe-area-inset-left));
+  overflow: visible;
 }
 
 .mobile-navigation-panel {
@@ -249,9 +252,10 @@ button {
 
 @media (min-width: 640px) {
   .mobile-site-header {
+    right: max(1.25rem, env(safe-area-inset-right));
+    left: max(1.25rem, env(safe-area-inset-left));
+    max-width: calc(100dvw - 2.5rem);
     padding-top: max(1.25rem, env(safe-area-inset-top));
-    padding-right: max(1.25rem, env(safe-area-inset-right));
-    padding-left: max(1.25rem, env(safe-area-inset-left));
   }
 }
 
@@ -453,6 +457,10 @@ button {
 .admin-status-dispatched { background: #dff2ff; color: #12628b; }
 .admin-status-resolved { background: #daf3de; color: #176331; }
 .admin-status-dismissed { background: #e4e2dd; color: #625f58; }
+.admin-status-contacted { background: #dff2ff; color: #12628b; }
+.admin-status-screening { background: #fff0bc; color: #775600; }
+.admin-status-approved { background: #daf3de; color: #176331; }
+.admin-status-rejected { background: #ffe5dd; color: #a9381d; }
 
 .admin-empty {
   display: flex;

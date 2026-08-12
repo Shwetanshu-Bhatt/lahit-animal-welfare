@@ -71,7 +71,7 @@ export async function PUT(request) {
     let settings = await Settings.findOne();
     
     if (settings) {
-      settings = await Settings.findByIdAndUpdate(settings._id, body, { new: true, runValidators: true });
+      settings = await Settings.findByIdAndUpdate(settings._id, body, { returnDocument: 'after', runValidators: true });
     } else {
       settings = await Settings.create(body);
     }

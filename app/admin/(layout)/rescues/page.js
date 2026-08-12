@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import Image from 'next/image';
 
 export default function AdminRescues() {
   const [rescues, setRescues] = useState([]);
@@ -171,7 +172,7 @@ export default function AdminRescues() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-3xl font-bold text-primary">Rescue Stories</h1>
         <Button 
           onClick={() => { resetForm(); setShowForm(true); }}
@@ -334,16 +335,16 @@ export default function AdminRescues() {
                 rescues.map((rescue) => (
                   <tr key={rescue._id} className="hover:bg-base-200/50">
                     <td>
-                      <div className="w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                      <div className="relative w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
                         {rescue.beforeImage && (
-                          <img src={rescue.beforeImage} alt="Before" className="w-full h-full object-cover" />
+                          <Image src={rescue.beforeImage} alt="Before" fill unoptimized className="object-cover" />
                         )}
                       </div>
                     </td>
                     <td>
-                      <div className="w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                      <div className="relative w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
                         {rescue.afterImage && (
-                          <img src={rescue.afterImage} alt="After" className="w-full h-full object-cover" />
+                          <Image src={rescue.afterImage} alt="After" fill unoptimized className="object-cover" />
                         )}
                       </div>
                     </td>

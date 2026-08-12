@@ -49,10 +49,10 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="mobile-site-header fixed inset-x-0 top-0 z-50">
+      <header className="mobile-site-header fixed top-0 z-50">
         <Container
           size="xl"
-          className={`relative w-full !px-3 py-2.5 sm:!px-5 rounded-full border transition-[background-color,border-color,box-shadow,color] duration-200 sm:backdrop-blur-xl ${
+          className={`relative min-w-0 !px-3 py-2.5 sm:!px-5 rounded-full border transition-[background-color,border-color,box-shadow,color] duration-200 sm:backdrop-blur-xl ${
             useSolidNav
               ? 'border-primary/10 bg-base-100 text-primary shadow-[0_12px_36px_rgba(11,51,36,0.12)] sm:bg-base-100/95'
               : 'border-white/20 bg-primary/90 text-white sm:bg-primary/25'
@@ -64,7 +64,7 @@ export default function Navbar() {
               <Image src="/lahit.png" alt="" fill className="object-cover" priority />
             </span>
             <span className="leading-none">
-              <span className="block text-lg font-black tracking-[-0.04em]">LAHIT</span>
+              <span className="block text-lg font-black tracking-[-0.04em]">LAHIT ANIMAL WELFARE GROUP</span>
               <span className={`mt-1 hidden text-[0.55rem] font-bold uppercase tracking-[0.17em] sm:block ${useSolidNav ? 'text-primary/55' : 'text-white/55'}`}>
                 Animal welfare
               </span>

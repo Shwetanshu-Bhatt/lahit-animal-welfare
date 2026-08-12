@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Volunteer from '@/models/Volunteer';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
+import { apiErrorResponse } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +13,7 @@ export async function GET() {
     const volunteers = await Volunteer.find().sort({ createdAt: -1 });
     return NextResponse.json({ success: true, data: volunteers });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
 
@@ -30,7 +31,6 @@ export async function POST(request) {
     });
     return NextResponse.json({ success: true, data: volunteer }, { status: 201 });
   } catch (error) {
-    const status = error.name === 'ValidationError' ? 400 : 500;
-    return NextResponse.json({ success: false, error: error.message }, { status });
+    return apiErrorResponse(error);
   }
 }

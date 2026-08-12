@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export default async function AdminLayout({ children }) {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
+  if (!session || !['admin', 'editor'].includes(session.user?.role)) {
     redirect('/admin/login');
   }
 

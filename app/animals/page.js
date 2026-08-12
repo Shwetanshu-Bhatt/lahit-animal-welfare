@@ -6,15 +6,56 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Container from '@/components/ui/Container';
 import Card from '@/components/ui/Card';
+import PublicSiteGate from '@/components/PublicSiteGate';
+import { CheckCircle2, PawPrint, X } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 
 export default function AnimalsPage() {
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [selectedAnimal, setSelectedAnimal] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   useEffect(() => {
     fetchAnimals();
   }, []);
+
+  useEffect(() => {
+    if (!selectedAnimal) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [selectedAnimal]);
+
+  function closeAdoptionForm() {
+    setSelectedAnimal(null);
+    setSubmitted(false);
+    setSubmitError('');
+    reset();
+  }
+
+  async function submitAdoption(data) {
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const response = await fetch('/api/adoption-inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, animalId: selectedAnimal._id }),
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error || 'Could not submit adoption application.');
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error.message || 'Could not submit adoption application.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   async function fetchAnimals() {
     try {
@@ -37,7 +78,7 @@ export default function AnimalsPage() {
     : animals.filter(a => a.type === filter);
 
   return (
-    <main className="public-page min-h-screen bg-base-200">
+    <PublicSiteGate><main className="public-page min-h-screen bg-base-200">
       <Navbar />
       
       <div className="pt-28 pb-14 sm:pt-32 sm:pb-16">
@@ -151,6 +192,14 @@ export default function AnimalsPage() {
                         </span>
                       )}
                     </div>
+                    <button
+                      type="button"
+                      disabled={animal.status !== 'available'}
+                      onClick={() => setSelectedAnimal(animal)}
+                      className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-3 text-xs font-bold text-white transition-colors hover:bg-[#164a36] disabled:cursor-not-allowed disabled:bg-primary/10 disabled:text-primary/45 sm:text-sm"
+                    >
+                      <PawPrint className="h-4 w-4" /> {animal.status === 'available' ? 'Apply to adopt' : 'Application pending'}
+                    </button>
                   </div>
                 </Card>
               ))}
@@ -159,7 +208,40 @@ export default function AnimalsPage() {
         </Container>
       </div>
 
+      {selectedAnimal && (
+        <div className="fixed inset-0 z-[70] flex items-end bg-black/60 sm:items-center sm:justify-center sm:p-4" onClick={closeAdoptionForm}>
+          <div className="max-h-[94svh] w-full overflow-y-auto rounded-t-[1.75rem] bg-base-100 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-w-xl sm:rounded-[1.75rem] sm:p-8" onClick={(event) => event.stopPropagation()}>
+            {submitted ? (
+              <div className="py-10 text-center">
+                <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white"><CheckCircle2 className="h-8 w-8" /></span>
+                <h2 className="mt-5 text-2xl font-black text-primary">Application received.</h2>
+                <p className="mt-2 text-primary/60">The LAHIT team will contact you about {selectedAnimal.name}.</p>
+                <button type="button" onClick={closeAdoptionForm} className="mt-7 min-h-11 rounded-full bg-primary px-6 font-bold text-white">Done</button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-start justify-between gap-4">
+                  <div><span className="text-xs font-black uppercase tracking-[0.12em] text-secondary">Adoption application</span><h2 className="mt-2 text-2xl font-black text-primary">Give {selectedAnimal.name} a home</h2></div>
+                  <button type="button" onClick={closeAdoptionForm} className="btn btn-ghost btn-circle btn-sm" aria-label="Close adoption form"><X className="h-5 w-5" /></button>
+                </div>
+                <form onSubmit={handleSubmit(submitAdoption)} className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {submitError && <div className="alert alert-error text-sm sm:col-span-2"><span>{submitError}</span></div>}
+                  <label className="block"><span className="mb-1 block text-sm font-medium text-primary">Full name</span><input {...register('applicantName', { required: 'Name is required' })} className="input input-bordered w-full" />{errors.applicantName && <small className="mt-1 block text-error">{errors.applicantName.message}</small>}</label>
+                  <label className="block"><span className="mb-1 block text-sm font-medium text-primary">Email</span><input type="email" {...register('email', { required: 'Email is required' })} className="input input-bordered w-full" />{errors.email && <small className="mt-1 block text-error">{errors.email.message}</small>}</label>
+                  <label className="block"><span className="mb-1 block text-sm font-medium text-primary">Phone</span><input type="tel" {...register('phone', { required: 'Phone is required' })} className="input input-bordered w-full" />{errors.phone && <small className="mt-1 block text-error">{errors.phone.message}</small>}</label>
+                  <label className="block"><span className="mb-1 block text-sm font-medium text-primary">City / location</span><input {...register('location', { required: 'Location is required' })} className="input input-bordered w-full" />{errors.location && <small className="mt-1 block text-error">{errors.location.message}</small>}</label>
+                  <label className="block sm:col-span-2"><span className="mb-1 block text-sm font-medium text-primary">Home type</span><select {...register('homeType', { required: 'Home type is required' })} defaultValue="" className="select select-bordered w-full"><option value="" disabled>Select your home</option>{['Apartment', 'Independent house', 'Farm', 'Other'].map((type) => <option key={type}>{type}</option>)}</select>{errors.homeType && <small className="mt-1 block text-error">{errors.homeType.message}</small>}</label>
+                  <label className="block sm:col-span-2"><span className="mb-1 block text-sm font-medium text-primary">Previous pet experience <span className="font-normal text-primary/45">(optional)</span></span><textarea {...register('experience')} rows={2} className="textarea textarea-bordered w-full" /></label>
+                  <label className="block sm:col-span-2"><span className="mb-1 block text-sm font-medium text-primary">Anything else we should know? <span className="font-normal text-primary/45">(optional)</span></span><textarea {...register('message')} rows={2} className="textarea textarea-bordered w-full" /></label>
+                  <button type="submit" disabled={submitting} className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-bold text-white disabled:opacity-50 sm:col-span-2"><PawPrint className="h-4 w-4" /> {submitting ? 'Submitting…' : `Apply for ${selectedAnimal.name}`}</button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <Footer />
-    </main>
+    </main></PublicSiteGate>
   );
 }

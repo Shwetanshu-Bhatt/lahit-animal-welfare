@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import { signOut } from 'next-auth/react';
 
 export default function AdminProfile() {
   const [profile, setProfile] = useState({
     name: '',
     email: ''
   });
+  const [originalProfile, setOriginalProfile] = useState({ name: '', email: '' });
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,10 +28,12 @@ export default function AdminProfile() {
       const res = await fetch('/api/profile');
       const data = await res.json();
       if (data.success) {
-        setProfile({
+        const loadedProfile = {
           name: data.data.name || '',
           email: data.data.email || ''
-        });
+        };
+        setProfile(loadedProfile);
+        setOriginalProfile(loadedProfile);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -63,6 +67,10 @@ export default function AdminProfile() {
       const data = await res.json();
       
       if (data.success) {
+        if (profile.email !== originalProfile.email || profile.name !== originalProfile.name) {
+          await signOut({ callbackUrl: '/admin/login' });
+          return;
+        }
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
         setCurrentPassword('');
         setNewPassword('');

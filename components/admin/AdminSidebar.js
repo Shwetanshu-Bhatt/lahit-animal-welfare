@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Dog, FileText, Heart, Image as ImageIcon, LayoutDashboard, LogOut, Settings, Siren, User, Users, X } from 'lucide-react';
+import { BarChart3, Dog, FileText, Heart, Image as ImageIcon, LayoutDashboard, LogOut, PawPrint, Settings, Siren, User, Users, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 
@@ -13,6 +13,7 @@ const menuGroups = [
     items: [
       { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
       { href: '/admin/rescue-reports', label: 'Rescue inbox', icon: Siren },
+      { href: '/admin/adoption-inquiries', label: 'Adoption inbox', icon: PawPrint },
     ],
   },
   {
@@ -38,6 +39,7 @@ const menuGroups = [
 export default function AdminSidebar({ open, onClose }) {
   const pathname = usePathname();
   const [newReportCount, setNewReportCount] = useState(0);
+  const [newAdoptionCount, setNewAdoptionCount] = useState(0);
 
   const fetchReportCount = useCallback(async () => {
     try {
@@ -51,14 +53,28 @@ export default function AdminSidebar({ open, onClose }) {
     }
   }, []);
 
+  const fetchAdoptionCount = useCallback(async () => {
+    try {
+      const response = await fetch('/api/adoption-inquiries', { cache: 'no-store' });
+      const data = await response.json();
+      if (data.success) setNewAdoptionCount(data.data.filter((inquiry) => inquiry.status === 'new').length);
+    } catch {
+      setNewAdoptionCount(0);
+    }
+  }, []);
+
   useEffect(() => {
     const timeoutId = window.setTimeout(fetchReportCount, 0);
+    const adoptionTimeoutId = window.setTimeout(fetchAdoptionCount, 0);
     window.addEventListener('rescue-reports-changed', fetchReportCount);
+    window.addEventListener('adoption-inquiries-changed', fetchAdoptionCount);
     return () => {
       window.clearTimeout(timeoutId);
+      window.clearTimeout(adoptionTimeoutId);
       window.removeEventListener('rescue-reports-changed', fetchReportCount);
+      window.removeEventListener('adoption-inquiries-changed', fetchAdoptionCount);
     };
-  }, [fetchReportCount, pathname]);
+  }, [fetchAdoptionCount, fetchReportCount, pathname]);
 
   return (
     <>
@@ -93,6 +109,11 @@ export default function AdminSidebar({ open, onClose }) {
                         {item.href === '/admin/rescue-reports' && newReportCount > 0 && (
                           <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-secondary px-1 text-[0.62rem] font-black text-white">
                             {newReportCount > 99 ? '99+' : newReportCount}
+                          </span>
+                        )}
+                        {item.href === '/admin/adoption-inquiries' && newAdoptionCount > 0 && (
+                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-secondary px-1 text-[0.62rem] font-black text-white">
+                            {newAdoptionCount > 99 ? '99+' : newAdoptionCount}
                           </span>
                         )}
                       </Link>

@@ -9,10 +9,11 @@ import DonationSection from "@/components/DonationSection";
 import VolunteerSection from "@/components/VolunteerSection";
 import RescueMap from "@/components/RescueMap";
 import Footer from "@/components/Footer";
+import PublicSiteGate from "@/components/PublicSiteGate";
 
 export default function Home() {
   return (
-    <main className="public-page min-h-screen">
+    <PublicSiteGate><main className="public-page min-h-screen">
       <Navbar />
       <HeroSection />
       <ImpactStats />
@@ -24,6 +25,6 @@ export default function Home() {
       <VolunteerSection />
       <RescueMap />
       <Footer />
-    </main>
+    </main></PublicSiteGate>
   );
 }

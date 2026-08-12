@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Rescue from '@/models/Rescue';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
+import { apiErrorResponse } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,7 @@ export async function GET(request) {
       headers: { 'Cache-Control': 'no-store' }
     });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
 
@@ -31,6 +32,6 @@ export async function POST(request) {
     const rescue = await Rescue.create(body);
     return NextResponse.json({ success: true, data: rescue }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }

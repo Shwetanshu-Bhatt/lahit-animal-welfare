@@ -337,7 +337,7 @@ export default function AdminSettings() {
                       onChange={handleChange}
                       className="checkbox checkbox-primary"
                     />
-                    <span className="text-primary">Enable Maintenance Mode</span>
+                    <span className="text-primary"><strong className="block">Enable maintenance mode</strong><small className="mt-1 block font-normal text-primary/50">Replaces all public pages with a temporary notice. The admin panel remains available.</small></span>
                   </label>
                 </div>
               </div>

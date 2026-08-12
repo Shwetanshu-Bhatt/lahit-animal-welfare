@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Clock3, MapPin, Phone, Siren, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 
 const statuses = ['all', 'new', 'reviewing', 'dispatched', 'resolved', 'dismissed'];
 
@@ -28,31 +29,40 @@ export default function RescueReportsPage() {
   async function updateStatus(id, status) {
     setProcessing(id);
     setError('');
-    const response = await fetch(`/api/rescue-reports/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status }),
-    });
-    const data = await response.json();
-    if (data.success) {
-      setReports((current) => current.map((report) => report._id === id ? data.data : report));
-      window.dispatchEvent(new Event('rescue-reports-changed'));
+    try {
+      const response = await fetch(`/api/rescue-reports/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setReports((current) => current.map((report) => report._id === id ? data.data : report));
+        window.dispatchEvent(new Event('rescue-reports-changed'));
+      } else setError(data.error || 'Could not update report');
+    } catch {
+      setError('Could not update report');
+    } finally {
+      setProcessing(null);
     }
-    else setError(data.error || 'Could not update report');
-    setProcessing(null);
   }
 
   async function deleteReport(id) {
     if (!window.confirm('Delete this rescue report permanently?')) return;
     setProcessing(id);
-    const response = await fetch(`/api/rescue-reports/${id}`, { method: 'DELETE' });
-    const data = await response.json();
-    if (data.success) {
-      setReports((current) => current.filter((report) => report._id !== id));
-      window.dispatchEvent(new Event('rescue-reports-changed'));
+    setError('');
+    try {
+      const response = await fetch(`/api/rescue-reports/${id}`, { method: 'DELETE' });
+      const data = await response.json();
+      if (data.success) {
+        setReports((current) => current.filter((report) => report._id !== id));
+        window.dispatchEvent(new Event('rescue-reports-changed'));
+      } else setError(data.error || 'Could not delete report');
+    } catch {
+      setError('Could not delete report');
+    } finally {
+      setProcessing(null);
     }
-    else setError(data.error || 'Could not delete report');
-    setProcessing(null);
   }
 
   if (loading) return <div className="admin-empty">Loading rescue reports…</div>;
@@ -88,6 +98,11 @@ export default function RescueReportsPage() {
                 </div>
                 <p className="flex items-center gap-2 text-xs font-semibold text-primary/45"><Clock3 className="h-4 w-4" />{new Date(report.createdAt).toLocaleString()}</p>
               </div>
+              {report.image && (
+                <a href={report.image} target="_blank" rel="noreferrer" className="mt-4 block overflow-hidden rounded-2xl border border-primary/10 bg-primary/5">
+                  <Image src={report.image} alt={`${report.animalType} rescue report`} width={900} height={500} unoptimized className="max-h-72 w-full object-cover" />
+                </a>
+              )}
               <p className="mt-4 leading-relaxed text-primary/70">{report.description}</p>
               <div className="mt-5 grid gap-2 text-sm text-primary/60 sm:grid-cols-2">
                 <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-secondary" />{report.location}</p>

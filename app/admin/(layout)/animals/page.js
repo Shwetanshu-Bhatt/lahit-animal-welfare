@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import Image from 'next/image';
 
 export default function AdminAnimals() {
   const [animals, setAnimals] = useState([]);
@@ -180,7 +181,7 @@ export default function AdminAnimals() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-3xl font-bold text-primary">Animals for Adoption</h1>
         <Button 
           onClick={() => { resetForm(); setShowForm(true); }}
@@ -380,9 +381,9 @@ export default function AdminAnimals() {
                 animals.map((animal) => (
                   <tr key={animal._id} className="hover:bg-base-200/50">
                     <td>
-                      <div className="w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                      <div className="relative w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
                         {animal.image && (
-                          <img src={animal.image} alt={animal.name} className="w-full h-full object-cover" />
+                          <Image src={animal.image} alt={animal.name} fill unoptimized className="object-cover" />
                         )}
                       </div>
                     </td>

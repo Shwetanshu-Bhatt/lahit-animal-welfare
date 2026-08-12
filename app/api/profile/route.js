@@ -38,6 +38,7 @@ export async function PUT(request) {
 
     const body = await request.json();
     const { name, email, currentPassword, newPassword } = body;
+    const normalizedEmail = email?.trim().toLowerCase();
 
     await connectDB();
     const user = await User.findOne({ email: session.user.email }).select('+password');
@@ -48,12 +49,12 @@ export async function PUT(request) {
 
     const updateData = {};
     if (name && name.trim()) updateData.name = name.trim();
-    if (email && email.trim() && email !== session.user.email) {
-      const existingUser = await User.findOne({ email: email.trim() });
+    if (normalizedEmail && normalizedEmail !== session.user.email.toLowerCase()) {
+      const existingUser = await User.findOne({ email: normalizedEmail });
       if (existingUser) {
         return NextResponse.json({ success: false, error: 'Email already in use' }, { status: 400 });
       }
-      updateData.email = email.trim();
+      updateData.email = normalizedEmail;
     }
 
     if (newPassword) {
@@ -70,7 +71,7 @@ export async function PUT(request) {
       updateData.password = await bcrypt.hash(newPassword, 12);
     }
 
-    const updatedUser = await User.findByIdAndUpdate(user._id, updateData, { new: true }).select('-password');
+    const updatedUser = await User.findByIdAndUpdate(user._id, updateData, { returnDocument: 'after' }).select('-password');
     
     return NextResponse.json({ success: true, data: updatedUser });
   } catch (error) {

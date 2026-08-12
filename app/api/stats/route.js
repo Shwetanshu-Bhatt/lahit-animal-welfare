@@ -50,7 +50,7 @@ export async function PUT(request) {
     let stats = await Stat.findOne();
     
     if (stats) {
-      stats = await Stat.findByIdAndUpdate(stats._id, body, { new: true, runValidators: true });
+      stats = await Stat.findByIdAndUpdate(stats._id, body, { returnDocument: 'after', runValidators: true });
     } else {
       stats = await Stat.create(body);
     }

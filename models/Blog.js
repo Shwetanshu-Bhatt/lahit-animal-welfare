@@ -56,12 +56,11 @@ const BlogSchema = new mongoose.Schema({
   },
 });
 
-BlogSchema.pre('save', function(next) {
+BlogSchema.pre('save', function() {
   if (this.title) {
     this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   }
   this.updatedAt = new Date();
-  next();
 });
 
 export default mongoose.models.Blog || mongoose.model('Blog', BlogSchema);

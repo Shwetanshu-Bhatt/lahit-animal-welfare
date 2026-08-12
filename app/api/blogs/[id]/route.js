@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
+import { apiErrorResponse } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ export async function GET(request, { params }) {
     }
     return NextResponse.json({ success: true, data: blog });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
 
@@ -28,13 +29,13 @@ export async function PUT(request, { params }) {
     const body = await request.json();
     if (body.title) body.slug = body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     body.updatedAt = new Date();
-    const blog = await Blog.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+    const blog = await Blog.findByIdAndUpdate(id, body, { returnDocument: 'after', runValidators: true });
     if (!blog) {
       return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     }
     return NextResponse.json({ success: true, data: blog });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
 
@@ -49,6 +50,6 @@ export async function DELETE(request, { params }) {
     }
     return NextResponse.json({ success: true, data: {} });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return apiErrorResponse(error);
   }
 }
