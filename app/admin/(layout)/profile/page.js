@@ -68,7 +68,7 @@ export default function AdminProfile() {
       
       if (data.success) {
         if (profile.email !== originalProfile.email || profile.name !== originalProfile.name) {
-          await signOut({ callbackUrl: '/admin/login' });
+          await signOut({ callbackUrl: '/login' });
           return;
         }
         setMessage({ type: 'success', text: 'Profile updated successfully!' });

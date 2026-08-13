@@ -60,7 +60,7 @@ export default function AdminForgotPassword() {
             {resetOtp && <p className="text-center text-xs text-primary/55">Development code: {resetOtp}</p>}
           </div>
         )}
-        <Link href="/admin/login/" className="block text-center text-sm font-bold text-primary hover:text-primary/70">← Back to sign in</Link>
+        <Link href="/login/" className="block text-center text-sm font-bold text-primary hover:text-primary/70">← Back to sign in</Link>
       </div>
     </main>
   );

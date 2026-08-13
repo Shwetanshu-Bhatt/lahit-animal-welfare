@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export default async function ProtectedCandidateLayout({ children }) {
   const session = await getServerSession(authOptions);
   if (!session || session.user?.role !== 'volunteer') {
-    redirect('/candidate/login/');
+    redirect('/login/');
   }
 
   return <CandidateShell user={session.user}>{children}</CandidateShell>;

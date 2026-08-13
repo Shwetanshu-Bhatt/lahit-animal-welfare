@@ -10,7 +10,7 @@ export default function PasswordResetPage({ audience }) {
   const router = useRouter();
   const token = searchParams.get('token');
   const isAdmin = audience === 'admin';
-  const loginPath = isAdmin ? '/admin/login/' : '/candidate/login/';
+  const loginPath = '/login/';
   const forgotPath = isAdmin ? '/admin/forgot/' : '/candidate/forgot/';
   const [checking, setChecking] = useState(Boolean(token));
   const [valid, setValid] = useState(false);

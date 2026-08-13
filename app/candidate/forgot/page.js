@@ -66,7 +66,7 @@ export default function ForgotPassword() {
         </div>
       )}
 
-        <Link href="/candidate/login/" className="block text-center text-sm font-bold text-primary hover:text-primary/70">← Back to sign in</Link>
+        <Link href="/login/" className="block text-center text-sm font-bold text-primary hover:text-primary/70">← Back to sign in</Link>
     </div>
   );
 }

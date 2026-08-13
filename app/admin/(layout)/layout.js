@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }) {
   const session = await getServerSession(authOptions);
 
   if (!session || !['admin', 'editor'].includes(session.user?.role)) {
-    redirect('/admin/login');
+    redirect('/login');
   }
 
   return (

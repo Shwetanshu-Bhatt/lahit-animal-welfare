@@ -57,7 +57,7 @@ export default function CandidateShell({ children, user }) {
         </nav>
 
         <div className="border-t border-white/10 p-4">
-          <button type="button" onClick={() => signOut({ callbackUrl: '/candidate/login/' })} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.07] hover:text-white"><LogOut className="h-[1.1rem] w-[1.1rem]" /> Sign out</button>
+          <button type="button" onClick={() => signOut({ callbackUrl: '/login/' })} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.07] hover:text-white"><LogOut className="h-[1.1rem] w-[1.1rem]" /> Sign out</button>
         </div>
       </aside>
 
