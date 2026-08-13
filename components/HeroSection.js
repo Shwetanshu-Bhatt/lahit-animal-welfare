@@ -24,7 +24,7 @@ export default function HeroSection() {
   ];
   return (
     <section id="home" className="relative min-h-[100svh] overflow-hidden bg-primary text-white">
-      <div className="hero-image-drift absolute inset-[-3%]">
+      <div className="absolute inset-0">
         <Image
           src="/images/rescue-hero-v2.webp"
           alt="A LAHIT volunteer caring for a rescued dog in Uttarakhand"
