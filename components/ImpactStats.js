@@ -6,6 +6,7 @@ import { ArrowUpRight, Heart, Home, Stethoscope, Utensils } from 'lucide-react';
 import Container from './ui/Container';
 
 const iconMap = { Heart, Utensils, Stethoscope, Home };
+const marqueeLabels = ['Rescue', 'Recover', 'Rehome', 'Repeat',];
 
 function AnimatedCounter({ value, suffix = '', start }) {
   const [count, setCount] = useState(0);
@@ -69,6 +70,23 @@ export default function ImpactStats() {
 
   return (
     <section id="about" className="section-padding overflow-hidden bg-base-100" ref={sectionRef}>
+      <div className="impact-marquee mb-16 border-y border-primary/10 py-4 sm:mb-24" aria-hidden="true">
+        <motion.div
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 24, ease: 'linear', repeat: Infinity }}
+          className="impact-marquee-track flex w-max whitespace-nowrap text-[0.62rem] font-black uppercase tracking-[0.22em] text-primary/45 sm:text-xs"
+        >
+          {Array.from({ length: 5 }).map((_, groupIndex) => (
+            <div key={groupIndex} className="impact-marquee-group flex shrink-0 items-center gap-7 pr-7 sm:gap-10 sm:pr-10">
+              {marqueeLabels.map((label) => (
+                <span key={`${groupIndex}-${label}`} className="inline-flex shrink-0 items-center gap-7 sm:gap-10">
+                  {label}<span className="text-secondary">✳</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </motion.div>
+      </div>
       <Container>
         <div className="grid gap-10 border-b border-primary/15 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:pb-16">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>

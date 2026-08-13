@@ -68,11 +68,14 @@ export default function HelpCards() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.12 + index * 0.08 }}
-                className={`group flex min-h-[300px] flex-col border-b border-white/15 p-6 transition-colors sm:min-h-[390px] sm:border-r sm:p-7 lg:border-b-0 lg:p-8 ${option.featured ? 'bg-accent text-primary' : 'hover:bg-white/[0.06]'} sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0`}
+                whileHover={{ y: -7 }}
+                whileTap={{ scale: 0.985 }}
+                data-number={option.number}
+                className={`action-card group flex min-h-[300px] flex-col border-b border-white/15 p-6 transition-colors sm:min-h-[390px] sm:border-r sm:p-7 lg:border-b-0 lg:p-8 ${option.featured ? 'bg-accent text-primary' : 'hover:bg-white/[0.06]'} sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0`}
               >
                 <div className="flex items-center justify-between">
                   <span className={`text-xs font-black tracking-[0.18em] ${option.featured ? 'text-primary/45' : 'text-white/38'}`}>{option.number}</span>
-                  <span className={`flex h-12 w-12 items-center justify-center rounded-full border ${option.featured ? 'border-primary/20' : 'border-white/18'}`}><Icon className="h-5 w-5" /></span>
+                  <span className={`action-card-icon flex h-12 w-12 items-center justify-center rounded-full border ${option.featured ? 'border-primary/20' : 'border-white/18'}`}><Icon className="h-5 w-5" /></span>
                 </div>
                 <div className="mt-auto pt-10 sm:pt-16">
                   <h3 className="text-3xl font-black tracking-[-0.055em] sm:text-4xl">{option.title}</h3>

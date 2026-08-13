@@ -9,42 +9,46 @@ import Button from './ui/Button';
 import Image from 'next/image';
 
 function RescueCard({ story, index }) {
+  const isFeatured = index === 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
+      className={isFeatured ? 'lg:col-span-3' : ''}
     >
-      <Card className="h-full group" padding="none">
+      <Card hover={false} className={`rescue-story-card h-full group ${isFeatured ? 'lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-5 lg:p-5' : ''}`} padding="none">
         {/* Before/After Images */}
-        <div className="grid grid-cols-2 gap-1 p-4 pb-0">
-          <div className="relative aspect-square rounded-xl overflow-hidden">
-            <div className="absolute top-2 left-2 z-10 px-2 py-1 bg-primary/80 text-white text-xs rounded-full">
+        <div className={`grid grid-cols-2 gap-1 p-4 pb-0 ${isFeatured ? 'lg:gap-2 lg:p-0' : ''}`}>
+          <div className={`relative aspect-square overflow-hidden rounded-xl ${isFeatured ? 'lg:aspect-[4/3]' : ''}`}>
+            <div className="absolute top-2 left-2 z-10 rounded-full bg-primary/80 px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] text-white backdrop-blur-sm">
               Before
             </div>
             <Image
               src={story.beforeImage}
               alt={`${story.name} before rescue`}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="rescue-story-image object-cover"
             />
           </div>
-          <div className="relative aspect-square rounded-xl overflow-hidden">
-            <div className="absolute top-2 left-2 z-10 px-2 py-1 bg-primary text-white text-xs rounded-full">
+          <div className={`relative aspect-square overflow-hidden rounded-xl ${isFeatured ? 'lg:aspect-[4/3]' : ''}`}>
+            <div className="absolute top-2 left-2 z-10 rounded-full bg-primary px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] text-white backdrop-blur-sm">
               After
             </div>
             <Image
               src={story.afterImage}
               alt={`${story.name} after recovery`}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="rescue-story-image object-cover"
             />
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className={`${isFeatured ? 'lg:flex lg:flex-col lg:justify-center lg:p-8' : ''} p-6`}>
+          {isFeatured && <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full bg-accent px-3 py-1.5 text-[0.6rem] font-black uppercase tracking-[0.12em] text-primary">Featured rescue <span className="h-1.5 w-1.5 rounded-full bg-secondary" /></span>}
           <div className="flex items-center gap-4 mb-3 text-sm text-primary/60">
             <span className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -56,7 +60,7 @@ function RescueCard({ story, index }) {
             </span>
           </div>
 
-          <h3 className="text-xl font-bold text-primary mb-2">
+          <h3 className={`${isFeatured ? 'text-3xl sm:text-4xl' : 'text-xl'} mb-2 font-bold text-primary`}>
             Meet {story.name}
           </h3>
           <p className="text-primary/70 text-sm leading-relaxed mb-4">
@@ -67,8 +71,9 @@ function RescueCard({ story, index }) {
             <span className="badge badge-primary badge-outline">
               {story.type}
             </span>
-            <button className="flex items-center gap-1 text-primary font-medium text-sm hover:gap-2 transition-all">
-              Read Story <ArrowRight className="w-4 h-4" />
+            <button className="group/story flex items-center gap-2 text-sm font-bold text-primary">
+              <span>Read Story</span>
+              <span className="rescue-story-arrow flex h-8 w-8 items-center justify-center rounded-full border border-primary/15"><ArrowRight className="h-4 w-4" /></span>
             </button>
           </div>
         </div>
