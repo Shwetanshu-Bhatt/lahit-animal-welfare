@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Dog, Heart, Menu, Siren, X } from 'lucide-react';
+import { ArrowUpRight, Dog, Heart, LogIn, Menu, Siren, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -79,9 +79,14 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <Link href="/#donate" className={`hidden min-h-11 items-center gap-2 rounded-full px-5 text-sm font-bold transition-all hover:-translate-y-0.5 lg:flex ${useSolidNav ? 'bg-primary text-white hover:bg-[#164a36]' : 'bg-accent text-primary hover:bg-white'}`}>
-            <Heart className="h-4 w-4" /> Donate <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          <div className="hidden items-center gap-2 lg:flex">
+            <Link href="/admin/login/" className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-bold transition-all hover:-translate-y-0.5 ${useSolidNav ? 'border-primary/15 text-primary hover:bg-primary/5' : 'border-white/25 text-white hover:bg-white/10'}`}>
+              <LogIn className="h-4 w-4" /> Log in
+            </Link>
+            <Link href="/#donate" className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-sm font-bold transition-all hover:-translate-y-0.5 ${useSolidNav ? 'bg-primary text-white hover:bg-[#164a36]' : 'bg-accent text-primary hover:bg-white'}`}>
+              <Heart className="h-4 w-4" /> Donate <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
 
           <button
             type="button"
@@ -110,6 +115,9 @@ export default function Navbar() {
                   {link.name}<ArrowUpRight className="h-4 w-4 text-white/45" />
                 </Link>
               ))}
+              <Link href="/admin/login/" onClick={() => setIsMobileMenuOpen(false)} className="mt-1.5 flex touch-manipulation items-center justify-center gap-2 rounded-2xl border border-white/15 px-4 py-3.5 font-bold text-white">
+                <LogIn className="h-4 w-4" /> Log in to your workspace
+              </Link>
               <Link href="/#donate" onClick={() => setIsMobileMenuOpen(false)} className="mt-1.5 flex touch-manipulation items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3.5 font-bold text-primary">
                 <Heart className="h-4 w-4" /> Donate to the mission
               </Link>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Check, X, Trash2, Mail, Phone, MapPin, Heart } from 'lucide-react';
-import Button from '@/components/ui/Button';
 
 export default function AdminVolunteers() {
   const [volunteers, setVolunteers] = useState([]);
@@ -10,6 +9,11 @@ export default function AdminVolunteers() {
   const [filter, setFilter] = useState('all');
   const [processingId, setProcessingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [inviteLink, setInviteLink] = useState(null);
+  const [inviteMessage, setInviteMessage] = useState({ type: '', text: '' });
+  const [invitingId, setInvitingId] = useState(null);
+  const [resendingId, setResendingId] = useState(null);
+  const [resendTarget, setResendTarget] = useState(null);
 
   useEffect(() => {
     fetchVolunteers();
@@ -55,6 +59,70 @@ export default function AdminVolunteers() {
       ));
     } finally {
       setProcessingId(null);
+    }
+  }
+
+   async function approveAndInvite(id) {
+    setInvitingId(id);
+    setInviteLink(null);
+    setInviteMessage({ type: '', text: '' });
+    try {
+      const res = await fetch(`/api/volunteers/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setVolunteers(prev => prev.map(v => v._id === id ? { ...v, status: 'approved' } : v));
+        setInviteLink(data.data?.setNewPasswordLink || null);
+        setInviteMessage({
+          type: data.data?.mailSent || data.data?.setNewPasswordLink ? 'success' : 'error',
+          text: data.data?.mailSent
+            ? 'Volunteer approved and account setup email sent.'
+            : data.data?.setNewPasswordLink
+            ? 'Email delivery is not configured; use the setup link below.'
+            : 'Volunteer approved, but the account setup email could not be sent.',
+        });
+      }
+      else setInviteMessage({ type: 'error', text: data.error || 'Could not approve volunteer.' });
+    } catch (error) {
+      console.error('Error approving volunteer:', error);
+      setInviteMessage({ type: 'error', text: 'Could not approve volunteer.' });
+    } finally {
+      setInvitingId(null);
+    }
+  }
+
+  async function resendInvite(id) {
+    setResendingId(id);
+    setInviteLink(null);
+    setInviteMessage({ type: '', text: '' });
+    try {
+      const res = await fetch(`/api/volunteers/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'resend-invite' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setInviteLink(data.data?.setNewPasswordLink || null);
+        setInviteMessage({
+          type: data.data?.mailSent || data.data?.setNewPasswordLink ? 'success' : 'error',
+          text: data.data?.mailSent
+            ? 'Account setup email re-sent to the volunteer.'
+            : data.data?.setNewPasswordLink
+            ? 'Email delivery is not configured; use the setup link below.'
+            : 'Could not re-send the account setup email.',
+        });
+      } else {
+        setInviteMessage({ type: 'error', text: data.error || 'Could not re-send the account setup email.' });
+      }
+    } catch (error) {
+      console.error('Error resending invite:', error);
+      setInviteMessage({ type: 'error', text: 'Could not re-send the account setup email.' });
+    } finally {
+      setResendingId(null);
     }
   }
 
@@ -112,6 +180,30 @@ export default function AdminVolunteers() {
           ))}
         </div>
       </div>
+
+      {inviteLink && (
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 mb-6">
+          <p className="text-sm font-semibold text-primary">Volunteer approved. Share this link so they can set their password:</p>
+          <div className="mt-2 flex items-center gap-2">
+            <a href={inviteLink} target="_blank" rel="noreferrer" className="truncate text-accent break-all font-medium">
+              {typeof window !== 'undefined' ? window.location.origin + inviteLink : inviteLink}
+            </a>
+            <button
+              onClick={() => { if (typeof window !== 'undefined') navigator.clipboard.writeText(window.location.origin + inviteLink); }}
+              className="btn btn-xs btn-ghost btn-square"
+              title="Copy link"
+            >
+              copy
+            </button>
+          </div>
+        </div>
+      )}
+
+      {inviteMessage.text && !inviteLink && (
+        <div className={`mb-6 rounded-2xl border p-4 text-sm font-semibold ${inviteMessage.type === 'error' ? 'border-error/20 bg-error/10 text-error' : 'border-success/20 bg-success/10 text-success'}`}>
+          {inviteMessage.text}
+        </div>
+      )}
 
       <div className="card bg-base-100 shadow-sm">
         <div className="card-body">
@@ -176,17 +268,17 @@ export default function AdminVolunteers() {
                       )}
                       {(volunteer.status === 'pending' || volunteer.status === 'contacted') && (
                         <>
-                          <button
-                            onClick={() => updateStatus(volunteer._id, 'approved')}
-                            disabled={processingId === volunteer._id}
-                            className="btn btn-sm btn-success"
-                            title="Approve"
-                          >
-                            {processingId === volunteer._id ? (
-                              <span className="loading loading-spinner loading-sm" />
-                            ) : (
-                              <Check className="w-4 h-4" />
-                            )}
+                           <button
+                             onClick={() => approveAndInvite(volunteer._id)}
+                             disabled={processingId === volunteer._id || invitingId === volunteer._id}
+                             className="btn btn-sm btn-success"
+                             title="Approve and issue credentials"
+                           >
+                             {invitingId === volunteer._id ? (
+                               <span className="loading loading-spinner loading-sm" />
+                             ) : (
+                               <Check className="w-4 h-4" />
+                             )}
                           </button>
                           <button
                             onClick={() => updateStatus(volunteer._id, 'rejected')}
@@ -202,7 +294,20 @@ export default function AdminVolunteers() {
                           </button>
                         </>
                       )}
-                      {(volunteer.status === 'contacted' || volunteer.status === 'rejected' || volunteer.status === 'approved') && (
+                      {volunteer.status === 'approved' && (
+                        <button
+                          onClick={() => {
+                            setResendTarget(volunteer);
+                          }}
+                          disabled={resendingId === volunteer._id}
+                          className="btn btn-sm btn-ghost"
+                          title="Resend account setup email"
+                          aria-label="Resend account setup email"
+                        >
+                          {resendingId === volunteer._id ? <span className="loading loading-spinner loading-sm" /> : <Mail className="w-4 h-4" />}
+                        </button>
+                      )}
+                        {(volunteer.status === 'contacted' || volunteer.status === 'rejected' || volunteer.status === 'approved') && (
                         <button
                           onClick={() => deleteVolunteer(volunteer._id)}
                           disabled={deletingId === volunteer._id}
@@ -223,6 +328,48 @@ export default function AdminVolunteers() {
             </div>
           )}
         </div>
+
+        {resendTarget && (
+          <div
+            className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4"
+            onClick={() => setResendTarget(null)}
+          >
+            <div
+              className="w-full max-w-md rounded-2xl bg-base-100 p-6 shadow-xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <h3 className="text-lg font-bold text-primary">Resend credentials to {resendTarget.name}?</h3>
+              <p className="mt-3 text-sm text-primary/70">
+                A new set-password link will be emailed to {resendTarget.email}.
+              </p>
+              <p className="mt-3 rounded-xl bg-warning/10 p-3 text-xs font-semibold text-warning">
+                Warning: if this volunteer has already set a password, using the new link will reset it.
+              </p>
+              <div className="mt-6 flex justify-end gap-3">
+                <button type="button" onClick={() => setResendTarget(null)} className="btn btn-sm btn-ghost">
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = resendTarget;
+                    setResendTarget(null);
+                    resendInvite(target._id);
+                  }}
+                  disabled={resendingId === resendTarget._id}
+                  className="btn btn-sm btn-success"
+                >
+                  {resendingId === resendTarget._id ? (
+                    <span className="loading loading-spinner loading-sm" />
+                  ) : (
+                    <Mail className="w-4 h-4" />
+                  )}
+                  Send credentials
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

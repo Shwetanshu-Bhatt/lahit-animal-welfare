@@ -91,7 +91,7 @@ export default function VolunteerSection() {
   };
 
   return (
-    <section id="volunteer" className="section-padding bg-base-200" ref={sectionRef}>
+    <section id="volunteer" className="section-padding bg-base-200 overflow-hidden" ref={sectionRef}>
       <Container>
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Left Content - Image */}

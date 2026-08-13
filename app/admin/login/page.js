@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
@@ -23,7 +23,9 @@ export default function AdminLogin() {
       const result = await signIn('credentials', { email, password, redirect: false });
       if (result?.error) setError('Invalid email or password.');
       else {
-        router.push('/admin');
+        const session = await getSession();
+        const destination = session?.user?.role === 'volunteer' ? '/candidate/' : '/admin/';
+        router.push(destination);
         router.refresh();
       }
     } catch {
@@ -57,7 +59,7 @@ export default function AdminLogin() {
           </div>
           <span className="admin-eyebrow">Secure workspace</span>
           <h2 className="text-4xl font-black tracking-[-0.055em] text-primary sm:text-5xl">Welcome back.</h2>
-          <p className="mt-3 text-primary/52">Sign in to manage the LAHIT mission.</p>
+          <p className="mt-3 text-primary/52">Sign in to access your LAHIT workspace.</p>
 
           {error && <div className="mt-7 rounded-2xl border border-error/20 bg-error/10 px-4 py-3 text-sm font-semibold text-error">{error}</div>}
 
@@ -66,7 +68,7 @@ export default function AdminLogin() {
               <span className="mb-2 block text-xs font-black uppercase tracking-[0.1em] text-primary/55">Email</span>
               <span className="relative block">
                 <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/35" />
-                <input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="h-14 w-full rounded-2xl border border-primary/15 bg-white pr-4 pl-12 text-primary outline-none transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/8" placeholder="admin@lahit.org" required />
+                <input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="h-14 w-full rounded-2xl border border-primary/15 bg-white pr-4 pl-12 text-primary outline-none transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/8" placeholder="you@example.com" required />
               </span>
             </label>
             <label className="block">
@@ -77,10 +79,11 @@ export default function AdminLogin() {
                 <button type="button" onClick={() => setShowPassword((visible) => !visible)} className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40" aria-label={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}</button>
               </span>
             </label>
-            <button type="submit" disabled={loading} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 font-bold text-white transition-colors hover:bg-[#164a36] disabled:opacity-50">
-              <ShieldCheck className="h-5 w-5" /> {loading ? 'Signing in…' : 'Enter mission control'}
+          <button type="submit" disabled={loading} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 font-bold text-white transition-colors hover:bg-[#164a36] disabled:opacity-50">
+              <ShieldCheck className="h-5 w-5" /> {loading ? 'Signing in…' : 'Continue to workspace'}
             </button>
           </form>
+          <Link href="/admin/forgot/" className="mt-5 inline-flex text-sm font-bold text-primary/55 hover:text-primary">Forgot your password?</Link>
           <Link href="/" className="mt-8 inline-flex text-sm font-bold text-primary/55 hover:text-primary">← Return to public website</Link>
         </div>
       </section>

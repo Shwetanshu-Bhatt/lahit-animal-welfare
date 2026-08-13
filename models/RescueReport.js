@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const RescueReportSchema = new mongoose.Schema({
   reporterName: { type: String, required: true, trim: true },
+  reporterEmail: { type: String, trim: true, lowercase: true, default: '' },
   phone: { type: String, required: true, trim: true },
   animalType: {
     type: String,

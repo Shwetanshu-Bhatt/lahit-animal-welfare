@@ -23,7 +23,7 @@ export async function POST(request) {
     const body = await request.json();
     const volunteer = await Volunteer.create({
       name: body.name,
-      email: body.email,
+      email: body.email?.trim().toLowerCase(),
       phone: body.phone,
       location: body.location,
       interest: body.interest,

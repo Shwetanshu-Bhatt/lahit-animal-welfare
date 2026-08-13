@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import RescueReport from '@/models/RescueReport';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,11 +27,13 @@ export async function POST(request) {
   try {
     await connectDB();
     const body = await request.json();
+    const session = await getServerSession(authOptions);
     if (!isValidReportImage(body.image)) {
       return NextResponse.json({ success: false, error: 'Please upload a valid rescue photo smaller than 2 MB.' }, { status: 400 });
     }
     const report = await RescueReport.create({
       reporterName: body.reporterName,
+      reporterEmail: session?.user?.role === 'volunteer' ? session.user.email : body.reporterEmail || '',
       phone: body.phone,
       animalType: body.animalType || 'Other',
       location: body.location,
