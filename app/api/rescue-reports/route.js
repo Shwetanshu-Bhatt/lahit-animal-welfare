@@ -5,6 +5,7 @@ import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { uploadImageSource } from '@/lib/cloudinary';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +32,9 @@ export async function POST(request) {
     if (!isValidReportImage(body.image)) {
       return NextResponse.json({ success: false, error: 'Please upload a valid rescue photo smaller than 2 MB.' }, { status: 400 });
     }
+    const uploadedImage = body.image
+      ? await uploadImageSource(body.image, { folder: 'lahit/rescue-reports' })
+      : null;
     const report = await RescueReport.create({
       reporterName: body.reporterName,
       reporterEmail: session?.user?.role === 'volunteer' ? session.user.email : body.reporterEmail || '',
@@ -38,7 +42,7 @@ export async function POST(request) {
       animalType: body.animalType || 'Other',
       location: body.location,
       description: body.description,
-      image: body.image || '',
+      image: uploadedImage?.secure_url || '',
     });
     return NextResponse.json({ success: true, data: report }, { status: 201 });
   } catch (error) {

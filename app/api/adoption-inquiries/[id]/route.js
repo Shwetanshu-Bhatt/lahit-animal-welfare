@@ -36,11 +36,10 @@ export async function PUT(request, { params }) {
     const nextAnimalStatus = inquiryStatusToAnimalStatus[status] ?? 'available';
 
     if (inquiry?.animal) {
-      await Animal.findByIdAndUpdate(
-        inquiry.animal,
-        { status: nextAnimalStatus, updatedAt: new Date() },
-        { runValidators: true }
-      );
+      const animalUpdate = { status: nextAnimalStatus, updatedAt: new Date() };
+      if (nextAnimalStatus === 'adopted') animalUpdate.published = false;
+
+      await Animal.findByIdAndUpdate(inquiry.animal, animalUpdate, { runValidators: true });
     }
 
     return NextResponse.json({ success: true, data: inquiry });

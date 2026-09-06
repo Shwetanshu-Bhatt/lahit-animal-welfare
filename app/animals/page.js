@@ -59,7 +59,7 @@ export default function AnimalsPage() {
 
   async function fetchAnimals() {
     try {
-      const res = await fetch('/api/animals');
+      const res = await fetch('/api/animals', { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
         // Filter only available animals for public view
@@ -76,6 +76,11 @@ export default function AnimalsPage() {
   const filteredAnimals = filter === 'all' 
     ? animals 
     : animals.filter(a => a.type === filter);
+  const categories = [
+    { value: 'Dog', label: 'Dogs' },
+    { value: 'Cat', label: 'Cats' },
+    { value: 'Other', label: 'Other' },
+  ].filter(category => animals.some(animal => animal.type === category.value));
 
   return (
     <PublicSiteGate><main className="public-page min-h-screen bg-base-200">
@@ -108,36 +113,19 @@ export default function AnimalsPage() {
             >
               All
             </button>
-            <button
-              onClick={() => setFilter('Dog')}
-              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
-                filter === 'Dog'
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-primary hover:bg-primary/10'
-              }`}
-            >
-              Dogs
-            </button>
-            <button
-              onClick={() => setFilter('Cat')}
-              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
-                filter === 'Cat'
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-primary hover:bg-primary/10'
-              }`}
-            >
-              Cats
-            </button>
-            <button
-              onClick={() => setFilter('Other')}
-              className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
-                filter === 'Other'
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-primary hover:bg-primary/10'
-              }`}
-            >
-              Other
-            </button>
+            {categories.map(category => (
+              <button
+                key={category.value}
+                onClick={() => setFilter(category.value)}
+                className={`min-h-11 shrink-0 rounded-full px-6 py-2 font-medium transition-colors ${
+                  filter === category.value
+                    ? 'bg-primary text-white'
+                    : 'bg-white text-primary hover:bg-primary/10'
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
           </div>
 
           {/* Animals Grid */}

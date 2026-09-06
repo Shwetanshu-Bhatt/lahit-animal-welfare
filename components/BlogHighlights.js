@@ -36,18 +36,15 @@ export default function BlogHighlights() {
 
   const featured = allPosts[0];
   const rest = allPosts.slice(1, 3);
-  const hasMore = allPosts.length > 3;
-
   return (
-    <section id="stories" className="section-padding bg-base-100">
+<section id="blogs" className="section-padding bg-base-100">
       <Container>
         <div className="mb-10 text-center sm:mb-14">
-          <span className="badge badge-primary badge-outline badge-lg mb-4">Field Notes</span>
           <h2 className="mb-4 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:text-5xl">
-            Latest from the Blog
+            Blogs
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-primary/70">
-            Real stories, updates, and community moments from the people caring for LAHIT animals every day.
+            Rescue stories, medical updates, feeding drives, adoption news, and community moments from LAHIT.
           </p>
         </div>
 
@@ -57,7 +54,7 @@ export default function BlogHighlights() {
           </div>
         ) : allPosts.length === 0 ? (
           <div className="rounded-[1.5rem] border border-dashed border-primary/20 bg-primary/5 p-10 text-center text-primary/60">
-            No field notes published yet.
+            No blogs published yet.
           </div>
         ) : (
           <div className="space-y-8">
@@ -95,7 +92,7 @@ export default function BlogHighlights() {
                     {featured.excerpt}
                   </p>
                   <span className="mt-6 flex items-center justify-between border-t border-primary/10 pt-5 text-sm font-bold text-primary">
-                    Read field note
+                    Read blog
                     <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                   </span>
                 </div>
@@ -139,7 +136,7 @@ export default function BlogHighlights() {
                         {post.excerpt}
                       </p>
                       <span className="mt-6 flex items-center justify-between border-t border-primary/10 pt-5 text-sm font-bold text-primary">
-                        Read field note
+                        Read blog
                         <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                       </span>
                     </div>
@@ -150,10 +147,10 @@ export default function BlogHighlights() {
           </div>
         )}
 
-        {hasMore && !loading && allPosts.length > 3 && (
+        {!loading && allPosts.length > 0 && (
           <div className="mt-12 text-center">
             <Button href="/blog" variant="outline" size="lg" icon={ArrowUpRight}>
-              View All Field Notes
+              View More
             </Button>
           </div>
         )}

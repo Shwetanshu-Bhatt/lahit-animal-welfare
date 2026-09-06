@@ -28,6 +28,7 @@ const heroSlides = [
 
 export default function HeroSection() {
   const [stats, setStats] = useState({ animalsRescued: 1200, volunteers: 0 });
+  const [slides, setSlides] = useState(heroSlides);
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -35,24 +36,36 @@ export default function HeroSection() {
       .then((res) => res.json())
       .then((data) => { if (data.success) setStats(data.data); })
       .catch(() => {});
+
+    fetch('/api/media/homepage')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data.hero.length > 0) {
+          setSlides(data.data.hero.map((item) => ({
+            src: item.url,
+            alt: item.alt || 'LAHIT animal rescue',
+          })));
+          setCurrent(0);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (mql.matches) return;
-    const id = setInterval(() => setCurrent((c) => (c + 1) % heroSlides.length), 6000);
+    const id = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 6000);
     return () => clearInterval(id);
-  }, []);
+  }, [slides.length]);
 
   const heroStats = [
     { value: `${Number(stats.animalsRescued || 0).toLocaleString()}+`, label: 'lives rescued' },
     { value: `${Number(stats.volunteers || 0).toLocaleString()}+`, label: 'active volunteers' },
-    { value: '24/7', label: 'rescue response' },
   ];
   return (
-    <section id="home" className="relative min-h-[100svh] overflow-hidden bg-primary text-white">
+    <section id="home" className="relative h-[100dvh] min-h-0 max-h-[100dvh] overflow-hidden bg-primary text-white">
       <div className="absolute inset-0">
-        {heroSlides.map((slide, index) => (
+        {slides.map((slide, index) => (
           <motion.div
             key={slide.src}
             className="absolute inset-0"
@@ -76,7 +89,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(#fff_0.7px,transparent_0.7px)] [background-size:7px_7px]" />
       <div className="hero-grid pointer-events-none absolute inset-0" />
 
-      <Container className="hero-viewport-container relative z-10 flex min-h-[100svh] flex-col pt-28 pb-24 sm:pt-36 lg:pt-44 lg:pb-5">
+      <Container className="hero-viewport-container relative z-10 flex h-full min-h-0 flex-col pt-28 pb-24 sm:pt-36 lg:pt-44 lg:pb-5">
         <div className="my-auto max-w-4xl py-8 sm:pb-16 lg:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -137,7 +150,7 @@ export default function HeroSection() {
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <span className="eyebrow text-[0.64rem] text-white/55">Our impact</span>
-            <div className="grid grid-cols-3 gap-5 sm:min-w-[34rem] sm:gap-8">
+          <div className="grid grid-cols-2 gap-5 sm:min-w-[24rem] sm:gap-8">
               {heroStats.map((stat) => (
                 <div key={stat.label} className="flex items-baseline gap-2 border-l border-white/20 pl-4 first:border-l-0 first:pl-0">
                   <p className="text-xl font-black tracking-[-0.06em] text-accent sm:text-3xl">{stat.value}</p>

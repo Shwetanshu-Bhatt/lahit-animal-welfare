@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import RescueReport from '@/models/RescueReport';
 import { requireCandidate, candidateUnauthorized } from '@/lib/candidate-api';
+import { uploadImageSource } from '@/lib/cloudinary';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +37,9 @@ export async function POST(request) {
     }
 
     await connectDB();
+    const uploadedImage = body.image
+      ? await uploadImageSource(body.image, { folder: 'lahit/rescue-reports' })
+      : null;
     const report = await RescueReport.create({
       reporterName: session.user.name || 'LAHIT volunteer',
       reporterEmail: session.user.email.toLowerCase(),
@@ -43,7 +47,7 @@ export async function POST(request) {
       animalType: body.animalType || 'Other',
       location: body.location.trim(),
       description: body.description.trim(),
-      image: body.image || '',
+      image: uploadedImage?.secure_url || '',
     });
     return NextResponse.json({ success: true, data: report }, { status: 201 });
   } catch (error) {

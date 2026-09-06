@@ -15,7 +15,11 @@ export default function VolunteerSection() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-const [volunteerCount, setVolunteerCount] = useState(0);
+  const [volunteerCount, setVolunteerCount] = useState(0);
+  const [volunteerImage, setVolunteerImage] = useState({
+    src: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=600&fit=crop',
+    alt: 'LAHIT Volunteers',
+  });
   const [activities, setActivities] = useState([
     'Animal Rescue Operations',
     'Daily Feeding Drives',
@@ -43,6 +47,17 @@ const [volunteerCount, setVolunteerCount] = useState(0);
       }
     }
     fetchSettings();
+    fetch('/api/media/homepage')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data.volunteer) {
+          setVolunteerImage({
+            src: data.data.volunteer.url,
+            alt: data.data.volunteer.alt || 'LAHIT Volunteers',
+          });
+        }
+      })
+      .catch(() => {});
     fetch('/api/stats')
       .then((res) => res.json())
       .then((data) => { if (data.success) setVolunteerCount(data.data.volunteers || 0); })
@@ -61,7 +76,15 @@ const [volunteerCount, setVolunteerCount] = useState(0);
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm();
+
+  const selectedInterests = watch('interest', []);
+  const selectedInterestValues = Array.isArray(selectedInterests)
+    ? selectedInterests
+    : selectedInterests
+      ? [selectedInterests]
+      : [];
 
   const onSubmit = async (data) => {
     setSubmitting(true);
@@ -103,8 +126,8 @@ const [volunteerCount, setVolunteerCount] = useState(0);
           >
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] sm:rounded-3xl">
               <Image
-                src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=600&fit=crop"
-                alt="LAHIT Volunteers"
+                src={volunteerImage.src}
+                alt={volunteerImage.alt}
                 fill
                 className="object-cover"
               />
@@ -296,17 +319,34 @@ const [volunteerCount, setVolunteerCount] = useState(0);
                     <label className="block text-sm font-medium text-primary mb-1">
                       Areas of Interest
                     </label>
-                    <select
-                      {...register('interest', { required: 'Please select an area' })}
-                      className="select select-bordered w-full"
-                    >
-                      <option value="">Select an area</option>
-                      {activities.map((activity) => (
-                        <option key={activity} value={activity}>
-                          {activity}
-                        </option>
-                      ))}
-                    </select>
+                    <fieldset className="rounded-2xl border border-base-300 bg-base-200/50 p-2 sm:p-3">
+                      <legend className="sr-only">Select one or more areas of interest</legend>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {activities.map((activity) => {
+                          const isSelected = selectedInterestValues.includes(activity);
+
+                          return (
+                            <label
+                              key={activity}
+                              className={`flex min-h-15 cursor-pointer items-start gap-3 rounded-xl border px-3 py-3 text-sm leading-5 transition-colors ${
+                                isSelected
+                                  ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                                  : 'border-transparent bg-base-100 text-primary/75 hover:border-primary/30'
+                              }`}
+                            >
+                              <input
+                                {...register('interest', { required: 'Please select an area' })}
+                                type="checkbox"
+                                value={activity}
+                                className="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0"
+                              />
+                              <span>{activity}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </fieldset>
+                    <p className="mt-1 text-xs text-primary/55">Choose one or more areas.</p>
                     {errors.interest && (
                       <p className="text-error text-sm mt-1">{errors.interest.message}</p>
                     )}

@@ -30,9 +30,9 @@ export default function BlogPage() {
       <Navbar />
       <section className="bg-primary pt-32 pb-14 text-white sm:pt-40 sm:pb-20 lg:pt-48 lg:pb-28">
         <Container>
-          <span className="eyebrow text-accent">From the field</span>
-          <h1 className="display-title mt-5 max-w-5xl text-[2.9rem] uppercase sm:mt-7 sm:text-8xl lg:text-9xl">Stories of rescue, recovery and hope.</h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 sm:mt-8 sm:text-lg">Updates from the people and animals at the heart of LAHIT.</p>
+          <span className="eyebrow text-accent">LAHIT blogs</span>
+          <h1 className="display-title mt-5 max-w-5xl text-[2.9rem] uppercase sm:mt-7 sm:text-8xl lg:text-9xl">Rescue, recovery and community.</h1>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 sm:mt-8 sm:text-lg">Browse all LAHIT updates by category, including rescue stories, medical updates, feeding drives, adoption, and volunteer events.</p>
         </Container>
       </section>
       <section className="section-padding">
@@ -40,7 +40,7 @@ export default function BlogPage() {
           {loading ? (
             <div className="flex min-h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : posts.length === 0 ? (
-            <div className="admin-empty bg-base-100"><BookOpen className="h-8 w-8" /><p>Field notes are coming soon.</p></div>
+            <div className="admin-empty bg-base-100"><BookOpen className="h-8 w-8" /><p>Blogs are coming soon.</p></div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {posts.map((post) => (
@@ -57,7 +57,7 @@ export default function BlogPage() {
                     <p className="text-xs font-bold uppercase tracking-[0.1em] text-primary/38">{new Date(post.createdAt).toLocaleDateString()}</p>
                     <h2 className="mt-3 text-2xl font-black tracking-[-0.045em] text-primary">{post.title}</h2>
                     <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-primary/58">{post.excerpt}</p>
-                    <span className="mt-6 flex items-center justify-between border-t border-primary/10 pt-5 text-sm font-bold text-primary">Read field note <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></span>
+                    <span className="mt-6 flex items-center justify-between border-t border-primary/10 pt-5 text-sm font-bold text-primary">Read blog <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></span>
                   </div>
                 </Link>
               ))}

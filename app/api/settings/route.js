@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Settings from '@/models/Settings';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
+import { uploadImageSource } from '@/lib/cloudinary';
 
 export const dynamic = 'force-dynamic';
 
 function isValidDisplayImage(value = '') {
   if (value.startsWith('data:image/')) return value.length <= 2_000_000;
   try {
-    const host = new URL(value).hostname.replace('www.', '');
-    return !['instagram.com', 'facebook.com', 'youtube.com'].includes(host);
+    return new URL(value).hostname === 'res.cloudinary.com';
   } catch {
     return false;
   }
@@ -59,11 +59,16 @@ export async function PUT(request) {
       if (totalImageSize > 10_000_000) {
         return NextResponse.json({ success: false, error: 'Instagram display images are too large. Remove cards or use smaller images.' }, { status: 400 });
       }
-      body.instagramPosts = body.instagramPosts.map((post) => ({
-        id: post.id,
-        image: post.image,
-        caption: String(post.caption || '').trim(),
-        postUrl: String(post.postUrl || '').trim(),
+      body.instagramPosts = await Promise.all(body.instagramPosts.map(async (post) => {
+        const uploadedImage = post.image.startsWith('data:image/')
+          ? await uploadImageSource(post.image, { folder: 'lahit/instagram' })
+          : null;
+        return {
+          id: post.id,
+          image: uploadedImage?.secure_url || post.image,
+          caption: String(post.caption || '').trim(),
+          postUrl: String(post.postUrl || '').trim(),
+        };
       }));
     }
     body.updatedAt = new Date();

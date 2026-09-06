@@ -15,16 +15,24 @@ export async function GET(request) {
     const type = searchParams.get('type');
     
     let query = {};
-    if (category) {
-      query.category = category;
-    }
     if (type) {
       query.type = type;
     }
     
-    const media = await Media.find(query).sort({ createdAt: -1 });
+    const media = await Media.find(query).sort({ createdAt: -1 }).lean();
+    const normalizedMedia = media.map((item) => ({
+      ...item,
+      category: ['hero', 'volunteer'].includes(item.category)
+        ? item.category
+        : /volunteer/i.test(item.filename)
+          ? 'volunteer'
+          : 'unused',
+    }));
+    const filteredMedia = category
+      ? normalizedMedia.filter((item) => item.category === category)
+      : normalizedMedia;
     
-    return NextResponse.json({ success: true, data: media }, {
+    return NextResponse.json({ success: true, data: filteredMedia }, {
       headers: { 'Cache-Control': 'no-store, must-revalidate' }
     });
   } catch (error) {

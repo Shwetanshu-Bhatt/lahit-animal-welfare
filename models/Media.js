@@ -16,8 +16,8 @@ const MediaSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['rescue', 'animal', 'event', 'general', 'blog'],
-    default: 'general',
+    enum: ['hero', 'volunteer', 'rescue', 'animal', 'event', 'general', 'blog'],
+    default: 'hero',
   },
   size: {
     type: Number,

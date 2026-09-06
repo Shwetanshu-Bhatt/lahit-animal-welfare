@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trash2, Edit, Copy, Check, Image as ImageIcon, Search } from 'lucide-react';
+import { Trash2, Edit, Image as ImageIcon, Search } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
+import { uploadImage } from '@/lib/upload-image';
 
 export default function AdminMedia() {
   const [media, setMedia] = useState([]);
@@ -16,15 +17,15 @@ export default function AdminMedia() {
     filename: '',
     url: '',
     type: 'image',
-    category: 'general',
+    category: 'hero',
     alt: '',
     caption: '',
     uploadedBy: 'Admin'
   });
   const [message, setMessage] = useState({ type: '', text: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     fetchMedia();
@@ -51,6 +52,10 @@ export default function AdminMedia() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!formData.url) {
+      setMessage({ type: 'error', text: 'Please upload an image.' });
+      return;
+    }
     setMessage({ type: '', text: '' });
     setSubmitting(true);
 
@@ -76,6 +81,30 @@ export default function AdminMedia() {
       setMessage({ type: 'error', text: 'Error saving media.' });
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleImageUpload(file) {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please choose an image file.' });
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image files must be smaller than 8 MB.' });
+      return;
+    }
+
+    setUploadingImage(true);
+    setMessage({ type: '', text: '' });
+    try {
+      const result = await uploadImage(file);
+      setFormData(prev => ({ ...prev, url: result.url, filename: file.name }));
+      setMessage({ type: 'success', text: 'Image uploaded successfully.' });
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || 'Image upload failed.' });
+    } finally {
+      setUploadingImage(false);
     }
   }
 
@@ -105,7 +134,7 @@ export default function AdminMedia() {
     setFormData({
       filename: item.filename,
       url: item.url,
-      type: item.type,
+      type: 'image',
       category: item.category,
       alt: item.alt || '',
       caption: item.caption || '',
@@ -121,17 +150,11 @@ export default function AdminMedia() {
       filename: '',
       url: '',
       type: 'image',
-      category: 'general',
+      category: 'hero',
       alt: '',
       caption: '',
       uploadedBy: 'Admin'
     });
-  }
-
-  function copyToClipboard(text, id) {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
   }
 
   const filteredMedia = media.filter(item => {
@@ -193,50 +216,46 @@ export default function AdminMedia() {
                   />
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-2">Type</label>
-                  <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="select select-bordered w-full"
-                  >
-                    <option value="image">Image</option>
-                    <option value="video">Video</option>
-                    <option value="document">Document</option>
-                  </select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-primary mb-2">Homepage placement</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="select select-bordered w-full"
+                >
+                  {formData.category === 'unused' && <option value="unused" disabled>Not used on homepage</option>}
+                  <option value="hero">Hero carousel</option>
+                  <option value="volunteer">Volunteer section</option>
+                </select>
+              </div>
                 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-primary mb-2">URL</label>
-                  <input
-                    type="text"
-                    name="url"
-                    value={formData.url}
-                    onChange={handleChange}
-                    required
-                    className="input input-bordered w-full"
-                    placeholder="https://... or /images/..."
-                  />
+                  <label className="block text-sm font-medium text-primary mb-2">Image</label>
+                  <div className="rounded-xl border border-base-300 bg-base-200/40 p-3">
+                    {formData.url ? (
+                      <div className="relative mb-3 h-48 w-full overflow-hidden rounded-lg">
+                        <Image src={formData.url} alt={formData.alt || formData.filename || 'Media preview'} fill unoptimized className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="mb-3 flex h-48 w-full items-center justify-center rounded-lg border border-dashed border-base-300 text-sm text-primary/60">
+                        No image selected
+                      </div>
+                    )}
+                    <label className="btn btn-sm btn-primary cursor-pointer">
+                      {uploadingImage ? 'Uploading...' : formData.url ? 'Replace image' : 'Upload image'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploadingImage}
+                        onChange={(event) => handleImageUpload(event.target.files?.[0])}
+                      />
+                    </label>
+                  </div>
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-2">Category</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="select select-bordered w-full"
-                  >
-                    <option value="general">General</option>
-                    <option value="rescue">Rescue</option>
-                    <option value="animal">Animal</option>
-                    <option value="event">Event</option>
-                    <option value="blog">Blog</option>
-                  </select>
-                </div>
-                
-                <div>
+              <div>
                   <label className="block text-sm font-medium text-primary mb-2">Alt Text</label>
                   <input
                     type="text"
@@ -303,11 +322,8 @@ export default function AdminMedia() {
               onChange={(e) => setFilterCategory(e.target.value)}
             >
               <option value="">All Categories</option>
-              <option value="general">General</option>
-              <option value="rescue">Rescue</option>
-              <option value="animal">Animal</option>
-              <option value="event">Event</option>
-              <option value="blog">Blog</option>
+                  <option value="hero">Hero carousel</option>
+                  <option value="volunteer">Volunteer section</option>
             </select>
           </div>
 
@@ -334,20 +350,6 @@ export default function AdminMedia() {
                   <div className="card-body p-4">
                     <p className="text-sm font-medium text-primary truncate">{item.filename}</p>
                     <p className="text-xs text-primary/60 capitalize">{item.category}</p>
-                    <div className="flex items-center gap-1 mt-2">
-                      <input
-                        type="text"
-                        readOnly
-                        value={item.url}
-                        className="input input-xs input-bordered flex-1 text-xs"
-                      />
-                      <button
-                        onClick={() => copyToClipboard(item.url, item._id)}
-                        className="btn btn-xs btn-ghost"
-                      >
-                        {copiedId === item._id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      </button>
-                    </div>
                     <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => editMedia(item)}

@@ -27,6 +27,7 @@ import Settings from '../models/Settings.js';
 import Volunteer from '../models/Volunteer.js';
 import Blog from '../models/Blog.js';
 import Media from '../models/Media.js';
+import { uploadImageSource } from '../lib/cloudinary.js';
 
 async function connectDB() {
   try {
@@ -66,6 +67,8 @@ async function createAdminUser() {
     console.log('✅ Admin user created successfully');
     console.log('   Email: admin@lahit.org');
     console.log('   Password: admin123');
+    console.log('   Volunteer email: volunteer@lahit.org');
+    console.log('   Volunteer password: volunteer123');
     console.log('   Role: admin');
 
     return adminUser;
@@ -73,6 +76,44 @@ async function createAdminUser() {
     console.error('❌ Error creating admin user:', error.message);
     throw error;
   }
+}
+
+async function createVolunteerUser() {
+  console.log('\n🙋 Creating seeded volunteer account...');
+
+  const email = 'volunteer@lahit.org';
+  const password = 'volunteer123';
+  const passwordHash = await bcrypt.hash(password, 12);
+  let user = await User.findOne({ email });
+
+  if (user) {
+    user.name = 'LAHIT Volunteer';
+    user.password = passwordHash;
+    user.role = 'volunteer';
+    await user.save();
+  } else {
+    user = await User.create({
+      name: 'LAHIT Volunteer',
+      email,
+      password: passwordHash,
+      role: 'volunteer',
+    });
+  }
+
+  if (!(await Volunteer.findOne({ email }))) {
+    await Volunteer.create({
+      name: 'LAHIT Volunteer',
+      email,
+      phone: '+91 90000 00000',
+      location: 'Uttarkashi',
+      interest: 'Animal Rescue Operations',
+      message: 'Seeded volunteer account for local testing.',
+      status: 'approved',
+    });
+  }
+
+  console.log(`✅ Volunteer account ready (${email})`);
+  return user;
 }
 
 async function createInitialStats() {
@@ -502,41 +543,58 @@ async function createMedia() {
       return;
     }
 
+    const uploadSeedImage = async (source, publicId) => {
+      const result = await uploadImageSource(source, {
+        folder: 'lahit/media',
+        public_id: publicId,
+        overwrite: true,
+      });
+      return result.secure_url;
+    };
     const media = [
       {
-        filename: 'hero-dog.jpg',
-        url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=400&fit=crop',
+        filename: 'rescue-hero-v2.webp',
+        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v2.webp'), 'rescue-hero-v2'),
         type: 'image',
-        category: 'general',
-        alt: 'Rescued dog receiving care',
+        category: 'hero',
+        alt: 'A LAHIT volunteer caring for a rescued dog in Uttarakhand',
         caption: 'Hero image for homepage',
         uploadedBy: 'Admin'
       },
       {
-        filename: 'rescue-bruno.jpg',
-        url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=400&fit=crop',
+        filename: 'rescue-hero-v3.webp',
+        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v3.webp'), 'rescue-hero-v3'),
         type: 'image',
-        category: 'rescue',
-        alt: 'Bruno rescue story',
-        caption: 'Bruno before rescue',
+        category: 'hero',
+        alt: 'Volunteers caring for rescued dogs in Uttarakhand',
+        caption: 'Homepage hero image',
         uploadedBy: 'Admin'
       },
       {
         filename: 'volunteers.jpg',
-        url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop',
+        url: await uploadSeedImage('https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop', 'volunteers'),
         type: 'image',
-        category: 'event',
+        category: 'volunteer',
         alt: 'LAHIT volunteers',
         caption: 'Volunteer team at work',
         uploadedBy: 'Admin'
       },
       {
-        filename: 'feeding-drive.jpg',
-        url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=400&fit=crop',
+        filename: 'rescue-hero-v5.webp',
+        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v5.webp'), 'rescue-hero-v5'),
         type: 'image',
-        category: 'event',
-        alt: 'Feeding drive',
-        caption: 'Morning feeding drive in Dehradun',
+        category: 'hero',
+        alt: 'A veterinarian examining a rescued dog during a clinic check-up',
+        caption: 'Homepage hero image',
+        uploadedBy: 'Admin'
+      },
+      {
+        filename: 'rescue-hero-v6.webp',
+        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v6.webp'), 'rescue-hero-v6'),
+        type: 'image',
+        category: 'hero',
+        alt: 'Veterinary staff providing medical treatment to a rescued animal',
+        caption: 'Homepage hero image',
         uploadedBy: 'Admin'
       }
     ];
@@ -558,8 +616,11 @@ async function seed() {
     // Create admin user
     await createAdminUser();
 
-    // Create initial stats
-    await createInitialStats();
+  // Create seeded volunteer login
+  await createVolunteerUser();
+
+  // Create initial stats
+  await createInitialStats();
 
     // Create sample animals
     await createAnimals();
@@ -583,6 +644,8 @@ async function seed() {
     console.log('\n📝 Login Credentials:');
     console.log('   Email: admin@lahit.org');
     console.log('   Password: admin123');
+    console.log('   Volunteer email: volunteer@lahit.org');
+    console.log('   Volunteer password: volunteer123');
     console.log('\n⚠️  Please change the default password after first login.\n');
   } catch (error) {
     console.error('\n❌ Seed failed:', error.message);

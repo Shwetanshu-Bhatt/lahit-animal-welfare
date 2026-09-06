@@ -241,7 +241,7 @@ export default function AdminVolunteers() {
 
                       <div className="mt-2 flex items-center gap-2">
                         <Heart className="w-4 h-4 text-primary" />
-                        <span className="text-sm text-primary/70">{volunteer.interest}</span>
+                        <span className="text-sm text-primary/70">{Array.isArray(volunteer.interest) ? volunteer.interest.join(', ') : volunteer.interest}</span>
                       </div>
 
                       {volunteer.message && (

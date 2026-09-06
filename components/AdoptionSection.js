@@ -17,7 +17,7 @@ export default function AdoptionSection() {
   useEffect(() => {
     async function fetchAnimals() {
       try {
-        const res = await fetch('/api/animals');
+        const res = await fetch('/api/animals', { cache: 'no-store' });
         const data = await res.json();
 
         if (data.success) {

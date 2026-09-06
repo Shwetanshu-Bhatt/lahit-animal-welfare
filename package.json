@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "migrate:images": "node scripts/migrate-images-to-cloudinary.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

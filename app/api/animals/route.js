@@ -13,7 +13,7 @@ export async function GET(request) {
     const includeAll = searchParams.get('all') === 'true';
     if (includeAll && !(await requireAdmin())) return unauthorizedResponse();
     
-    const query = includeAll ? {} : { published: true, status: { $ne: 'adopted' } };
+    const query = includeAll ? {} : { published: true, status: { $in: ['available', 'pending'] } };
     const animals = await Animal.find(query).sort({ createdAt: -1 });
     const normalizedAnimals = animals.map((animal) => ({
       ...animal.toObject(),

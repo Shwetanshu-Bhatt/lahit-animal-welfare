@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Trash2, Edit, Eye, EyeOff, FileText } from 'lucide-react';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
+import { uploadImage } from '@/lib/upload-image';
 
 export default function AdminBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -185,34 +186,12 @@ export default function AdminBlogs() {
       return;
     }
 
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      setMessage({ type: 'error', text: 'Cloudinary upload is not configured yet. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET.' });
-      return;
-    }
-
     setUploadingCoverImage(true);
     setMessage({ type: '', text: '' });
 
     try {
-      const formPayload = new FormData();
-      formPayload.append('file', file);
-      formPayload.append('upload_preset', uploadPreset);
-      formPayload.append('cloud_name', cloudName);
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: 'POST',
-        body: formPayload
-      });
-
-      const result = await response.json();
-      if (!response.ok || !result.secure_url) {
-        throw new Error(result.error?.message || 'Failed to upload image.');
-      }
-
-      setFormData(prev => ({ ...prev, coverImage: result.secure_url }));
+      const result = await uploadImage(file);
+      setFormData(prev => ({ ...prev, coverImage: result.url }));
       setMessage({ type: 'success', text: 'Cover image uploaded successfully.' });
     } catch (error) {
       setMessage({ type: 'error', text: error.message || 'Image upload failed.' });

@@ -118,7 +118,7 @@ export default function EmergencyRescue() {
   }
 
   const whatsappNumber = contactPhone.replace(/\D/g, '');
-  const whatsappMessage = encodeURIComponent('Emergency: I found an injured animal that needs help. Please respond quickly.');
+  const whatsappMessage = encodeURIComponent('Emergency: I found an injured animal that needs help.');
 
   return (
     <section
@@ -143,7 +143,7 @@ export default function EmergencyRescue() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              24/7 Emergency Service
+              Emergency Rescue
             </div>
 
             <h2 className="mb-5 text-[2rem] font-bold tracking-[-0.04em] text-white sm:text-4xl lg:mb-6 lg:text-5xl">
@@ -151,9 +151,9 @@ export default function EmergencyRescue() {
             </h2>
 
             <p className="mb-7 text-base leading-relaxed text-white/90 sm:mb-8 sm:text-lg">
-              If you come across an injured, sick, or distressed animal, 
-              please report it immediately. Our rescue team is available 
-              around the clock to help animals in need across Uttarakhand.
+              If you come across an injured, sick, or distressed animal,
+              please submit a rescue report. Our team reviews reports and
+              coordinates help for animals in need across Uttarakhand.
             </p>
 
             <div className="mb-7 space-y-3 sm:mb-8 sm:space-y-4">
@@ -186,9 +186,9 @@ export default function EmergencyRescue() {
                   <Send className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Quick Response</h4>
+                  <h4 className="font-semibold text-white mb-1">Team Review</h4>
                   <p className="text-white/80 text-sm">
-                    Our volunteers will try to reach as soon as possible
+                    Our team reviews the report and coordinates the next steps
                   </p>
                 </div>
               </div>
@@ -229,9 +229,7 @@ export default function EmergencyRescue() {
                 <h3 className="text-2xl font-bold text-primary mb-2">
                   Emergency Hotline
                 </h3>
-                <p className="text-primary/70 mb-4">
-                  Available 24/7 for animal emergencies
-                </p>
+                <p className="text-primary/70 mb-4">Call us or submit a rescue report</p>
                 {contactPhone ? (
                   <a href={`tel:${contactPhone}`} className="break-all text-2xl font-bold text-secondary transition-colors hover:text-secondary/80 sm:text-3xl">{contactPhone}</a>
                 ) : (
@@ -240,11 +238,7 @@ export default function EmergencyRescue() {
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-base-300">
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-primary">{'<30'}</p>
-                  <p className="text-sm text-primary/70">Min Avg Response</p>
-                </div>
+              <div className="pt-6 text-center border-t border-base-300">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-primary">{volunteerCount}+</p>
                   <p className="text-sm text-primary/70">Active Volunteers</p>

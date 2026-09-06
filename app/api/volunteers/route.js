@@ -21,12 +21,19 @@ export async function POST(request) {
   try {
     await connectDB();
     const body = await request.json();
+    const interests = (Array.isArray(body.interest) ? body.interest : [body.interest])
+      .filter(Boolean)
+      .map((interest) => String(interest).trim())
+      .filter(Boolean);
+    if (interests.length === 0) {
+      return NextResponse.json({ success: false, error: 'Select at least one area of interest.' }, { status: 400 });
+    }
     const volunteer = await Volunteer.create({
       name: body.name,
       email: body.email?.trim().toLowerCase(),
       phone: body.phone,
       location: body.location,
-      interest: body.interest,
+      interest: interests,
       message: body.message || '',
     });
     return NextResponse.json({ success: true, data: volunteer }, { status: 201 });

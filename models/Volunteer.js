@@ -5,10 +5,14 @@ const VolunteerSchema = new mongoose.Schema({
   email: { type: String, required: true, trim: true, lowercase: true },
   phone: { type: String, required: true },
   location: { type: String, required: true },
-  interest: { type: String, required: true },
+  interest: { type: [String], required: true },
   message: { type: String },
   status: { type: String, enum: ['pending', 'contacted', 'approved', 'rejected'], default: 'pending' },
   createdAt: { type: Date, default: Date.now },
 });
+
+if (mongoose.models.Volunteer && mongoose.models.Volunteer.schema.path('interest')?.instance !== 'Array') {
+  mongoose.deleteModel('Volunteer');
+}
 
 export default mongoose.models.Volunteer || mongoose.model('Volunteer', VolunteerSchema);

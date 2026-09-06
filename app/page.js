@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ImpactStats from "@/components/ImpactStats";
 import AdoptionSection from "@/components/AdoptionSection";
-import RescueStories from "@/components/RescueStories";
 import HelpCards from "@/components/HelpCards";
 import EmergencyRescue from "@/components/EmergencyRescue";
 import InstagramFeed from "@/components/InstagramFeed";
@@ -20,7 +19,6 @@ export default function Home() {
       <HeroSection />
       <ImpactStats />
       <AdoptionSection />
-      <RescueStories />
       <BlogHighlights />
       <HelpCards />
       <EmergencyRescue />
