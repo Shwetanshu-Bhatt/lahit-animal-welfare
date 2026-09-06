@@ -7,14 +7,41 @@ import Image from 'next/image';
 import Container from './ui/Container';
 import Button from './ui/Button';
 
+const heroSlides = [
+  {
+    src: '/images/rescue-hero-v2.webp',
+    alt: 'A LAHIT volunteer caring for a rescued dog in Uttarakhand',
+  },
+  {
+    src: '/images/rescue-hero-v3.webp',
+    alt: 'Volunteers caring for rescued dogs at an animal shelter',
+  },
+  {
+    src: '/images/rescue-hero-v5.webp',
+    alt: 'A veterinarian examining a rescued dog during a clinic check-up',
+  },
+  {
+    src: '/images/rescue-hero-v6.webp',
+    alt: 'Veterinary staff providing medical treatment to a rescued animal',
+  },
+];
+
 export default function HeroSection() {
   const [stats, setStats] = useState({ animalsRescued: 1200, volunteers: 50 });
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     fetch('/api/stats')
       .then((res) => res.json())
       .then((data) => { if (data.success) setStats(data.data); })
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mql.matches) return;
+    const id = setInterval(() => setCurrent((c) => (c + 1) % heroSlides.length), 6000);
+    return () => clearInterval(id);
   }, []);
 
   const heroStats = [
@@ -25,17 +52,27 @@ export default function HeroSection() {
   return (
     <section id="home" className="relative min-h-[100svh] overflow-hidden bg-primary text-white">
       <div className="absolute inset-0">
-        <Image
-          src="/images/rescue-hero-v2.webp"
-          alt="A LAHIT volunteer caring for a rescued dog in Uttarakhand"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[72%_center] sm:object-[68%_center]"
-        />
+        {heroSlides.map((slide, index) => (
+          <motion.div
+            key={slide.src}
+            className="absolute inset-0"
+            initial={{ opacity: index === 0 ? 1 : 0 }}
+            animate={{ opacity: index === current ? 1 : 0 }}
+            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Image
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              priority={index === 0}
+              sizes="100vw"
+              className="object-cover object-[72%_center] sm:object-[68%_center]"
+            />
+          </motion.div>
+        ))}
       </div>
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,28,19,0.96)_0%,rgba(4,28,19,0.87)_38%,rgba(4,28,19,0.24)_72%,rgba(4,28,19,0.12)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,28,19,0.9)_0%,transparent_40%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,28,19,0.48)_0%,rgba(4,28,19,0.435)_38%,rgba(4,28,19,0.12)_72%,rgba(4,28,19,0.06)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,28,19,0.45)_0%,transparent_40%)]" />
       <div className="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(#fff_0.7px,transparent_0.7px)] [background-size:7px_7px]" />
       <div className="hero-grid pointer-events-none absolute inset-0" />
 

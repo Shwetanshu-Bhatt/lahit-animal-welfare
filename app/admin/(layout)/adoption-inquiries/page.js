@@ -11,6 +11,7 @@ export default function AdoptionInquiriesPage() {
   const [filter, setFilter] = useState('all');
   const [processing, setProcessing] = useState(null);
   const [error, setError] = useState('');
+  const [pendingStatusUpdate, setPendingStatusUpdate] = useState(null);
 
   useEffect(() => {
     fetch('/api/adoption-inquiries', { cache: 'no-store' })
@@ -25,7 +26,20 @@ export default function AdoptionInquiriesPage() {
     [filter, inquiries]
   );
 
-  async function updateStatus(id, status) {
+  async function updateStatus(id, status, skipWarning = false) {
+    const inquiry = inquiries.find((item) => item._id === id);
+    const previousStatus = inquiry?.status;
+
+    if (!skipWarning && (previousStatus === 'approved' || previousStatus === 'rejected')) {
+      setPendingStatusUpdate({
+        id,
+        status,
+        previousStatus,
+        animalName: inquiry?.animalName || 'this animal',
+      });
+      return;
+    }
+
     setProcessing(id);
     setError('');
     try {
@@ -43,6 +57,7 @@ export default function AdoptionInquiriesPage() {
       setError('Could not update adoption inquiry');
     } finally {
       setProcessing(null);
+      setPendingStatusUpdate(null);
     }
   }
 
@@ -68,6 +83,39 @@ export default function AdoptionInquiriesPage() {
 
   return (
     <div>
+      {pendingStatusUpdate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/30 p-4 backdrop-blur-[2px]">
+          <div className="w-full max-w-md rounded-3xl border border-primary/10 bg-base-100 p-6 shadow-2xl">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="inline-flex items-center rounded-full bg-warning/10 px-2.5 py-1 text-xs font-black uppercase tracking-[0.12em] text-warning">
+                Warning
+              </span>
+            </div>
+            <h3 className="text-2xl font-black tracking-[-0.04em] text-primary">Change adoption status?</h3>
+            <p className="mt-3 text-sm leading-relaxed text-primary/65">
+              This request is already marked as <span className="font-bold text-primary">{pendingStatusUpdate.previousStatus}</span>.
+              Changing it again will also update the linked animal record for <span className="font-bold text-primary">{pendingStatusUpdate.animalName}</span> and may change its availability.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingStatusUpdate(null)}
+                className="btn btn-ghost btn-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => updateStatus(pendingStatusUpdate.id, pendingStatusUpdate.status, true)}
+                className="btn btn-warning btn-sm"
+              >
+                Continue update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="admin-page-heading">
         <div><span className="admin-eyebrow">Adoption workflow</span><h2>Adoption inbox</h2><p>Applications submitted from published animal profiles arrive here.</p></div>
         <div className="flex flex-wrap gap-2">

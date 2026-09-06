@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import AdoptionInquiry from '@/models/AdoptionInquiry';
+import Animal from '@/models/Animal';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
+
+const inquiryStatusToAnimalStatus = {
+  new: 'pending',
+  contacted: 'pending',
+  screening: 'pending',
+  approved: 'adopted',
+  rejected: 'available',
+};
 
 export async function PUT(request, { params }) {
   try {
@@ -12,8 +21,28 @@ export async function PUT(request, { params }) {
     await connectDB();
     const { id } = await params;
     const { status } = await request.json();
-    const inquiry = await AdoptionInquiry.findByIdAndUpdate(id, { status, updatedAt: new Date() }, { returnDocument: 'after', runValidators: true });
-    if (!inquiry) return NextResponse.json({ success: false, error: 'Adoption inquiry not found' }, { status: 404 });
+
+    const currentInquiry = await AdoptionInquiry.findById(id);
+    if (!currentInquiry) {
+      return NextResponse.json({ success: false, error: 'Adoption inquiry not found' }, { status: 404 });
+    }
+
+    const inquiry = await AdoptionInquiry.findByIdAndUpdate(
+      id,
+      { status, updatedAt: new Date() },
+      { returnDocument: 'after', runValidators: true }
+    );
+
+    const nextAnimalStatus = inquiryStatusToAnimalStatus[status] ?? 'available';
+
+    if (inquiry?.animal) {
+      await Animal.findByIdAndUpdate(
+        inquiry.animal,
+        { status: nextAnimalStatus, updatedAt: new Date() },
+        { runValidators: true }
+      );
+    }
+
     return NextResponse.json({ success: true, data: inquiry });
   } catch (error) {
     return apiErrorResponse(error);

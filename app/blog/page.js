@@ -12,6 +12,7 @@ import PublicSiteGate from '@/components/PublicSiteGate';
 export default function BlogPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     fetch('/api/blogs')
@@ -19,6 +20,10 @@ export default function BlogPage() {
       .then((data) => { if (data.success) setPosts(data.data); })
       .finally(() => setLoading(false));
   }, []);
+
+  function handleImageError(id) {
+    setImageErrors(prev => ({ ...prev, [id]: true }));
+  }
 
   return (
     <PublicSiteGate><main className="public-page min-h-screen bg-base-200">
@@ -41,7 +46,11 @@ export default function BlogPage() {
               {posts.map((post) => (
                 <Link key={post._id} href={`/blog/${post.slug}`} className="group overflow-hidden rounded-[1.75rem] border border-primary/10 bg-base-100 shadow-[0_14px_50px_rgba(11,51,36,0.06)]">
                   <div className="relative aspect-[4/3] overflow-hidden bg-primary/8">
-                    {post.coverImage ? <Image src={post.coverImage} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center"><BookOpen className="h-10 w-10 text-primary/25" /></div>}
+                    {post.coverImage && !imageErrors[post._id] ? (
+                      <Image src={post.coverImage} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" onError={() => handleImageError(post._id)} />
+                    ) : (
+                      <div className="flex h-full items-center justify-center"><BookOpen className="h-10 w-10 text-primary/25" /></div>
+                    )}
                     <span className="absolute top-4 left-4 rounded-full bg-accent px-3 py-1.5 text-[0.62rem] font-black uppercase tracking-[0.1em] text-primary">{post.category}</span>
                   </div>
                   <div className="p-6">

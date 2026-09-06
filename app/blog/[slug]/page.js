@@ -14,6 +14,7 @@ export default function BlogDetailPage() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -41,7 +42,11 @@ export default function BlogDetailPage() {
             </Container>
           </header>
           <Container size="md" className="py-10 sm:py-14 lg:py-20">
-            {post.coverImage && <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-[1.5rem] sm:mb-12 sm:rounded-[2rem]"><Image src={post.coverImage} alt={post.title} fill priority className="object-cover" /></div>}
+            {post.coverImage && !imageError ? (
+              <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-[1.5rem] sm:mb-12 sm:rounded-[2rem]">
+                <Image src={post.coverImage} alt={post.title} fill priority className="object-cover" onError={() => setImageError(true)} />
+              </div>
+            ) : null}
             <div className="whitespace-pre-wrap text-base leading-7 text-primary/72 sm:text-lg sm:leading-8">{post.content}</div>
             <div className="mt-12 border-t border-primary/10 pt-6 text-sm font-bold text-primary/45">Written by {post.author}</div>
           </Container>

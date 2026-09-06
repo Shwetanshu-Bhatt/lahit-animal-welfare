@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Trash2, Edit, Eye, EyeOff, FileText } from 'lucide-react';
+import Image from 'next/image';
 import Button from '@/components/ui/Button';
 
 export default function AdminBlogs() {
@@ -24,6 +25,7 @@ export default function AdminBlogs() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
+  const [uploadingCoverImage, setUploadingCoverImage] = useState(false);
 
   useEffect(() => {
     fetchBlogs();
@@ -167,6 +169,56 @@ export default function AdminBlogs() {
       published: true,
       featured: false
     });
+    setUploadingCoverImage(false);
+  }
+
+  async function handleCoverImageUpload(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please choose an image file.' });
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image files must be smaller than 8 MB.' });
+      return;
+    }
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      setMessage({ type: 'error', text: 'Cloudinary upload is not configured yet. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET.' });
+      return;
+    }
+
+    setUploadingCoverImage(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formPayload = new FormData();
+      formPayload.append('file', file);
+      formPayload.append('upload_preset', uploadPreset);
+      formPayload.append('cloud_name', cloudName);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formPayload
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.secure_url) {
+        throw new Error(result.error?.message || 'Failed to upload image.');
+      }
+
+      setFormData(prev => ({ ...prev, coverImage: result.secure_url }));
+      setMessage({ type: 'success', text: 'Cover image uploaded successfully.' });
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || 'Image upload failed.' });
+    } finally {
+      setUploadingCoverImage(false);
+    }
   }
 
   if (loading) {
@@ -248,15 +300,40 @@ export default function AdminBlogs() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-primary mb-2">Cover Image URL</label>
-                  <input
-                    type="text"
-                    name="coverImage"
-                    value={formData.coverImage}
-                    onChange={handleChange}
-                    className="input input-bordered w-full"
-                    placeholder="/images/blog-cover.jpg"
-                  />
+                  <label className="block text-sm font-medium text-primary mb-2">Cover Image</label>
+                  <div className="rounded-xl border border-base-300 bg-base-200/40 p-3">
+                    {formData.coverImage ? (
+                      <div className="relative h-40 w-full overflow-hidden rounded-lg mb-3">
+                        <Image src={formData.coverImage} alt="Blog cover preview" fill unoptimized className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="flex h-40 w-full items-center justify-center rounded-lg border border-dashed border-base-300 text-sm text-primary/60 mb-3">
+                        No cover image selected
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="btn btn-sm btn-primary cursor-pointer">
+                        {uploadingCoverImage ? 'Uploading...' : 'Upload image'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => handleCoverImageUpload(event.target.files?.[0])}
+                        />
+                      </label>
+
+                      {formData.coverImage && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-ghost text-error"
+                          onClick={() => setFormData(prev => ({ ...prev, coverImage: '' }))}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div>

@@ -5,11 +5,18 @@ import { Trash2, Edit, Eye, EyeOff } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
 
+const animalStatusOptions = [
+  { value: 'available', label: 'Available' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'adopted', label: 'Adopted' },
+];
+
 export default function AdminAnimals() {
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState(null);
+  const [statusUpdatingId, setStatusUpdatingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     type: 'Dog',
@@ -27,9 +34,17 @@ export default function AdminAnimals() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState(null);
 
   useEffect(() => {
     fetchAnimals();
+    const handleAnimalsRefresh = () => fetchAnimals();
+    window.addEventListener('adoption-inquiries-changed', handleAnimalsRefresh);
+
+    return () => {
+      window.removeEventListener('adoption-inquiries-changed', handleAnimalsRefresh);
+    };
   }, []);
 
   async function fetchAnimals() {
@@ -62,11 +77,15 @@ export default function AdminAnimals() {
     try {
       const url = editingAnimal ? `/api/animals/${editingAnimal._id}` : '/api/animals';
       const method = editingAnimal ? 'PUT' : 'POST';
+      const sanitizedFormData = {
+        ...formData,
+        published: formData.status === 'adopted' ? false : formData.published
+      };
 
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(sanitizedFormData)
       });
       const data = await res.json();
 
@@ -84,54 +103,163 @@ export default function AdminAnimals() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Are you sure you want to delete this animal?')) return;
-    setDeletingId(id);
+  function openConfirmDialog({ title, message, confirmLabel = 'OK', confirmButtonClass = 'btn-primary', onConfirm }) {
+    setConfirmDialog({
+      title,
+      message,
+      confirmLabel,
+      confirmButtonClass,
+      onConfirm,
+    });
+  }
 
-    try {
-      const res = await fetch(`/api/animals/${id}`, { method: 'DELETE' });
-      const data = await res.json();
-      
-      if (data.success) {
-        setMessage({ type: 'success', text: 'Animal deleted successfully!' });
-        fetchAnimals();
-      } else {
-        setMessage({ type: 'error', text: 'Failed to delete animal.' });
+  function closeConfirmDialog() {
+    setConfirmDialog(null);
+  }
+
+  async function handleDelete(id) {
+    openConfirmDialog({
+      title: 'Delete animal',
+      message: 'Are you sure you want to delete this animal? This action cannot be undone.',
+      confirmLabel: 'Delete',
+      confirmButtonClass: 'btn-error',
+      onConfirm: async () => {
+        closeConfirmDialog();
+        setDeletingId(id);
+
+        try {
+          const res = await fetch(`/api/animals/${id}`, { method: 'DELETE' });
+          const data = await res.json();
+          
+          if (data.success) {
+            setMessage({ type: 'success', text: 'Animal deleted successfully!' });
+            fetchAnimals();
+          } else {
+            setMessage({ type: 'error', text: 'Failed to delete animal.' });
+          }
+        } catch (error) {
+          setMessage({ type: 'error', text: 'Error deleting animal.' });
+        } finally {
+          setDeletingId(null);
+        }
       }
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Error deleting animal.' });
-    } finally {
-      setDeletingId(null);
-    }
+    });
   }
 
   async function togglePublish(animal) {
-    setTogglingId(animal._id);
-    const previousPublished = animal.published;
-    setAnimals(prev => prev.map(a => 
-      a._id === animal._id ? { ...a, published: !animal.published } : a
-    ));
+    const isPublishing = !animal.published;
+    const warningMessage = animal.status === 'adopted'
+      ? 'This animal is already marked as adopted and will be hidden from the public adoption list. Unpublish it now?'
+      : isPublishing
+        ? 'Publish this animal to the public adoption listing?'
+        : 'Unpublish this animal from the public adoption listing?';
+
+    openConfirmDialog({
+      title: isPublishing ? 'Publish animal' : 'Unpublish animal',
+      message: warningMessage,
+      confirmLabel: isPublishing ? 'Publish' : 'Unpublish',
+      confirmButtonClass: isPublishing ? 'btn-primary' : 'btn-warning',
+      onConfirm: async () => {
+        closeConfirmDialog();
+        setTogglingId(animal._id);
+        const previousPublished = animal.published;
+        setAnimals(prev => prev.map(a => 
+          a._id === animal._id ? { ...a, published: isPublishing } : a
+        ));
+
+        try {
+          const res = await fetch(`/api/animals/${animal._id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ published: isPublishing })
+          });
+          const data = await res.json();
+          
+          if (!data.success) {
+            setAnimals(prev => prev.map(a => 
+              a._id === animal._id ? { ...a, published: previousPublished } : a
+            ));
+          } else {
+            setMessage({ type: 'success', text: isPublishing ? 'Animal published successfully.' : 'Animal unpublished successfully.' });
+          }
+        } catch (error) {
+          console.error('Error toggling publish:', error);
+          setAnimals(prev => prev.map(a => 
+            a._id === animal._id ? { ...a, published: previousPublished } : a
+          ));
+        } finally {
+          setTogglingId(null);
+        }
+      }
+    });
+  }
+
+  async function updateAnimalStatus(animal, nextStatus) {
+    const previousStatus = animal.status;
+    const willBeAdopted = nextStatus === 'adopted';
+
+    if (willBeAdopted) {
+      openConfirmDialog({
+        title: 'Mark as adopted',
+        message: 'Changing this animal to adopted will automatically unpublish it from the public adoption list. Continue?',
+        confirmLabel: 'OK',
+        confirmButtonClass: 'btn-primary',
+        onConfirm: async () => {
+          closeConfirmDialog();
+          setStatusUpdatingId(animal._id);
+          const nextPublished = false;
+          setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: nextStatus, published: nextPublished } : item));
+
+          try {
+            const res = await fetch(`/api/animals/${animal._id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: nextStatus, published: nextPublished })
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+              setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
+              setMessage({ type: 'error', text: data.error || 'Failed to update animal status.' });
+            } else {
+              setMessage({ type: 'success', text: 'Animal marked as adopted and automatically unpublished.' });
+            }
+          } catch (error) {
+            console.error('Error updating animal status:', error);
+            setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
+            setMessage({ type: 'error', text: 'Error updating animal status.' });
+          } finally {
+            setStatusUpdatingId(null);
+          }
+        }
+      });
+      return;
+    }
+
+    setStatusUpdatingId(animal._id);
+    const nextPublished = animal.published;
+    setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: nextStatus, published: nextPublished } : item));
 
     try {
       const res = await fetch(`/api/animals/${animal._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ published: !animal.published })
+        body: JSON.stringify({ status: nextStatus, published: nextPublished })
       });
       const data = await res.json();
-      
+
       if (!data.success) {
-        setAnimals(prev => prev.map(a => 
-          a._id === animal._id ? { ...a, published: previousPublished } : a
-        ));
+        setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
+        setMessage({ type: 'error', text: data.error || 'Failed to update animal status.' });
+      } else {
+        setMessage({ type: 'success', text: 'Animal status updated successfully.' });
       }
     } catch (error) {
-      console.error('Error toggling publish:', error);
-      setAnimals(prev => prev.map(a => 
-        a._id === animal._id ? { ...a, published: previousPublished } : a
-      ));
+      console.error('Error updating animal status:', error);
+      setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
+      setMessage({ type: 'error', text: 'Error updating animal status.' });
     } finally {
-      setTogglingId(null);
+      setStatusUpdatingId(null);
     }
   }
 
@@ -148,7 +276,7 @@ export default function AdminAnimals() {
       vaccinated: animal.vaccinated,
       neutered: animal.neutered,
       status: animal.status,
-      published: animal.published
+      published: animal.status === 'adopted' ? false : animal.published
     });
     setShowForm(true);
   }
@@ -169,6 +297,56 @@ export default function AdminAnimals() {
       status: 'available',
       published: true
     });
+    setUploadingImage(false);
+  }
+
+  async function handleImageUpload(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please choose an image file.' });
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image files must be smaller than 8 MB.' });
+      return;
+    }
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      setMessage({ type: 'error', text: 'Cloudinary upload is not configured yet. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET.' });
+      return;
+    }
+
+    setUploadingImage(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formPayload = new FormData();
+      formPayload.append('file', file);
+      formPayload.append('upload_preset', uploadPreset);
+      formPayload.append('cloud_name', cloudName);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formPayload
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.secure_url) {
+        throw new Error(result.error?.message || 'Failed to upload image.');
+      }
+
+      setFormData(prev => ({ ...prev, image: result.secure_url }));
+      setMessage({ type: 'success', text: 'Image uploaded successfully.' });
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || 'Image upload failed.' });
+    } finally {
+      setUploadingImage(false);
+    }
   }
 
   if (loading) {
@@ -194,6 +372,35 @@ export default function AdminAnimals() {
       {message.text && (
         <div className={`alert mb-6 ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
           <span>{message.text}</span>
+        </div>
+      )}
+
+      {confirmDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-base-300 bg-base-100 shadow-2xl">
+            <div className="px-6 pb-4 pt-5">
+              <h3 className="text-xl font-semibold text-primary">{confirmDialog.title}</h3>
+              <p className="mt-3 text-sm text-base-content/70">{confirmDialog.message}</p>
+            </div>
+            <div className="flex justify-end gap-3 border-t border-base-200 bg-base-200/40 px-6 py-4">
+              <button type="button" className="btn btn-ghost" onClick={closeConfirmDialog}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={`btn ${confirmDialog.confirmButtonClass || 'btn-primary'}`}
+                onClick={() => {
+                  if (confirmDialog.onConfirm) {
+                    confirmDialog.onConfirm();
+                  } else {
+                    closeConfirmDialog();
+                  }
+                }}
+              >
+                {confirmDialog.confirmLabel}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -286,16 +493,40 @@ export default function AdminAnimals() {
                 </div>
                 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-primary mb-2">Image URL</label>
-                  <input
-                    type="text"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    required
-                    placeholder="/images/animal.jpg"
-                    className="input input-bordered w-full"
-                  />
+                  <label className="block text-sm font-medium text-primary mb-2">Image</label>
+                  <div className="rounded-xl border border-base-300 bg-base-200/40 p-3">
+                    {formData.image ? (
+                      <div className="relative h-48 w-full overflow-hidden rounded-lg mb-3">
+                        <Image src={formData.image} alt="Animal preview" fill unoptimized className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="flex h-48 w-full items-center justify-center rounded-lg border border-dashed border-base-300 text-sm text-primary/60 mb-3">
+                        No image selected
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="btn btn-sm btn-primary cursor-pointer">
+                        {uploadingImage ? 'Uploading...' : 'Upload image'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => handleImageUpload(event.target.files?.[0])}
+                        />
+                      </label>
+
+                      {formData.image && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-ghost text-error"
+                          onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="md:col-span-2">
@@ -378,55 +609,76 @@ export default function AdminAnimals() {
                   </td>
                 </tr>
               ) : (
-                animals.map((animal) => (
-                  <tr key={animal._id} className="hover:bg-base-200/50">
-                    <td>
-                      <div className="relative w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
-                        {animal.image && (
-                          <Image src={animal.image} alt={animal.name} fill unoptimized className="object-cover" />
-                        )}
-                      </div>
-                    </td>
-                    <td className="font-medium text-primary">{animal.name}</td>
-                    <td className="text-primary/70">{animal.type}</td>
-                    <td className="text-primary/70">{animal.breed}</td>
-                    <td>
-                      <span className={`badge badge-sm ${
-                        animal.status === 'available' ? 'badge-success' :
-                        animal.status === 'adopted' ? 'badge-primary' :
-                        'badge-warning'
-                      }`}>
-                        {animal.status}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => togglePublish(animal)}
-                        disabled={togglingId === animal._id}
-                        className={`btn btn-sm ${animal.published ? 'btn-success' : 'btn-ghost'}`}
-                      >
-                        {togglingId === animal._id ? '...' : animal.published ? 'Yes' : 'No'}
-                      </button>
-                    </td>
-                    <td>
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => editAnimal(animal)}
-                          className="btn btn-sm btn-ghost text-primary"
+                animals.map((animal) => {
+                  const isAutoUnpublished = animal.status === 'adopted';
+                  const isPublished = !isAutoUnpublished && Boolean(animal.published);
+
+                  return (
+                    <tr key={animal._id} className="hover:bg-base-200/50">
+                      <td>
+                        <div className="relative w-12 h-12 bg-base-300 rounded-lg overflow-hidden">
+                          {animal.image && (
+                            <Image src={animal.image} alt={animal.name} fill unoptimized className="object-cover" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="font-medium text-primary">{animal.name}</td>
+                      <td className="text-primary/70">{animal.type}</td>
+                      <td className="text-primary/70">{animal.breed}</td>
+                      <td>
+                        <select
+                          value={animal.status}
+                          disabled={statusUpdatingId === animal._id}
+                          onChange={(event) => updateAnimalStatus(animal, event.target.value)}
+                          className={`select select-bordered select-xs min-w-[120px] ${
+                            animal.status === 'available' ? 'text-success' :
+                            animal.status === 'adopted' ? 'text-primary' :
+                            'text-warning'
+                          }`}
                         >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(animal._id)}
-                          disabled={deletingId === animal._id}
-                          className="btn btn-sm btn-ghost text-error"
-                        >
-                          {deletingId === animal._id ? '...' : <Trash2 className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {animalStatusOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <div className="flex flex-col items-start gap-1">
+                          <button
+                            onClick={() => togglePublish(animal)}
+                            disabled={togglingId === animal._id}
+                            className={`btn btn-sm ${isPublished ? 'btn-success' : 'btn-error'}`}
+                          >
+                            {togglingId === animal._id ? '...' : isPublished ? 'Yes' : 'No'}
+                          </button>
+                          {isAutoUnpublished && (
+                            <span className="text-[10px] font-medium uppercase tracking-wide text-warning">
+                              Auto-unpublished
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => editAnimal(animal)}
+                            className="btn btn-sm btn-ghost text-primary"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(animal._id)}
+                            disabled={deletingId === animal._id}
+                            className="btn btn-sm btn-ghost text-error"
+                          >
+                            {deletingId === animal._id ? '...' : <Trash2 className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

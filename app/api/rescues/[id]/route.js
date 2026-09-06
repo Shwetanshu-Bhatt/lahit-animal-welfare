@@ -8,12 +8,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
   try {
-    if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
     const rescue = await Rescue.findById(id);
     if (!rescue) {
       return NextResponse.json({ success: false, error: 'Rescue not found' }, { status: 404 });
+    }
+    if (!rescue.published && !(await requireAdmin())) {
+      return NextResponse.json({ success: false, error: 'Not authorized' }, { status: 401 });
     }
     return NextResponse.json({ success: true, data: rescue });
   } catch (error) {

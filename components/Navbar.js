@@ -10,9 +10,9 @@ import Container from './ui/Container';
 
 const navLinks = [
   { name: 'Our impact', href: '/#about' },
+  { name: 'Adopt', href: '/#adoption' },
   { name: 'Rescues', href: '/#rescues' },
-  { name: 'Adopt', href: '/animals' },
-  { name: 'Stories', href: '/blog' },
+  { name: 'Blog', href: '/#stories' },
   { name: 'Volunteer', href: '/#volunteer' },
 ];
 
@@ -22,6 +22,18 @@ export default function Navbar() {
   const scrollFrame = useRef(null);
   const pathname = usePathname();
   const useSolidNav = isScrolled || pathname !== '/';
+
+  function scrollToSection(href) {
+    if (!href.startsWith('/#')) return false;
+    if (pathname !== '/') return false;
+    const id = href.replace('/#', '');
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      return true;
+    }
+    return false;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,7 +85,7 @@ export default function Navbar() {
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
             {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} className={`text-[0.78rem] font-bold transition-colors ${useSolidNav ? 'text-primary/70 hover:text-primary' : 'text-white/72 hover:text-white'}`}>
+              <Link key={link.name} href={link.href} onClick={(e) => scrollToSection(link.href)} className={`text-[0.78rem] font-bold transition-colors ${useSolidNav ? 'text-primary/70 hover:text-primary' : 'text-white/72 hover:text-white'}`}>
                 {link.name}
               </Link>
             ))}
@@ -111,7 +123,7 @@ export default function Navbar() {
               className="mobile-navigation-panel absolute inset-x-0 top-[calc(100%+0.55rem)] origin-top overflow-x-hidden overflow-y-auto overscroll-contain rounded-[1.5rem] border border-white/10 bg-primary p-2.5 text-white shadow-2xl lg:hidden"
             >
               {navLinks.map((link) => (
-                <Link key={link.name} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="flex touch-manipulation items-center justify-between rounded-2xl px-4 py-3 font-semibold transition-colors duration-150 hover:bg-white/10 active:bg-white/10">
+                <Link key={link.name} href={link.href} onClick={(e) => { scrollToSection(link.href); setIsMobileMenuOpen(false); }} className="flex touch-manipulation items-center justify-between rounded-2xl px-4 py-3 font-semibold transition-colors duration-150 hover:bg-white/10 active:bg-white/10">
                   {link.name}<ArrowUpRight className="h-4 w-4 text-white/45" />
                 </Link>
               ))}
@@ -132,7 +144,7 @@ export default function Navbar() {
           <Link href="/#emergency" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-secondary text-[0.65rem] font-black uppercase tracking-[0.06em] text-white">
             <Siren className="h-4 w-4" /> Report
           </Link>
-          <Link href="/animals" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-primary/7 text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
+          <Link href="/#adoption" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-primary/7 text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">
             <Dog className="h-4 w-4" /> Adopt
           </Link>
           <Link href="/#donate" className="flex min-h-12 touch-manipulation flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-2xl bg-accent text-[0.65rem] font-black uppercase tracking-[0.06em] text-primary">

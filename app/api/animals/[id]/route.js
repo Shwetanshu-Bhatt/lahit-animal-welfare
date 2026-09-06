@@ -15,7 +15,11 @@ export async function GET(request, { params }) {
     if (!animal) {
       return NextResponse.json({ success: false, error: 'Animal not found' }, { status: 404 });
     }
-    return NextResponse.json({ success: true, data: animal });
+    const normalizedAnimal = {
+      ...animal.toObject(),
+      published: animal.status === 'adopted' ? false : animal.published
+    };
+    return NextResponse.json({ success: true, data: normalizedAnimal });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -27,8 +31,13 @@ export async function PUT(request, { params }) {
     await connectDB();
     const { id } = await params;
     const body = await request.json();
-    body.updatedAt = new Date();
-    const animal = await Animal.findByIdAndUpdate(id, body, { returnDocument: 'after', runValidators: true });
+    const safeBody = { ...body, updatedAt: new Date() };
+
+    if (safeBody.status === 'adopted') {
+      safeBody.published = false;
+    }
+
+    const animal = await Animal.findByIdAndUpdate(id, safeBody, { returnDocument: 'after', runValidators: true });
     if (!animal) {
       return NextResponse.json({ success: false, error: 'Animal not found' }, { status: 404 });
     }

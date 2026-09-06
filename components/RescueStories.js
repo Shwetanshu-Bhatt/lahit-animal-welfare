@@ -7,9 +7,11 @@ import Container from './ui/Container';
 import Card from './ui/Card';
 import Button from './ui/Button';
 import Image from 'next/image';
+import Link from 'next/link';
 
 function RescueCard({ story, index }) {
   const isFeatured = index === 0;
+  const [imgError, setImgError] = useState({ before: false, after: false });
 
   return (
     <motion.div
@@ -17,38 +19,52 @@ function RescueCard({ story, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={isFeatured ? 'lg:col-span-3' : ''}
+      className={isFeatured ? 'lg:col-span-2' : ''}
     >
-      <Card hover={false} className={`rescue-story-card h-full group ${isFeatured ? 'lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-5 lg:p-5' : ''}`} padding="none">
+      <Card hover={false} className={`rescue-story-card h-full group ${isFeatured ? 'lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-5' : ''}`} padding="none">
         {/* Before/After Images */}
-        <div className={`grid grid-cols-2 gap-1 p-4 pb-0 ${isFeatured ? 'lg:gap-2 lg:p-0' : ''}`}>
-          <div className={`relative aspect-square overflow-hidden rounded-xl ${isFeatured ? 'lg:aspect-[4/3]' : ''}`}>
+        <div className={`grid grid-cols-2 gap-1.5 p-3 sm:p-4 ${isFeatured ? 'lg:p-4' : ''}`}>
+          <div className={`relative overflow-hidden rounded-xl ${isFeatured ? 'lg:aspect-[4/3]' : 'aspect-square'}`}>
             <div className="absolute top-2 left-2 z-10 rounded-full bg-primary/80 px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] text-white backdrop-blur-sm">
               Before
             </div>
-            <Image
-              src={story.beforeImage}
-              alt={`${story.name} before rescue`}
-              fill
-              className="rescue-story-image object-cover"
-            />
+            {!imgError.before && story.beforeImage ? (
+              <Image
+                src={story.beforeImage}
+                alt={`${story.name} before rescue`}
+                fill
+                className="rescue-story-image object-cover"
+                onError={() => setImgError(prev => ({ ...prev, before: true }))}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-base-200 text-primary/40">
+                <span className="text-xs font-semibold">Image unavailable</span>
+              </div>
+            )}
           </div>
-          <div className={`relative aspect-square overflow-hidden rounded-xl ${isFeatured ? 'lg:aspect-[4/3]' : ''}`}>
+          <div className={`relative overflow-hidden rounded-xl ${isFeatured ? 'lg:aspect-[4/3]' : 'aspect-square'}`}>
             <div className="absolute top-2 left-2 z-10 rounded-full bg-primary px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.1em] text-white backdrop-blur-sm">
               After
             </div>
-            <Image
-              src={story.afterImage}
-              alt={`${story.name} after recovery`}
-              fill
-              className="rescue-story-image object-cover"
-            />
+            {!imgError.after && story.afterImage ? (
+              <Image
+                src={story.afterImage}
+                alt={`${story.name} after recovery`}
+                fill
+                className="rescue-story-image object-cover"
+                onError={() => setImgError(prev => ({ ...prev, after: true }))}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-base-200 text-primary/40">
+                <span className="text-xs font-semibold">Image unavailable</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Content */}
-        <div className={`${isFeatured ? 'lg:flex lg:flex-col lg:justify-center lg:p-8' : ''} p-6`}>
-          {isFeatured && <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full bg-accent px-3 py-1.5 text-[0.6rem] font-black uppercase tracking-[0.12em] text-primary">Featured rescue <span className="h-1.5 w-1.5 rounded-full bg-secondary" /></span>}
+        <div className={`${isFeatured ? 'lg:flex lg:flex-col lg:justify-center lg:p-6' : ''} p-4 sm:p-6`}>
+          {isFeatured && <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-accent px-3 py-1.5 text-[0.6rem] font-black uppercase tracking-[0.12em] text-primary">Featured rescue <span className="h-1.5 w-1.5 rounded-full bg-secondary" /></span>}
           <div className="flex items-center gap-4 mb-3 text-sm text-primary/60">
             <span className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -60,7 +76,7 @@ function RescueCard({ story, index }) {
             </span>
           </div>
 
-          <h3 className={`${isFeatured ? 'text-3xl sm:text-4xl' : 'text-xl'} mb-2 font-bold text-primary`}>
+          <h3 className={`${isFeatured ? 'text-2xl sm:text-3xl lg:text-4xl' : 'text-xl'} mb-2 font-bold text-primary`}>
             Meet {story.name}
           </h3>
           <p className="text-primary/70 text-sm leading-relaxed mb-4">
@@ -71,10 +87,10 @@ function RescueCard({ story, index }) {
             <span className="badge badge-primary badge-outline">
               {story.type}
             </span>
-            <button className="group/story flex items-center gap-2 text-sm font-bold text-primary">
+            <Link href={`/rescues/${story._id}`} className="group/story flex items-center gap-2 text-sm font-bold text-primary">
               <span>Read Story</span>
               <span className="rescue-story-arrow flex h-8 w-8 items-center justify-center rounded-full border border-primary/15"><ArrowRight className="h-4 w-4" /></span>
-            </button>
+            </Link>
           </div>
         </div>
       </Card>
@@ -95,7 +111,7 @@ export default function RescueStories() {
         const res = await fetch('/api/rescues');
         const data = await res.json();
         if (data.success) {
-          setRescues(data.data);
+          setRescues(data.data.slice(0, 3));
         } else {
           setError('Failed to load rescues');
         }
@@ -145,9 +161,11 @@ export default function RescueStories() {
             No rescue stories available yet.
           </div>
         ) : (
-          <div className="grid gap-4 mb-10 sm:grid-cols-2 sm:gap-6 sm:mb-12 lg:grid-cols-3">
+          <div className="mb-10 grid gap-4 sm:gap-6 sm:mb-12 lg:grid-cols-2">
             {rescues.map((story, index) => (
-              <RescueCard key={story._id || index} story={story} index={index} />
+              <div key={story._id || index} className={index === 0 ? 'lg:col-span-2' : ''}>
+                <RescueCard story={story} index={index} />
+              </div>
             ))}
           </div>
         )}
@@ -161,7 +179,7 @@ export default function RescueStories() {
           className="text-center"
         >
           <Button
-            href="#rescues"
+            href="/rescues"
             variant="outline"
             size="lg"
             icon={ArrowRight}

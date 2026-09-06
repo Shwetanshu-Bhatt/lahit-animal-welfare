@@ -24,6 +24,7 @@ export default function AdminRescues() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState({ beforeImage: false, afterImage: false });
 
   useEffect(() => {
     fetchRescues();
@@ -54,6 +55,12 @@ export default function AdminRescues() {
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage({ type: '', text: '' });
+
+    if (!formData.beforeImage || !formData.afterImage) {
+      setMessage({ type: 'error', text: 'Please upload both before and after images.' });
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -160,6 +167,56 @@ export default function AdminRescues() {
       date: '',
       published: true
     });
+    setUploadingImage({ beforeImage: false, afterImage: false });
+  }
+
+  async function handleImageUpload(fieldName, file) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please choose an image file.' });
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image files must be smaller than 8 MB.' });
+      return;
+    }
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      setMessage({ type: 'error', text: 'Cloudinary upload is not configured yet. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET.' });
+      return;
+    }
+
+    setUploadingImage(prev => ({ ...prev, [fieldName]: true }));
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formPayload = new FormData();
+      formPayload.append('file', file);
+      formPayload.append('upload_preset', uploadPreset);
+      formPayload.append('cloud_name', cloudName);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formPayload
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.secure_url) {
+        throw new Error(result.error?.message || 'Failed to upload image.');
+      }
+
+      setFormData(prev => ({ ...prev, [fieldName]: result.secure_url }));
+      setMessage({ type: 'success', text: 'Image uploaded successfully.' });
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || 'Image upload failed.' });
+    } finally {
+      setUploadingImage(prev => ({ ...prev, [fieldName]: false }));
+    }
   }
 
   if (loading) {
@@ -250,29 +307,77 @@ export default function AdminRescues() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-primary mb-2">Before Image URL</label>
-                  <input
-                    type="text"
-                    name="beforeImage"
-                    value={formData.beforeImage}
-                    onChange={handleChange}
-                    required
-                    placeholder="/images/rescue-before.jpg"
-                    className="input input-bordered w-full"
-                  />
+                  <label className="block text-sm font-medium text-primary mb-2">Before Image</label>
+                  <div className="rounded-xl border border-base-300 bg-base-200/40 p-3">
+                    {formData.beforeImage ? (
+                      <div className="relative h-36 w-full overflow-hidden rounded-lg mb-3">
+                        <Image src={formData.beforeImage} alt="Before rescue preview" fill unoptimized className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="flex h-36 w-full items-center justify-center rounded-lg border border-dashed border-base-300 text-sm text-primary/60 mb-3">
+                        No before image selected
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="btn btn-sm btn-primary cursor-pointer">
+                        {uploadingImage.beforeImage ? 'Uploading...' : 'Upload image'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => handleImageUpload('beforeImage', event.target.files?.[0])}
+                        />
+                      </label>
+
+                      {formData.beforeImage && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-ghost text-error"
+                          onClick={() => setFormData(prev => ({ ...prev, beforeImage: '' }))}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-primary mb-2">After Image URL</label>
-                  <input
-                    type="text"
-                    name="afterImage"
-                    value={formData.afterImage}
-                    onChange={handleChange}
-                    required
-                    placeholder="/images/rescue-after.jpg"
-                    className="input input-bordered w-full"
-                  />
+                  <label className="block text-sm font-medium text-primary mb-2">After Image</label>
+                  <div className="rounded-xl border border-base-300 bg-base-200/40 p-3">
+                    {formData.afterImage ? (
+                      <div className="relative h-36 w-full overflow-hidden rounded-lg mb-3">
+                        <Image src={formData.afterImage} alt="After rescue preview" fill unoptimized className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="flex h-36 w-full items-center justify-center rounded-lg border border-dashed border-base-300 text-sm text-primary/60 mb-3">
+                        No after image selected
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="btn btn-sm btn-primary cursor-pointer">
+                        {uploadingImage.afterImage ? 'Uploading...' : 'Upload image'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => handleImageUpload('afterImage', event.target.files?.[0])}
+                        />
+                      </label>
+
+                      {formData.afterImage && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-ghost text-error"
+                          onClick={() => setFormData(prev => ({ ...prev, afterImage: '' }))}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="md:col-span-2">

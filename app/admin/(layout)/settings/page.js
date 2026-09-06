@@ -77,7 +77,7 @@ export default function AdminSettings() {
     const incompletePost = (settings.instagramPosts || []).find((post) => !isLikelyImageSource(post.image));
     if (incompletePost) {
       setActiveTab('social');
-      setMessage({ type: 'error', text: 'Each homepage Instagram card needs a display image. Upload one or enter a direct image URL.' });
+      setMessage({ type: 'error', text: 'Each homepage Instagram card needs a display image. Upload one to continue.' });
       return;
     }
     setSaving(true);
@@ -558,14 +558,6 @@ export default function AdminSettings() {
                           <input type="url" value={post.postUrl || ''} onChange={(event) => handleInstagramPostChange(index, 'postUrl', event.target.value)} placeholder="https://www.instagram.com/p/POST_ID/" className="input input-bordered w-full" />
                           <span className="mt-1.5 block text-xs text-primary/45">Used when someone clicks this card. This is not the display image.</span>
                         </label>
-                        <details className="rounded-2xl border border-primary/10 bg-white px-4 py-3">
-                          <summary className="cursor-pointer text-xs font-bold text-primary/60">Use a hosted image URL instead</summary>
-                          <label className="mt-3 block">
-                            <span className="mb-2 block text-xs font-bold text-primary">Direct image URL</span>
-                            <input type="url" value={post.image?.startsWith('data:image/') ? '' : post.image || ''} onChange={(event) => handleInstagramPostChange(index, 'image', event.target.value)} placeholder="https://example.com/photo.jpg" className="input input-bordered w-full" />
-                            <span className="mt-1.5 block text-xs text-primary/45">Must open the image itself—not an Instagram page.</span>
-                          </label>
-                        </details>
                       </div>
                     </div>
                   </div>
