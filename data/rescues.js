@@ -63,6 +63,13 @@ export const rescueStories = [
 
 export const rescueLocations = [
   {
+    id: 'uttarkashi-base',
+    name: 'Uttarkashi',
+    coordinates: [30.7268, 78.4354],
+    address: 'Uttarkashi, Uttarakhand',
+    isBase: true
+  },
+  {
     id: 1,
     name: 'Dehradun Rescue Center',
     coordinates: [30.3165, 78.0322],
@@ -78,12 +85,6 @@ export const rescueLocations = [
   },
   {
     id: 3,
-    name: 'Uttarkashi Shelter',
-    coordinates: [30.7268, 78.4354],
-    address: 'Main Market, Uttarkashi',
-    animalsHelped: 95
-  },
-  {
     id: 4,
     name: 'Rishikesh Care Unit',
     coordinates: [30.0869, 78.2676],

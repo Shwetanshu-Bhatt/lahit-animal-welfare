@@ -64,7 +64,7 @@ export default function Navbar() {
       <header className="mobile-site-header fixed top-0 z-50">
         <Container
           size="xl"
-          className={`relative min-w-0 !px-3 py-2.5 sm:!px-5 rounded-full border transition-[background-color,border-color,box-shadow,color] duration-200 sm:backdrop-blur-xl ${
+          className={`site-nav-container relative min-w-0 !px-3 py-2.5 sm:!px-5 rounded-full border transition-[background-color,border-color,box-shadow,color] duration-200 sm:backdrop-blur-xl ${
             useSolidNav
               ? 'border-primary/10 bg-base-100 text-primary shadow-[0_12px_36px_rgba(11,51,36,0.12)] sm:bg-base-100/95'
               : 'border-white/20 bg-primary/90 text-white sm:bg-primary/25'

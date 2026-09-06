@@ -144,10 +144,10 @@ export default function ImpactStats() {
           </div>
           <div className="grid grid-cols-2 border-t border-white/15 lg:border-t-0 lg:border-l">
             {[
-              [stats?.citiesCovered || 15, 'Cities covered'],
-              [stats?.volunteers || 50, 'Volunteers'],
-              [stats?.partnerVets || 10, 'Partner vets'],
-              [stats?.yearsActive || 4, 'Years active'],
+              [stats?.citiesCovered ?? 15, 'Cities covered'],
+              [stats?.volunteers ?? 0, 'Volunteers'],
+              [stats?.partnerVets ?? 10, 'Partner vets'],
+              [stats?.yearsActive ?? 4, 'Years active'],
             ].map(([value, label]) => (
               <div key={label} className="flex min-h-28 flex-col justify-end border-r border-b border-white/15 p-5 even:border-r-0 last:border-b-0 sm:min-h-44 sm:p-8 [&:nth-last-child(2)]:border-b-0">
                 <p className="text-3xl font-black tracking-[-0.06em] text-accent sm:text-4xl">{value}+</p>

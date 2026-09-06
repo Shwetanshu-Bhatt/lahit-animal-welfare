@@ -14,7 +14,7 @@ const heroSlides = [
   },
   {
     src: '/images/rescue-hero-v3.webp',
-    alt: 'Volunteers caring for rescued dogs at an animal shelter',
+    alt: 'Volunteers caring for rescued dogs in Uttarakhand',
   },
   {
     src: '/images/rescue-hero-v5.webp',
@@ -27,7 +27,7 @@ const heroSlides = [
 ];
 
 export default function HeroSection() {
-  const [stats, setStats] = useState({ animalsRescued: 1200, volunteers: 50 });
+  const [stats, setStats] = useState({ animalsRescued: 1200, volunteers: 0 });
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(#fff_0.7px,transparent_0.7px)] [background-size:7px_7px]" />
       <div className="hero-grid pointer-events-none absolute inset-0" />
 
-      <Container className="relative z-10 flex min-h-[100svh] flex-col pt-28 pb-24 sm:pt-36 lg:pt-44 lg:pb-5">
+      <Container className="hero-viewport-container relative z-10 flex min-h-[100svh] flex-col pt-28 pb-24 sm:pt-36 lg:pt-44 lg:pb-5">
         <div className="my-auto max-w-4xl py-8 sm:pb-16 lg:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -92,7 +92,7 @@ export default function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, delay: 0.08 }}
             aria-label="Every life deserves a rescue."
-            className="display-title max-w-4xl text-[3.15rem] uppercase min-[380px]:text-[3.55rem] sm:text-[5.7rem] lg:text-[7.6rem] xl:text-[8.4rem]"
+            className="display-title hero-display-title max-w-4xl uppercase text-[3.15rem] min-[380px]:text-[3.55rem] sm:text-[5.7rem]"
           >
             {['Every life', 'deserves', 'a rescue.'].map((line, index) => (
               <span key={line} className="hero-title-line">
@@ -133,7 +133,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.45 }}
-          className="mt-12 border-t border-white/20 pt-5 sm:mt-16 sm:pt-6"
+          className="mt-12 border-t border-white/20 pt-5 sm:mt-16 sm:pt-6 lg:absolute lg:inset-x-10 lg:bottom-5 lg:mt-0"
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <span className="eyebrow text-[0.64rem] text-white/55">Our impact</span>

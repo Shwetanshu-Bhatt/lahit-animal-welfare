@@ -16,6 +16,7 @@ export default function EmergencyRescue() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [volunteerCount, setVolunteerCount] = useState(0);
   const [reportImage, setReportImage] = useState('');
   const [imageError, setImageError] = useState('');
 
@@ -24,6 +25,15 @@ export default function EmergencyRescue() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data.contactPhone) setContactPhone(data.data.contactPhone);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setVolunteerCount(Number(data.data.volunteers) || 0);
       })
       .catch(() => {});
   }, []);
@@ -236,7 +246,7 @@ export default function EmergencyRescue() {
                   <p className="text-sm text-primary/70">Min Avg Response</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-primary">50+</p>
+                  <p className="text-3xl font-bold text-primary">{volunteerCount}+</p>
                   <p className="text-sm text-primary/70">Active Volunteers</p>
                 </div>
               </div>

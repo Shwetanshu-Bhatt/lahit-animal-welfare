@@ -419,6 +419,22 @@ button {
   }
 }
 
+@media (min-width: 1024px) {
+  .hero-display-title {
+    font-size: clamp(5.7rem, 6.3vw, 8.4rem);
+  }
+
+  .hero-viewport-container {
+    width: 66.666667vw;
+    max-width: none;
+  }
+
+  .site-nav-container {
+    width: 75vw;
+    max-width: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -6,6 +6,22 @@ import { MapPin, Navigation, Loader2 } from 'lucide-react';
 import Container from './ui/Container';
 import dynamic from 'next/dynamic';
 
+const uttarkashiBase = {
+  id: 'uttarkashi-base',
+  name: 'Uttarkashi',
+  coordinates: [30.7268, 78.4354],
+  address: 'Uttarkashi, Uttarakhand',
+  isBase: true,
+};
+const removeShelterLocations = (locations = []) => locations.filter((location) => !/shelter/i.test(location.name || ''));
+const prepareLocations = (locations = []) => {
+  const visibleLocations = removeShelterLocations(locations);
+  const hasUttarkashi = visibleLocations.some((location) => /uttarkashi/i.test(location.name || ''));
+  return hasUttarkashi
+    ? visibleLocations.map((location) => /uttarkashi/i.test(location.name || '') ? { ...uttarkashiBase, ...location, isBase: true } : location)
+    : [uttarkashiBase, ...visibleLocations];
+};
+
 // Dynamically import Leaflet components to avoid SSR issues
 const MapContainer = dynamic(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
@@ -64,13 +80,12 @@ function MapComponent({ locations }) {
     );
   }
 
-  // Center of Uttarakhand
-  const center = [30.0668, 79.0193];
+  const center = [30.7268, 78.4354];
 
   return (
     <MapContainer
       center={center}
-      zoom={8}
+      zoom={9}
       scrollWheelZoom={false}
       className="w-full h-full rounded-3xl z-0"
       style={{ height: '100%' }}
@@ -90,7 +105,7 @@ function MapComponent({ locations }) {
               <h3 className="font-bold text-[#401E01] mb-1">{location.name}</h3>
               <p className="text-sm text-[#401E01]/70 mb-2">{location.address}</p>
               <p className="text-sm font-medium text-[#164020]">
-                {location.animalsHelped}+ animals helped
+                {location.isBase ? 'NGO base' : `${location.animalsHelped}+ animals helped`}
               </p>
             </div>
           </Popup>
@@ -104,9 +119,9 @@ export default function RescueMap() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [locations, setLocations] = useState([
+    uttarkashiBase,
     { id: 1, name: 'Dehradun Rescue Center', coordinates: [30.3165, 78.0322], address: 'Rajpur Road, Dehradun', animalsHelped: 450 },
     { id: 2, name: 'Mussoorie Feeding Point', coordinates: [30.4598, 78.0644], address: 'Mall Road, Mussoorie', animalsHelped: 180 },
-    { id: 3, name: 'Uttarkashi Shelter', coordinates: [30.7268, 78.4354], address: 'Main Market, Uttarkashi', animalsHelped: 95 },
     { id: 4, name: 'Rishikesh Care Unit', coordinates: [30.0869, 78.2676], address: 'Laxman Jhula Road, Rishikesh', animalsHelped: 220 },
     { id: 5, name: 'Haridwar Help Center', coordinates: [29.9457, 78.1642], address: 'Near Har Ki Pauri, Haridwar', animalsHelped: 165 }
   ]);
@@ -118,7 +133,7 @@ export default function RescueMap() {
         const res = await fetch('/api/settings');
         const data = await res.json();
         if (data.success && data.data.rescueLocations && data.data.rescueLocations.length > 0) {
-          setLocations(data.data.rescueLocations);
+          setLocations(prepareLocations(data.data.rescueLocations));
         }
       } catch (error) {
         console.error('Error fetching settings:', error);
@@ -147,8 +162,7 @@ export default function RescueMap() {
             Rescue Locations
           </h2>
           <p className="text-lg text-[#401E01]/70 max-w-2xl mx-auto">
-            We operate across Uttarakhand, with active rescue centers and feeding 
-            points in multiple cities. Click on the markers to learn more.
+            Based in Uttarkashi, Uttarakhand, we coordinate rescue support and feeding points across the region.
           </p>
         </motion.div>
 
@@ -218,7 +232,7 @@ export default function RescueMap() {
                       {location.name}
                     </h4>
                     <p className="text-xs text-[#401E01]/60">
-                      {location.animalsHelped}+ animals helped
+                      {location.isBase ? 'NGO base' : `${location.animalsHelped}+ animals helped`}
                     </p>
                   </div>
                 </div>

@@ -15,7 +15,7 @@ export default function VolunteerSection() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [volunteerCount, setVolunteerCount] = useState(50);
+const [volunteerCount, setVolunteerCount] = useState(0);
   const [activities, setActivities] = useState([
     'Animal Rescue Operations',
     'Daily Feeding Drives',
