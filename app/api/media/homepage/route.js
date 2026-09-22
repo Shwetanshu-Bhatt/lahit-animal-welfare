@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
 import { apiErrorResponse } from '@/lib/api-error';
+import { PUBLIC_CACHE_CONTROL } from '@/lib/cache-headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +29,7 @@ export async function GET() {
         hero: normalizedMedia.filter((item) => item.category === 'hero'),
         volunteer: volunteerImages.at(-1) || null,
       },
-    }, { headers: { 'Cache-Control': 'no-store' } });
+    }, { headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL } });
   } catch (error) {
     return apiErrorResponse(error);
   }

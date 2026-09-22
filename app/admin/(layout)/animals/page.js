@@ -12,12 +12,17 @@ const animalStatusOptions = [
   { value: 'adopted', label: 'Adopted' },
 ];
 
+const animalStatusMeta = {
+  available: { label: 'Available', description: 'Accepting applications', className: 'bg-success/10 text-success' },
+  pending: { label: 'Pending', description: 'Application in progress', className: 'bg-warning/15 text-warning' },
+  adopted: { label: 'Adopted', description: 'Permanently unavailable', className: 'bg-primary/10 text-primary/65' },
+};
+
 export default function AdminAnimals() {
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState(null);
-  const [statusUpdatingId, setStatusUpdatingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     type: 'Dog',
@@ -136,7 +141,7 @@ export default function AdminAnimals() {
             setMessage({ type: 'success', text: 'Animal deleted successfully!' });
             fetchAnimals();
           } else {
-            setMessage({ type: 'error', text: 'Failed to delete animal.' });
+            setMessage({ type: 'error', text: data.error || 'Failed to delete animal.' });
           }
         } catch (error) {
           setMessage({ type: 'error', text: 'Error deleting animal.' });
@@ -148,10 +153,9 @@ export default function AdminAnimals() {
   }
 
   async function togglePublish(animal) {
+    if (animal.status === 'adopted') return;
     const isPublishing = !animal.published;
-    const warningMessage = animal.status === 'adopted'
-      ? 'This animal is already marked as adopted and will be hidden from the public adoption list. Unpublish it now?'
-      : isPublishing
+    const warningMessage = isPublishing
         ? 'Publish this animal to the public adoption listing?'
         : 'Unpublish this animal from the public adoption listing?';
 
@@ -193,75 +197,6 @@ export default function AdminAnimals() {
         }
       }
     });
-  }
-
-  async function updateAnimalStatus(animal, nextStatus) {
-    const previousStatus = animal.status;
-    const willBeAdopted = nextStatus === 'adopted';
-
-    if (willBeAdopted) {
-      openConfirmDialog({
-        title: 'Mark as adopted',
-        message: 'Changing this animal to adopted will automatically unpublish it from the public adoption list. Continue?',
-        confirmLabel: 'OK',
-        confirmButtonClass: 'btn-primary',
-        onConfirm: async () => {
-          closeConfirmDialog();
-          setStatusUpdatingId(animal._id);
-          const nextPublished = false;
-          setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: nextStatus, published: nextPublished } : item));
-
-          try {
-            const res = await fetch(`/api/animals/${animal._id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ status: nextStatus, published: nextPublished })
-            });
-            const data = await res.json();
-
-            if (!data.success) {
-              setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
-              setMessage({ type: 'error', text: data.error || 'Failed to update animal status.' });
-            } else {
-              setMessage({ type: 'success', text: 'Animal marked as adopted and automatically unpublished.' });
-            }
-          } catch (error) {
-            console.error('Error updating animal status:', error);
-            setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
-            setMessage({ type: 'error', text: 'Error updating animal status.' });
-          } finally {
-            setStatusUpdatingId(null);
-          }
-        }
-      });
-      return;
-    }
-
-    setStatusUpdatingId(animal._id);
-    const nextPublished = animal.published;
-    setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: nextStatus, published: nextPublished } : item));
-
-    try {
-      const res = await fetch(`/api/animals/${animal._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: nextStatus, published: nextPublished })
-      });
-      const data = await res.json();
-
-      if (!data.success) {
-        setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
-        setMessage({ type: 'error', text: data.error || 'Failed to update animal status.' });
-      } else {
-        setMessage({ type: 'success', text: 'Animal status updated successfully.' });
-      }
-    } catch (error) {
-      console.error('Error updating animal status:', error);
-      setAnimals(prev => prev.map((item) => item._id === animal._id ? { ...item, status: previousStatus, published: animal.published } : item));
-      setMessage({ type: 'error', text: 'Error updating animal status.' });
-    } finally {
-      setStatusUpdatingId(null);
-    }
   }
 
   function editAnimal(animal) {
@@ -469,6 +404,9 @@ export default function AdminAnimals() {
                     <option value="adopted">Adopted</option>
                     <option value="pending">Pending</option>
                   </select>
+                  <p className="mt-2 text-xs leading-5 text-primary/50">
+                    Pending means an adoption application is being handled. Adopted animals are always removed from the public listing.
+                  </p>
                 </div>
                 
                 <div className="md:col-span-2">
@@ -575,8 +513,8 @@ export default function AdminAnimals() {
                 <th className="text-primary">Name</th>
                 <th className="text-primary">Type</th>
                 <th className="text-primary">Breed</th>
-                <th className="text-primary">Status</th>
-                <th className="text-primary">Published</th>
+                <th className="text-primary">Adoption state</th>
+                <th className="text-primary">Public listing</th>
                 <th className="text-right text-primary">Actions</th>
               </tr>
             </thead>
@@ -591,6 +529,7 @@ export default function AdminAnimals() {
                 animals.map((animal) => {
                   const isAutoUnpublished = animal.status === 'adopted';
                   const isPublished = !isAutoUnpublished && Boolean(animal.published);
+                  const statusMeta = animalStatusMeta[animal.status] || animalStatusMeta.available;
 
                   return (
                     <tr key={animal._id} className="hover:bg-base-200/50">
@@ -605,54 +544,61 @@ export default function AdminAnimals() {
                       <td className="text-primary/70">{animal.type}</td>
                       <td className="text-primary/70">{animal.breed}</td>
                       <td>
-                        <select
-                          value={animal.status}
-                          disabled={statusUpdatingId === animal._id}
-                          onChange={(event) => updateAnimalStatus(animal, event.target.value)}
-                          className={`select select-bordered select-xs min-w-[120px] ${
-                            animal.status === 'available' ? 'text-success' :
-                            animal.status === 'adopted' ? 'text-primary' :
-                            'text-warning'
-                          }`}
-                        >
-                          {animalStatusOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusMeta.className}`}>
+                            {statusMeta.label}
+                          </span>
+                          <span className="text-[10px] font-medium text-primary/45">{statusMeta.description}</span>
+                        </div>
                       </td>
                       <td>
-                        <div className="flex flex-col items-start gap-1">
+                        {isAutoUnpublished ? (
+                          <div className="flex flex-col items-start gap-1">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary/65">
+                              <EyeOff className="h-3.5 w-3.5" /> Hidden
+                            </span>
+                            <span className="text-[10px] font-medium uppercase tracking-wide text-warning">Auto-unpublished</span>
+                          </div>
+                        ) : (
                           <button
+                            type="button"
                             onClick={() => togglePublish(animal)}
                             disabled={togglingId === animal._id}
-                            className={`btn btn-sm ${isPublished ? 'btn-success' : 'btn-error'}`}
+                            className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold transition-colors ${isPublished ? 'bg-success/15 text-success hover:bg-success/25' : 'bg-error/10 text-error hover:bg-error/20'}`}
+                            title={isPublished ? 'Hide from public adoption listings' : 'Show on public adoption listings'}
                           >
-                            {togglingId === animal._id ? '...' : isPublished ? 'Yes' : 'No'}
+                            {togglingId === animal._id ? <span className="loading loading-spinner loading-xs" /> : isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                            {togglingId === animal._id ? 'Updating' : isPublished ? 'Visible' : 'Hidden'}
                           </button>
-                          {isAutoUnpublished && (
-                            <span className="text-[10px] font-medium uppercase tracking-wide text-warning">
-                              Auto-unpublished
-                            </span>
-                          )}
-                        </div>
+                        )}
                       </td>
                       <td>
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            type="button"
                             onClick={() => editAnimal(animal)}
                             className="btn btn-sm btn-ghost text-primary"
+                            title={`Edit ${animal.name}`}
+                            aria-label={`Edit ${animal.name}`}
                           >
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(animal._id)}
-                            disabled={deletingId === animal._id}
-                            className="btn btn-sm btn-ghost text-error"
-                          >
-                            {deletingId === animal._id ? '...' : <Trash2 className="w-4 h-4" />}
-                          </button>
+                          {animal.status === 'adopted' ? (
+                            <span className="px-2 text-[10px] font-bold uppercase tracking-wide text-primary/35" title="Adopted records are preserved">
+                              Preserved
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(animal._id)}
+                              disabled={deletingId === animal._id}
+                              className="btn btn-sm btn-ghost text-error"
+                              title={`Delete ${animal.name}`}
+                              aria-label={`Delete ${animal.name}`}
+                            >
+                              {deletingId === animal._id ? '...' : <Trash2 className="w-4 h-4" />}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

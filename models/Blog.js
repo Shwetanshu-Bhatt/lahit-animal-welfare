@@ -63,4 +63,8 @@ BlogSchema.pre('save', function() {
   this.updatedAt = new Date();
 });
 
+BlogSchema.index({ published: 1, createdAt: -1 });
+BlogSchema.index({ published: 1, category: 1, createdAt: -1 });
+BlogSchema.index({ published: 1, featured: 1, createdAt: -1 });
+
 export default mongoose.models.Blog || mongoose.model('Blog', BlogSchema);

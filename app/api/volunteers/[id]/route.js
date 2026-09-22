@@ -16,7 +16,7 @@ export async function GET(request, { params }) {
     if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
-    const volunteer = await Volunteer.findById(id);
+    const volunteer = await Volunteer.findById(id).lean();
     if (!volunteer) {
       return NextResponse.json({ success: false, error: 'Volunteer not found' }, { status: 404 });
     }

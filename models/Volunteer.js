@@ -15,4 +15,6 @@ if (mongoose.models.Volunteer && mongoose.models.Volunteer.schema.path('interest
   mongoose.deleteModel('Volunteer');
 }
 
+VolunteerSchema.index({ status: 1, createdAt: -1 });
+
 export default mongoose.models.Volunteer || mongoose.model('Volunteer', VolunteerSchema);

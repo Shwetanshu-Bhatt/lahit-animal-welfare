@@ -22,6 +22,16 @@ function isLikelyImageSource(value = '') {
   }
 }
 
+const donationIconOptions = [
+  { value: 'Heart', label: 'Heart' },
+  { value: 'Utensils', label: 'Meals' },
+  { value: 'Syringe', label: 'Vaccination' },
+  { value: 'HeartPulse', label: 'Medical care' },
+  { value: 'Ambulance', label: 'Rescue' },
+  { value: 'PawPrint', label: 'Animal care' },
+  { value: 'HeartHandshake', label: 'Support' },
+];
+
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
     siteName: '',
@@ -417,6 +427,7 @@ export default function AdminSettings() {
               </div>
 
               <h2 className="text-xl font-bold text-primary mb-4">Donation Tiers</h2>
+              <p className="mb-4 text-sm text-primary/55">Choose an icon for each tier. Older or unknown icon names automatically use a public fallback.</p>
               <div className="space-y-4 mb-4">
                 {(settings.donationTiers || []).map((tier, index) => (
                   <div key={tier.id || index} className="flex gap-4 items-start p-4 bg-base-200 rounded-xl">
@@ -435,6 +446,13 @@ export default function AdminSettings() {
                         placeholder="Title"
                         className="input input-bordered"
                       />
+                      <select
+                        value={tier.icon || 'HeartHandshake'}
+                        onChange={(e) => handleDonationTierChange(index, 'icon', e.target.value)}
+                        className="select select-bordered"
+                      >
+                        {donationIconOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                      </select>
                       <input
                         type="text"
                         value={tier.description}

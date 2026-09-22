@@ -10,7 +10,7 @@ export async function GET() {
   try {
     if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
-    const volunteers = await Volunteer.find().sort({ createdAt: -1 });
+    const volunteers = await Volunteer.find().sort({ createdAt: -1 }).lean();
     return NextResponse.json({ success: true, data: volunteers });
   } catch (error) {
     return apiErrorResponse(error);

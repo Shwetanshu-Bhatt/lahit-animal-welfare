@@ -3,6 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
+import { PUBLIC_CACHE_CONTROL, PRIVATE_CACHE_CONTROL } from '@/lib/cache-headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,10 +31,10 @@ export async function GET(request) {
       query.slug = slug;
     }
     
-    const blogs = await Blog.find(query).sort({ createdAt: -1 });
+    const blogs = await Blog.find(query).sort({ createdAt: -1 }).lean();
     
     return NextResponse.json({ success: true, data: blogs }, {
-      headers: { 'Cache-Control': 'no-store' }
+      headers: { 'Cache-Control': includeAll ? PRIVATE_CACHE_CONTROL : PUBLIC_CACHE_CONTROL }
     });
   } catch (error) {
     return apiErrorResponse(error);

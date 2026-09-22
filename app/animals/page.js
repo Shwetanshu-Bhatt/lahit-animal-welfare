@@ -49,6 +49,10 @@ export default function AnimalsPage() {
       });
       const result = await response.json();
       if (!result.success) throw new Error(result.error || 'Could not submit adoption application.');
+      setAnimals((current) => current.map((animal) => (
+        animal._id === selectedAnimal._id ? { ...animal, status: 'pending' } : animal
+      )));
+      setSelectedAnimal((current) => current ? { ...current, status: 'pending' } : current);
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error.message || 'Could not submit adoption application.');

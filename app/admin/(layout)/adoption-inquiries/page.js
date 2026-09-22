@@ -4,6 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Clock3, Home, Mail, MapPin, PawPrint, Phone, Trash2 } from 'lucide-react';
 
 const statuses = ['all', 'new', 'contacted', 'screening', 'approved', 'rejected'];
+const statusTransitions = {
+  new: ['contacted', 'rejected'],
+  contacted: ['screening', 'rejected'],
+  screening: ['approved', 'rejected'],
+  approved: [],
+  rejected: [],
+};
 
 export default function AdoptionInquiriesPage() {
   const [inquiries, setInquiries] = useState([]);
@@ -143,8 +150,13 @@ export default function AdoptionInquiriesPage() {
               {inquiry.experience && <p className="mt-4 text-sm leading-relaxed text-primary/65"><strong>Pet experience:</strong> {inquiry.experience}</p>}
               {inquiry.message && <p className="mt-2 text-sm leading-relaxed text-primary/65">{inquiry.message}</p>}
               <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-primary/10 pt-5">
-                <select value={inquiry.status} disabled={processing === inquiry._id} onChange={(event) => updateStatus(inquiry._id, event.target.value)} className="select select-bordered select-sm min-w-40">
-                  {statuses.slice(1).map((status) => <option key={status}>{status}</option>)}
+                <select
+                  value={inquiry.status}
+                  disabled={processing === inquiry._id || statusTransitions[inquiry.status]?.length === 0}
+                  onChange={(event) => event.target.value !== inquiry.status && updateStatus(inquiry._id, event.target.value)}
+                  className="select select-bordered select-sm min-w-40"
+                >
+                  {[inquiry.status, ...(statusTransitions[inquiry.status] || [])].map((status) => <option key={status}>{status}</option>)}
                 </select>
                 <a href={`tel:${inquiry.phone}`} className="btn btn-sm btn-primary">Call applicant</a>
                 <button onClick={() => deleteInquiry(inquiry._id)} disabled={processing === inquiry._id} className="btn btn-sm btn-ghost ml-auto text-error" aria-label="Delete adoption inquiry"><Trash2 className="h-4 w-4" /></button>

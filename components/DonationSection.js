@@ -7,6 +7,9 @@ import {
   Syringe, 
   HeartPulse, 
   Ambulance, 
+  Heart,
+  HeartHandshake,
+  PawPrint,
   Check, 
   Copy,
   Wallet,
@@ -22,7 +25,23 @@ const iconMap = {
   Syringe,
   HeartPulse,
   Ambulance,
+  Heart,
+  HeartHandshake,
+  PawPrint,
 };
+
+function getTierIcon(tier) {
+  const configuredIcon = iconMap[tier?.icon];
+  if (configuredIcon) return configuredIcon;
+
+  const tierText = `${tier?.title || ''} ${tier?.description || ''}`.toLowerCase();
+  if (tierText.includes('meal') || tierText.includes('food') || tierText.includes('feed')) return Utensils;
+  if (tierText.includes('vaccin')) return Syringe;
+  if (tierText.includes('treat') || tierText.includes('medical')) return HeartPulse;
+  if (tierText.includes('rescue') || tierText.includes('emergency')) return Ambulance;
+  if (tierText.includes('animal') || tierText.includes('pet')) return PawPrint;
+  return HeartHandshake;
+}
 
 export default function DonationSection() {
   const sectionRef = useRef(null);
@@ -101,7 +120,7 @@ export default function DonationSection() {
           <>
             <div className="mb-10 grid grid-cols-2 gap-3 sm:mb-16 sm:gap-6 lg:grid-cols-4">
               {donationTiers.map((tier, index) => {
-                const Icon = iconMap[tier.icon];
+                const Icon = getTierIcon(tier);
                 return (
                   <motion.div
                     key={tier.id}
@@ -111,7 +130,7 @@ export default function DonationSection() {
                   >
                     <Card className="h-full text-center group !p-4 sm:!p-8 lg:!p-10" padding="xl">
                       <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary sm:mb-4 sm:h-16 sm:w-16 sm:rounded-2xl">
-                        {Icon && <Icon className="h-5 w-5 text-primary transition-colors duration-300 group-hover:text-primary-content sm:h-8 sm:w-8" />}
+                        <Icon className="h-5 w-5 text-primary transition-colors duration-300 group-hover:text-primary-content sm:h-8 sm:w-8" />
                       </div>
 
                       <div className="mb-4">

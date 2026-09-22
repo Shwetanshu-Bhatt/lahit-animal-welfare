@@ -1,5 +1,13 @@
 import mongoose from 'mongoose';
 
+export const RESCUE_STATUS_TRANSITIONS = {
+  new: ['reviewing', 'dismissed'],
+  reviewing: ['dispatched', 'dismissed'],
+  dispatched: ['resolved'],
+  resolved: [],
+  dismissed: [],
+};
+
 const RescueReportSchema = new mongoose.Schema({
   reporterName: { type: String, required: true, trim: true },
   reporterEmail: { type: String, trim: true, lowercase: true, default: '' },
@@ -20,5 +28,8 @@ const RescueReportSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
+
+RescueReportSchema.index({ reporterEmail: 1, createdAt: -1 });
+RescueReportSchema.index({ status: 1, createdAt: -1 });
 
 export default mongoose.models.RescueReport || mongoose.model('RescueReport', RescueReportSchema);

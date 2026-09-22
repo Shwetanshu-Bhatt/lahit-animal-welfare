@@ -9,8 +9,8 @@ import Button from './ui/Button';
 import Image from 'next/image';
 import Link from 'next/link';
 
-function RescueCard({ story, index }) {
-  const isFeatured = index === 0;
+function RescueCard({ story, index, featured = false }) {
+  const isFeatured = featured;
   const [imgError, setImgError] = useState({ before: false, after: false });
 
   return (
@@ -111,7 +111,7 @@ export default function RescueStories() {
         const res = await fetch('/api/rescues');
         const data = await res.json();
         if (data.success) {
-          setRescues(data.data.slice(0, 3));
+          setRescues(data.data.slice(0, 2));
         } else {
           setError('Failed to load rescues');
         }
@@ -161,17 +161,15 @@ export default function RescueStories() {
             No rescue stories available yet.
           </div>
         ) : (
-          <div className="mb-10 grid gap-4 sm:gap-6 sm:mb-12 lg:grid-cols-2">
+          <div className="mb-10 grid gap-4 sm:mb-12 sm:gap-6 lg:grid-cols-2">
             {rescues.map((story, index) => (
-              <div key={story._id || index} className={index === 0 ? 'lg:col-span-2' : ''}>
-                <RescueCard story={story} index={index} />
-              </div>
+              <RescueCard key={story._id || index} story={story} index={index} />
             ))}
           </div>
         )}
 
         {/* CTA */}
-        <motion.div
+        {!loading && rescues.length > 0 && <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -184,9 +182,9 @@ export default function RescueStories() {
             size="lg"
             icon={ArrowRight}
           >
-            View All Rescue Stories
+            View More
           </Button>
-        </motion.div>
+        </motion.div>}
       </Container>
     </section>
   );

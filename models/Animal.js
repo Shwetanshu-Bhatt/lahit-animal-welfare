@@ -16,4 +16,6 @@ const AnimalSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+AnimalSchema.index({ published: 1, status: 1, createdAt: -1 });
+
 export default mongoose.models.Animal || mongoose.model('Animal', AnimalSchema);

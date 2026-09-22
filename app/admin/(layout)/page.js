@@ -19,7 +19,7 @@ async function getDashboardData() {
     Blog.countDocuments(),
     Volunteer.countDocuments(),
     Volunteer.countDocuments({ status: 'pending' }),
-    RescueReport.countDocuments({ status: { $in: ['new', 'reviewing'] } }),
+    RescueReport.countDocuments({ status: { $in: ['new', 'reviewing', 'dispatched'] } }),
     AdoptionInquiry.countDocuments({ status: 'new' }),
     Stat.findOne().lean(),
     RescueReport.find().sort({ createdAt: -1 }).limit(4).lean(),
@@ -33,6 +33,14 @@ const cards = [
   { key: 'blogs', label: 'Blog posts', icon: FileText, href: '/admin/blogs', color: 'bg-sky-100 text-sky-700' },
   { key: 'volunteers', label: 'Volunteers', icon: Users, href: '/admin/volunteers', color: 'bg-emerald-100 text-emerald-700' },
 ];
+
+const rescueStatusLabels = {
+  new: 'Received',
+  reviewing: 'Reviewing',
+  dispatched: 'Dispatched',
+  resolved: 'Resolved',
+  dismissed: 'Dismissed',
+};
 
 export default async function AdminDashboard() {
   const data = await getDashboardData();
@@ -77,7 +85,7 @@ export default async function AdminDashboard() {
               {data.recentReports.map((report) => (
                 <Link key={report._id.toString()} href="/admin/rescue-reports" className="group grid gap-3 py-5 sm:grid-cols-[1fr_auto] sm:items-center">
                   <div>
-                    <div className="flex items-center gap-3"><span className={`admin-status admin-status-${report.status}`}>{report.status}</span><p className="font-bold text-primary">{report.animalType} · {report.location}</p></div>
+                    <div className="flex items-center gap-3"><span className={`admin-status admin-status-${report.status}`}>{rescueStatusLabels[report.status] || report.status}</span><p className="font-bold text-primary">{report.animalType} · {report.location}</p></div>
                     <p className="mt-2 line-clamp-1 text-sm text-primary/50">{report.description}</p>
                   </div>
                   <p className="text-xs font-semibold text-primary/35">{new Date(report.createdAt).toLocaleDateString()}</p>

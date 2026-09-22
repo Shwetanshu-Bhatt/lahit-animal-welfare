@@ -16,7 +16,7 @@ export async function GET() {
     }
 
     await connectDB();
-    const user = await User.findOne({ email: session.user.email }).select('-password');
+    const user = await User.findOne({ email: session.user.email }).select('-password').lean();
     
     if (!user) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });

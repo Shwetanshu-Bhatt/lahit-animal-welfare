@@ -9,6 +9,7 @@ export default function AdminVolunteers() {
   const [filter, setFilter] = useState('all');
   const [processingId, setProcessingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [inviteLink, setInviteLink] = useState(null);
   const [inviteMessage, setInviteMessage] = useState({ type: '', text: '' });
   const [invitingId, setInvitingId] = useState(null);
@@ -127,7 +128,6 @@ export default function AdminVolunteers() {
   }
 
   async function deleteVolunteer(id) {
-    if (!confirm('Are you sure you want to delete this volunteer?')) return;
     setDeletingId(id);
     
     try {
@@ -143,6 +143,10 @@ export default function AdminVolunteers() {
     } finally {
       setDeletingId(null);
     }
+  }
+
+  function openDeleteDialog(volunteer) {
+    setDeleteTarget(volunteer);
   }
 
   const filteredVolunteers = filter === 'all' 
@@ -168,14 +172,24 @@ export default function AdminVolunteers() {
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <h1 className="text-3xl font-bold text-primary">Volunteer Applications</h1>
-        <div className="join">
+        <div
+          role="tablist"
+          aria-label="Filter volunteer applications"
+          className="flex w-full max-w-full gap-1 overflow-x-auto rounded-2xl border border-base-300 bg-base-100 p-1 shadow-sm md:w-auto"
+        >
           {['all', 'pending', 'contacted', 'approved', 'rejected'].map(status => (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`join-item btn btn-sm ${filter === status ? 'btn-primary' : 'btn-ghost'}`}
+              role="tab"
+              aria-selected={filter === status}
+              className={`min-h-10 shrink-0 rounded-xl border-0 px-4 text-xs font-bold capitalize transition-all ${
+                filter === status
+                  ? 'bg-primary text-primary-content shadow-sm'
+                  : 'bg-transparent text-primary/60 hover:bg-base-200 hover:text-primary'
+              }`}
             >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
+              {status}
             </button>
           ))}
         </div>
@@ -309,7 +323,7 @@ export default function AdminVolunteers() {
                       )}
                         {(volunteer.status === 'contacted' || volunteer.status === 'rejected' || volunteer.status === 'approved') && (
                         <button
-                          onClick={() => deleteVolunteer(volunteer._id)}
+                          onClick={() => openDeleteDialog(volunteer)}
                           disabled={deletingId === volunteer._id}
                           className="btn btn-sm btn-error"
                           title="Remove"
@@ -328,6 +342,52 @@ export default function AdminVolunteers() {
             </div>
           )}
         </div>
+
+        {deleteTarget && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setDeleteTarget(null)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-volunteer-title"
+              className="w-full max-w-md rounded-2xl border border-base-300 bg-base-100 shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="px-6 pb-4 pt-5">
+                <h3 id="delete-volunteer-title" className="text-xl font-semibold text-primary">
+                  Delete volunteer?
+                </h3>
+                <p className="mt-3 text-sm text-base-content/70">
+                  Are you sure you want to delete {deleteTarget.name}? This action cannot be undone.
+                </p>
+              </div>
+              <div className="flex justify-end gap-3 border-t border-base-200 bg-base-200/40 px-6 py-4">
+                <button type="button" className="btn btn-ghost" onClick={() => setDeleteTarget(null)}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-error"
+                  disabled={deletingId === deleteTarget._id}
+                  onClick={() => {
+                    const target = deleteTarget;
+                    setDeleteTarget(null);
+                    deleteVolunteer(target._id);
+                  }}
+                >
+                  {deletingId === deleteTarget._id ? (
+                    <span className="loading loading-spinner loading-sm" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {resendTarget && (
           <div

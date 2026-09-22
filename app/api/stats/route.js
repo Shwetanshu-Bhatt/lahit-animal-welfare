@@ -3,16 +3,17 @@ import connectDB from '@/lib/mongodb';
 import Stat from '@/models/Stat';
 import Volunteer from '@/models/Volunteer';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
+import { PUBLIC_CACHE_CONTROL } from '@/lib/cache-headers';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     await connectDB();
-    let stats = await Stat.findOne();
-    
-    // Get actual volunteer count from database
-    const volunteerCount = await Volunteer.countDocuments({ status: 'approved' });
+    let [stats, volunteerCount] = await Promise.all([
+      Stat.findOne().lean(),
+      Volunteer.countDocuments({ status: 'approved' }),
+    ]);
     
     // Create default stats if none exist
     if (!stats) {
@@ -29,11 +30,11 @@ export async function GET() {
     }
     
     // Update stats with actual volunteer count
-    const statsData = stats.toObject();
+    const statsData = typeof stats.toObject === 'function' ? stats.toObject() : stats;
     statsData.volunteers = volunteerCount;
     
     return NextResponse.json({ success: true, data: statsData }, {
-      headers: { 'Cache-Control': 'no-store' }
+      headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL }
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

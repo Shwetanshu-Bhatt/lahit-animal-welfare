@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
     if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
-    const media = await Media.findById(id);
+    const media = await Media.findById(id).lean();
     if (!media) {
       return NextResponse.json({ success: false, error: 'Media not found' }, { status: 404 });
     }

@@ -118,7 +118,7 @@ export default function AdoptionSection() {
                     <div className="mt-5 flex items-center justify-between border-t border-primary/10 pt-4">
                       <span className="inline-flex items-center gap-2 text-sm font-bold text-primary">
                         <HeartHandshake className="h-4 w-4 text-secondary" />
-                        Ready for love
+                        {animal.status === 'available' ? 'Ready for adoption' : 'Application in progress'}
                       </span>
                     </div>
                   </div>

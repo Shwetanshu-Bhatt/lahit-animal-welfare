@@ -17,7 +17,7 @@ export async function GET() {
   try {
     if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
-    const reports = await RescueReport.find().sort({ createdAt: -1 });
+    const reports = await RescueReport.find().sort({ createdAt: -1 }).lean();
     return NextResponse.json({ success: true, data: reports }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     return apiErrorResponse(error);

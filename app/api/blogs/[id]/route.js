@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
     if (!(await requireAdmin())) return unauthorizedResponse();
     await connectDB();
     const { id } = await params;
-    const blog = await Blog.findById(id);
+    const blog = await Blog.findById(id).lean();
     if (!blog) {
       return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     }

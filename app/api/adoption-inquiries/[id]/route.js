@@ -1,19 +1,11 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import AdoptionInquiry from '@/models/AdoptionInquiry';
+import AdoptionInquiry, { ADOPTION_INQUIRY_TRANSITIONS } from '@/models/AdoptionInquiry';
 import Animal from '@/models/Animal';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
 
 export const dynamic = 'force-dynamic';
-
-const inquiryStatusToAnimalStatus = {
-  new: 'pending',
-  contacted: 'pending',
-  screening: 'pending',
-  approved: 'adopted',
-  rejected: 'available',
-};
 
 export async function PUT(request, { params }) {
   try {
@@ -27,19 +19,39 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ success: false, error: 'Adoption inquiry not found' }, { status: 404 });
     }
 
+    const allowedTransitions = ADOPTION_INQUIRY_TRANSITIONS[currentInquiry.status] || [];
+    if (!allowedTransitions.includes(status)) {
+      return NextResponse.json({
+        success: false,
+        error: `A ${currentInquiry.status} application can only move to: ${allowedTransitions.join(', ') || 'a terminal state'}.`,
+      }, { status: 409 });
+    }
+
+    const animal = await Animal.findById(currentInquiry.animal);
+    if (!animal) {
+      return NextResponse.json({ success: false, error: 'The linked animal no longer exists.' }, { status: 409 });
+    }
+    if (status === 'approved' && animal.status === 'adopted') {
+      return NextResponse.json({ success: false, error: 'This animal has already been adopted.' }, { status: 409 });
+    }
+
     const inquiry = await AdoptionInquiry.findByIdAndUpdate(
       id,
       { status, updatedAt: new Date() },
       { returnDocument: 'after', runValidators: true }
     );
 
-    const nextAnimalStatus = inquiryStatusToAnimalStatus[status] ?? 'available';
-
-    if (inquiry?.animal) {
-      const animalUpdate = { status: nextAnimalStatus, updatedAt: new Date() };
-      if (nextAnimalStatus === 'adopted') animalUpdate.published = false;
-
-      await Animal.findByIdAndUpdate(inquiry.animal, animalUpdate, { runValidators: true });
+    if (inquiry?.animal && status === 'approved') {
+      await Animal.findByIdAndUpdate(inquiry.animal, { status: 'adopted', published: false, updatedAt: new Date() }, { runValidators: true });
+    } else if (inquiry?.animal && status === 'rejected') {
+      const activeInquiry = await AdoptionInquiry.exists({
+        animal: inquiry.animal,
+        _id: { $ne: inquiry._id },
+        status: { $in: ['new', 'contacted', 'screening'] },
+      });
+      if (!activeInquiry && animal.status !== 'adopted') {
+        await Animal.findByIdAndUpdate(inquiry.animal, { status: 'available', updatedAt: new Date() }, { runValidators: true });
+      }
     }
 
     return NextResponse.json({ success: true, data: inquiry });

@@ -3,6 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Animal from '@/models/Animal';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { apiErrorResponse } from '@/lib/api-error';
+import { PUBLIC_CACHE_CONTROL, PRIVATE_CACHE_CONTROL } from '@/lib/cache-headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,14 +15,14 @@ export async function GET(request) {
     if (includeAll && !(await requireAdmin())) return unauthorizedResponse();
     
     const query = includeAll ? {} : { published: true, status: { $in: ['available', 'pending'] } };
-    const animals = await Animal.find(query).sort({ createdAt: -1 });
+    const animals = await Animal.find(query).sort({ createdAt: -1 }).lean();
     const normalizedAnimals = animals.map((animal) => ({
-      ...animal.toObject(),
+      ...animal,
       published: animal.status === 'adopted' ? false : animal.published
     }));
     
     return NextResponse.json({ success: true, data: normalizedAnimals }, {
-      headers: { 'Cache-Control': 'no-store' }
+      headers: { 'Cache-Control': includeAll ? PRIVATE_CACHE_CONTROL : PUBLIC_CACHE_CONTROL }
     });
   } catch (error) {
     return apiErrorResponse(error);

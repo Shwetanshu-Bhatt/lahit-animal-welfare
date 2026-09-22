@@ -1,5 +1,13 @@
 import mongoose from 'mongoose';
 
+export const ADOPTION_INQUIRY_TRANSITIONS = {
+  new: ['contacted', 'rejected'],
+  contacted: ['screening', 'rejected'],
+  screening: ['approved', 'rejected'],
+  approved: [],
+  rejected: [],
+};
+
 const AdoptionInquirySchema = new mongoose.Schema({
   animal: { type: mongoose.Schema.Types.ObjectId, ref: 'Animal', required: true },
   animalName: { type: String, required: true, trim: true },
@@ -18,5 +26,8 @@ const AdoptionInquirySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
+
+AdoptionInquirySchema.index({ email: 1, createdAt: -1 });
+AdoptionInquirySchema.index({ animal: 1, status: 1 });
 
 export default mongoose.models.AdoptionInquiry || mongoose.model('AdoptionInquiry', AdoptionInquirySchema);

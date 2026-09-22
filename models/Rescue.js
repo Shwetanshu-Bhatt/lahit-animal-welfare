@@ -44,4 +44,6 @@ const RescueSchema = new mongoose.Schema({
   },
 });
 
+RescueSchema.index({ published: 1, createdAt: -1 });
+
 export default mongoose.models.Rescue || mongoose.model('Rescue', RescueSchema);

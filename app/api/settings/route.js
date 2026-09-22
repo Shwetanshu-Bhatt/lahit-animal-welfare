@@ -3,6 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Settings from '@/models/Settings';
 import { requireAdmin, unauthorizedResponse } from '@/lib/admin-api';
 import { uploadImageSource } from '@/lib/cloudinary';
+import { PUBLIC_CACHE_CONTROL } from '@/lib/cache-headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ function isValidDisplayImage(value = '') {
 export async function GET() {
   try {
     await connectDB();
-    let settings = await Settings.findOne();
+    let settings = await Settings.findOne().lean();
     
     // Create default settings if none exist
     if (!settings) {
@@ -36,7 +37,7 @@ export async function GET() {
     }
     
     return NextResponse.json({ success: true, data: settings }, {
-      headers: { 'Cache-Control': 'no-store' }
+      headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL }
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
