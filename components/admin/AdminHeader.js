@@ -20,7 +20,8 @@ const titles = {
 
 export default function AdminHeader({ user, onOpenMenu }) {
   const pathname = usePathname();
-  const [title, description] = titles[pathname] || ['Admin', 'Manage LAHIT'];
+  const routeKey = pathname?.replace(/\/$/, '') || '/admin';
+  const [title, description] = titles[routeKey] || ['Admin', 'Manage LAHIT'];
 
   return (
     <header className="sticky top-0 z-30 flex min-h-24 items-center justify-between border-b border-primary/10 bg-[#f8f6f0]/90 px-5 backdrop-blur-xl sm:px-8 lg:px-10">

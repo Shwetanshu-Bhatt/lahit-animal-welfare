@@ -90,7 +90,7 @@ export default function RescueReportsPage() {
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           {visibleReports.map((report) => (
-            <article key={report._id} className="admin-report-card">
+            <article key={report._id} className="admin-report-card flex h-full flex-col">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <span className={`admin-status admin-status-${report.status}`}>{report.status}</span>
@@ -100,20 +100,20 @@ export default function RescueReportsPage() {
               </div>
               {report.image && (
                 <a href={report.image} target="_blank" rel="noreferrer" className="mt-4 block overflow-hidden rounded-2xl border border-primary/10 bg-primary/5">
-                  <Image src={report.image} alt={`${report.animalType} rescue report`} width={900} height={500} unoptimized className="max-h-72 w-full object-cover" />
+                  <Image src={report.image} alt={`${report.animalType} rescue report`} width={900} height={500} unoptimized className="admin-rescue-report-image max-h-72 w-full object-cover" />
                 </a>
               )}
-              <p className="mt-4 leading-relaxed text-primary/70">{report.description}</p>
+              <p className="mt-4 line-clamp-2 leading-relaxed text-primary/70">{report.description}</p>
               <div className="mt-5 grid gap-2 text-sm text-primary/60 sm:grid-cols-2">
-                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-secondary" />{report.location}</p>
-                <a href={`tel:${report.phone}`} className="flex items-center gap-2 hover:text-primary"><Phone className="h-4 w-4 text-secondary" />{report.reporterName} · {report.phone}</a>
+                <p className="min-w-0 break-words flex items-center gap-2"><MapPin className="h-4 w-4 shrink-0 text-secondary" />{report.location}</p>
+                <a href={`tel:${report.phone}`} className="min-w-0 break-words flex items-center gap-2 hover:text-primary"><Phone className="h-4 w-4 shrink-0 text-secondary" />{report.reporterName} · {report.phone}</a>
               </div>
-              <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-primary/10 pt-5">
-                <select value={report.status} disabled={processing === report._id} onChange={(event) => updateStatus(report._id, event.target.value)} className="select select-bordered select-sm min-w-40">
+              <div className="mt-auto grid grid-cols-1 items-center gap-2 border-t border-primary/10 pt-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+                <select value={report.status} disabled={processing === report._id} onChange={(event) => updateStatus(report._id, event.target.value)} className="select select-bordered select-sm h-10 w-full min-w-0 rounded-xl text-sm sm:w-44">
                   {statuses.slice(1).map((status) => <option key={status}>{status}</option>)}
                 </select>
-                <a href={`tel:${report.phone}`} className="btn btn-sm btn-primary">Call reporter</a>
-                <button onClick={() => deleteReport(report._id)} disabled={processing === report._id} className="btn btn-sm btn-ghost ml-auto text-error" aria-label="Delete report"><Trash2 className="h-4 w-4" /></button>
+                <a href={`tel:${report.phone}`} className="btn btn-sm h-10 min-h-10 rounded-xl bg-primary px-4 text-xs text-white hover:bg-[#164a36]">Call reporter</a>
+                <button onClick={() => deleteReport(report._id)} disabled={processing === report._id} className="btn btn-sm h-10 min-h-10 w-10 rounded-xl text-error" aria-label="Delete report"><Trash2 className="h-4 w-4" /></button>
               </div>
             </article>
           ))}

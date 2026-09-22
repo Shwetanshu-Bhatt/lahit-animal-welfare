@@ -90,7 +90,7 @@ export default function HeroSection() {
       <div className="hero-grid pointer-events-none absolute inset-0" />
 
       <Container className="hero-viewport-container relative z-10 flex h-full min-h-0 flex-col pt-28 pb-24 sm:pt-36 lg:pt-44 lg:pb-5">
-        <div className="my-auto max-w-4xl py-8 sm:pb-16 lg:pb-24">
+        <div className="hero-main-content my-auto max-w-4xl py-8 sm:pb-16 lg:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -146,7 +146,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.45 }}
-          className="mt-12 border-t border-white/20 pt-5 sm:mt-16 sm:pt-6 lg:absolute lg:inset-x-10 lg:bottom-5 lg:mt-0"
+          className="hero-impact-stats mt-12 border-t border-white/20 pt-5 sm:mt-16 sm:pt-6 lg:absolute lg:inset-x-10 lg:bottom-5 lg:mt-0"
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <span className="eyebrow text-[0.64rem] text-white/55">Our impact</span>

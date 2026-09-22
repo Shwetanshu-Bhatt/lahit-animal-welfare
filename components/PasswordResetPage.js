@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Lock, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Lock, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PasswordResetPage({ audience }) {
@@ -18,6 +18,7 @@ export default function PasswordResetPage({ audience }) {
   const [otpVerified, setOtpVerified] = useState(false);
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -72,26 +73,34 @@ export default function PasswordResetPage({ audience }) {
 
   if (!token || checking || !valid) {
     return (
-      <div className="space-y-5">
-        <h2 className="text-2xl font-black tracking-[-0.04em] text-primary">{!token || valid ? 'Reset password' : 'Link expired or invalid'}</h2>
-        <p className="text-sm text-primary/60">{checking ? 'Checking link…' : error || 'A valid reset link is required.'}</p>
-        {!checking && <Link href={forgotPath} className="block text-center font-bold text-primary hover:text-primary/70">Request a new code →</Link>}
-      </div>
+      <main className="flex min-h-screen items-center justify-center bg-[#f3f0e8] px-5 py-10 sm:px-8">
+        <div className="w-full max-w-md rounded-[2rem] border border-primary/10 bg-white/80 p-6 shadow-[0_24px_80px_rgba(11,51,36,0.1)] backdrop-blur-xl sm:p-9">
+          <div className="mb-8 flex items-center gap-3"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-lg font-black text-accent">L</span><span><strong className="block text-xl tracking-[-0.04em] text-primary">LAHIT</strong><small className="font-bold uppercase tracking-[0.15em] text-primary/45">{isAdmin ? 'Admin workspace' : 'Volunteer workspace'}</small></span></div>
+          <div className="space-y-5">
+            <div><span className="admin-eyebrow">Secure access</span><h2 className="text-3xl font-black tracking-[-0.05em] text-primary">{!token || valid ? 'Reset password' : 'Link expired or invalid'}</h2></div>
+            <p className="text-sm leading-relaxed text-primary/60">{checking ? 'Checking link…' : error || 'A valid reset link is required.'}</p>
+            {!checking && <Link href={forgotPath} className="flex min-h-12 items-center justify-center rounded-full bg-primary px-5 text-center font-bold text-white transition-colors hover:bg-[#164a36]">Request a new code</Link>}
+          </div>
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className="space-y-5">
-      <h2 className="text-2xl font-black tracking-[-0.04em] text-primary">{otpVerified ? 'Set new password' : 'Verify your email'}</h2>
-      {error && <div className="rounded-xl bg-error/10 p-3 text-sm font-semibold text-error">{error}</div>}
-      {success && <div className="rounded-xl bg-base-100 p-3 text-sm font-semibold text-primary">{success}</div>}
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <main className="flex min-h-screen items-center justify-center bg-[#f3f0e8] px-5 py-10 sm:px-8">
+      <div className="w-full max-w-md rounded-[2rem] border border-primary/10 bg-white/80 p-6 shadow-[0_24px_80px_rgba(11,51,36,0.1)] backdrop-blur-xl sm:p-9">
+        <div className="mb-8 flex items-center gap-3"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-lg font-black text-accent">L</span><span><strong className="block text-xl tracking-[-0.04em] text-primary">LAHIT</strong><small className="font-bold uppercase tracking-[0.15em] text-primary/45">{isAdmin ? 'Admin workspace' : 'Volunteer workspace'}</small></span></div>
+        <div className="space-y-5">
+          <div><span className="admin-eyebrow">Secure access</span><h2 className="text-3xl font-black tracking-[-0.05em] text-primary">{otpVerified ? 'Set new password' : 'Verify your email'}</h2><p className="mt-3 text-sm leading-relaxed text-primary/55">{otpVerified ? 'Choose a strong password with at least 6 characters.' : 'Enter the six-digit code sent to your email.'}</p></div>
+          {error && <div className="rounded-2xl border border-error/20 bg-error/10 p-3 text-sm font-semibold text-error">{error}</div>}
+          {success && <div className="rounded-2xl border border-success/20 bg-success/10 p-3 text-sm font-semibold text-success">{success}</div>}
+          <form onSubmit={handleSubmit} className="space-y-5">
         {requiresOtp && !otpVerified ? (
           <label className="block">
             <span className="mb-2 block text-xs font-black uppercase tracking-[0.1em] text-primary/55">Six-digit code</span>
             <span className="relative block">
               <ShieldCheck className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/35" />
-              <input inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={otp} onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))} className="h-12 w-full rounded-2xl border border-primary/15 bg-white pl-12 pr-4 text-primary outline-none" placeholder="Enter code from email" required />
+              <input inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={otp} onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))} className="h-14 w-full rounded-2xl border border-primary/15 bg-white pl-12 pr-4 text-primary outline-none transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/8" placeholder="Enter code from email" required />
             </span>
           </label>
         ) : (
@@ -99,15 +108,20 @@ export default function PasswordResetPage({ audience }) {
             <span className="mb-2 block text-xs font-black uppercase tracking-[0.1em] text-primary/55">New password</span>
             <span className="relative block">
               <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/35" />
-              <input type="password" autoComplete="new-password" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} className="h-12 w-full rounded-2xl border border-primary/15 bg-white pl-12 pr-4 text-primary outline-none" placeholder="At least 6 characters" required />
+              <input type={showPassword ? 'text' : 'password'} autoComplete="new-password" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} className="h-14 w-full rounded-2xl border border-primary/15 bg-white pl-12 pr-12 text-primary outline-none transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/8" placeholder="At least 6 characters" required />
+              <button type="button" onClick={() => setShowPassword((visible) => !visible)} className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 transition-colors hover:text-primary" aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </span>
           </label>
         )}
-        <button type="submit" disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 font-bold text-white disabled:opacity-50">
+        <button type="submit" disabled={submitting} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 font-bold text-white transition-colors hover:bg-[#164a36] disabled:opacity-50">
           {submitting ? 'Working…' : requiresOtp && !otpVerified ? 'Verify code' : 'Set password'}
         </button>
-      </form>
-      <Link href={loginPath} className="block text-center text-sm font-bold text-primary hover:text-primary/70">← Back to sign in</Link>
-    </div>
+          </form>
+          <Link href={loginPath} className="block text-center text-sm font-bold text-primary/55 transition-colors hover:text-primary">← Back to sign in</Link>
+        </div>
+      </div>
+    </main>
   );
 }

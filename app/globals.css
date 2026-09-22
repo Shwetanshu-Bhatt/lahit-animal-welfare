@@ -435,6 +435,38 @@ button {
   }
 }
 
+/* Keep the hero usable on Windows displays running at 125% scaling. The
+   reduced CSS viewport height must not force the impact stats over the CTA. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  #home {
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+  }
+
+  .hero-viewport-container {
+    min-height: 100dvh;
+    padding-top: 7.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hero-main-content {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .hero-display-title {
+    font-size: clamp(4.35rem, 5.8vw, 6.25rem);
+  }
+
+  .hero-impact-stats {
+    position: static;
+    margin-top: 1rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -668,6 +700,33 @@ button {
   flex-wrap: wrap;
   gap: 0.35rem;
   border-radius: 999px;
+}
+
+/* Keep admin cards and their action rows usable on Windows at 125% scaling,
+   where the browser exposes a shorter CSS viewport. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  .admin-content {
+    min-height: calc(100dvh - 5rem);
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .admin-page-heading {
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+  }
+
+  .admin-page-heading h2 {
+    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+  }
+
+  .admin-report-card {
+    padding: 1.1rem;
+  }
+
+  .admin-rescue-report-image {
+    max-height: 10rem;
+  }
 }
 
 @media (max-width: 767px) {

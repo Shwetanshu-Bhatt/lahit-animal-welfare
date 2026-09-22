@@ -197,12 +197,12 @@ export default function Footer() {
               © {new Date().getFullYear()} LAHIT Animal Welfare. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-primary-content transition-colors">
+              <Link href="/privacy/" className="hover:text-primary-content transition-colors">
                 Privacy Policy
-              </a>
-              <a href="#" className="hover:text-primary-content transition-colors">
+              </Link>
+              <Link href="/terms/" className="hover:text-primary-content transition-colors">
                 Terms of Service
-              </a>
+              </Link>
             </div>
           </div>
         </Container>

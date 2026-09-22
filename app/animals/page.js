@@ -141,7 +141,7 @@ export default function AnimalsPage() {
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
               {filteredAnimals.map((animal, index) => (
-                <Card key={animal._id} className="overflow-hidden" padding="none">
+                <Card key={animal._id} className="flex h-full flex-col overflow-hidden" padding="none">
                   <div className="relative aspect-square">
                     <Image
                       src={animal.image}
@@ -159,16 +159,16 @@ export default function AnimalsPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="p-3 sm:p-5">
+                  <div className="flex flex-1 flex-col p-3 sm:p-5">
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <h3 className="text-base font-bold text-primary sm:text-lg">{animal.name}</h3>
                       <span className="text-xs text-primary/60 sm:text-sm">{animal.type}</span>
                     </div>
                     <p className="mb-3 text-xs text-primary/70 sm:text-sm">{animal.breed} • {animal.age}</p>
-                    <p className="mb-4 hidden text-sm text-primary/60 line-clamp-2 sm:block">
+                    <p className="mb-4 hidden min-h-[3.5rem] text-sm text-primary/60 line-clamp-2 sm:block">
                       {animal.description}
                     </p>
-                    <div className="hidden flex-wrap gap-2 sm:flex">
+                    <div className="hidden min-h-[2rem] flex-wrap content-start gap-2 sm:flex">
                       {animal.vaccinated && (
                         <span className="px-2 py-1 bg-[#164020]/10 text-[#164020] text-xs rounded-full">
                           ✓ Vaccinated
@@ -184,7 +184,7 @@ export default function AnimalsPage() {
                       type="button"
                       disabled={animal.status !== 'available'}
                       onClick={() => setSelectedAnimal(animal)}
-                      className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-3 text-xs font-bold text-white transition-colors hover:bg-[#164a36] disabled:cursor-not-allowed disabled:bg-primary/10 disabled:text-primary/45 sm:text-sm"
+                      className="mt-auto flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-3 text-xs font-bold text-white transition-colors hover:bg-[#164a36] disabled:cursor-not-allowed disabled:bg-primary/10 disabled:text-primary/45 sm:text-sm"
                     >
                       <PawPrint className="h-4 w-4" /> {animal.status === 'available' ? 'Apply to adopt' : 'Application pending'}
                     </button>
