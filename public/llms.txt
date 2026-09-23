@@ -1,0 +1,29 @@
+# LAHIT Animal Welfare
+
+> LAHIT Animal Welfare is a volunteer-led animal rescue initiative helping stray and injured animals across Uttarakhand, India.
+
+## About
+
+LAHIT shares rescue stories, lists animals available for adoption, coordinates volunteers, receives rescue reports, and publishes updates about animal welfare work. It is a volunteer-led initiative and is not currently a registered NGO.
+
+## Important pages
+
+- [Home](https://lahitanimalwelfare.org/): Mission, impact, rescue reporting, adoption, volunteering, donation, and contact information.
+- [Animals for adoption](https://lahitanimalwelfare.org/animals/): Rescued animals currently listed for adoption.
+- [Rescue stories](https://lahitanimalwelfare.org/rescues/): Before-and-after rescue stories and recovery updates.
+- [Field notes and updates](https://lahitanimalwelfare.org/blog/): Articles about rescue work, feeding, medical care, adoption, and volunteering.
+- [Privacy policy](https://lahitanimalwelfare.org/privacy/): How website information is handled.
+- [Terms of service](https://lahitanimalwelfare.org/terms/): Website and submission terms.
+
+## Topics
+
+Animal rescue, stray dog rescue, cat rescue, injured animal care, pet adoption in Uttarakhand, animal welfare volunteering, feeding drives, sterilization, awareness, and rescue reporting.
+
+## Contact and safety
+
+Use the contact details shown on the website for current enquiries. This website is not an emergency service; for an immediate life-threatening situation, contact the appropriate local emergency, veterinary, or animal-control service first.
+
+## Machine-readable discovery
+
+- Sitemap: https://lahitanimalwelfare.org/sitemap.xml
+- Robots policy: https://lahitanimalwelfare.org/robots.txt
