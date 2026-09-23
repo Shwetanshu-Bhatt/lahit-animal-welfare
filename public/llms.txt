@@ -8,12 +8,12 @@ LAHIT shares rescue stories, lists animals available for adoption, coordinates v
 
 ## Important pages
 
-- [Home](https://lahitanimalwelfare.org/): Mission, impact, rescue reporting, adoption, volunteering, donation, and contact information.
-- [Animals for adoption](https://lahitanimalwelfare.org/animals/): Rescued animals currently listed for adoption.
-- [Rescue stories](https://lahitanimalwelfare.org/rescues/): Before-and-after rescue stories and recovery updates.
-- [Field notes and updates](https://lahitanimalwelfare.org/blog/): Articles about rescue work, feeding, medical care, adoption, and volunteering.
-- [Privacy policy](https://lahitanimalwelfare.org/privacy/): How website information is handled.
-- [Terms of service](https://lahitanimalwelfare.org/terms/): Website and submission terms.
+- [Home](https://lahitanimalwelfaregroup.com/): Mission, impact, rescue reporting, adoption, volunteering, donation, and contact information.
+- [Animals for adoption](https://lahitanimalwelfaregroup.com/animals/): Rescued animals currently listed for adoption.
+- [Rescue stories](https://lahitanimalwelfaregroup.com/rescues/): Before-and-after rescue stories and recovery updates.
+- [Field notes and updates](https://lahitanimalwelfaregroup.com/blog/): Articles about rescue work, medical care, feeding drives, adoption, and volunteering.
+- [Privacy policy](https://lahitanimalwelfaregroup.com/privacy/): How website information is handled.
+- [Terms of service](https://lahitanimalwelfaregroup.com/terms/): Website and submission terms.
 
 ## Topics
 
@@ -25,5 +25,5 @@ Use the contact details shown on the website for current enquiries. This website
 
 ## Machine-readable discovery
 
-- Sitemap: https://lahitanimalwelfare.org/sitemap.xml
-- Robots policy: https://lahitanimalwelfare.org/robots.txt
+- Sitemap: https://lahitanimalwelfaregroup.com/sitemap.xml
+- Robots policy: https://lahitanimalwelfaregroup.com/robots.txt
