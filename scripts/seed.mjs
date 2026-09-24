@@ -1,9 +1,4 @@
 #!/usr/bin/env node
-/**
- * Database Seed Script for LAHIT Animal Welfare Admin Panel
- *
- * Usage: node scripts/seed.mjs
- */
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -11,14 +6,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 
-// Load environment variables
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-// MongoDB Connection URI
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lahit-animal-welfare';
-
-// Import models
 import User from '../models/User.js';
 import Stat from '../models/Stat.js';
 import Animal from '../models/Animal.js';
@@ -29,632 +16,284 @@ import Blog from '../models/Blog.js';
 import Media from '../models/Media.js';
 import { uploadImageSource } from '../lib/cloudinary.js';
 
-async function connectDB() {
-  try {
-    console.log('🔌 Connecting to MongoDB...');
-    await mongoose.connect(MONGODB_URI);
-    console.log('✅ Connected to MongoDB successfully');
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error.message);
-    process.exit(1);
-  }
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lahit-animal-welfare';
+const RESET_CONTENT = process.env.LAHIT_RESET_SEED === 'true';
+const image = (name) => `/images/rescues/${name}`;
+
+const rescueStories = [
+  {
+    name: 'Kalu',
+    type: 'Dog',
+    location: 'Maneri, Uttarkashi',
+    beforeImage: image('kalu-before.png'),
+    afterImage: image('kalu-after.png'),
+    story: 'A roadside tea seller in Maneri called us after Kalu spent two days curled beside the stone wall, too sore to stand. He had a deep scrape on his front leg, pine needles in his coat, and the quiet, watchful manner of an Indian Pariah dog used to being ignored. Our volunteers cleaned the wound, treated the infection, and brought him to the shelter for three weeks of rest. Kalu now greets every visitor at the gate and sleeps in the warmest patch of sun.',
+    date: 'February 2026',
+    published: true,
+  },
+  {
+    name: 'Golu',
+    type: 'Dog',
+    location: 'Bhatwari, Uttarkashi',
+    beforeImage: image('golu-before.png'),
+    afterImage: image('golu-after.png'),
+    story: 'Golu, a Himalayan Sheepdog (Bhutia), was found at the edge of a cattle path above Bhatwari with an injured paw and a coat matted from rain. He would move only when someone came close, then try to hide behind the wood stack. The team gave him antibiotics, careful grooming, and a soft place to sleep through the cold nights. Six weeks later he was walking the shelter boundary again, tail raised, choosing people instead of running from them.',
+    date: 'January 2026',
+    published: true,
+  },
+  {
+    name: 'Choti',
+    type: 'Dog',
+    location: 'Dunda, Uttarkashi',
+    beforeImage: image('choti-before.png'),
+    afterImage: image('choti-after.png'),
+    story: 'Choti was noticed by a school bus driver near a Dunda tea stall. Her rear paw was swollen and she kept shifting her weight, but she still followed anyone carrying food. An examination found a small road injury rather than a fracture. After cleaning, pain relief, vaccination, and ten quiet days indoors, Choti was back on her feet. She is now fostered by a shopkeeper who says she waits outside each morning for the first cup of chai and a scratch behind the ear.',
+    date: 'December 2025',
+    published: true,
+  },
+  {
+    name: 'Gauri',
+    type: 'Cow',
+    location: 'Barkot, Uttarkashi',
+    beforeImage: image('gauri-before.png'),
+    afterImage: image('gauri-after.png'),
+    story: 'Gauri, a small red-and-white Pahadi hill cow, was found near the Barkot road with a rope wound around her neck and no strength left to pull away. A nearby family kept her shaded while our team arranged transport to the gaushala. The wound needed daily dressing, but the bigger change came from regular water, fodder, and patient handling. Gauri now walks out to the feeding area on her own and has become the calmest resident in the shelter.',
+    date: 'November 2025',
+    published: true,
+  },
+  {
+    name: 'Neel',
+    type: 'Bird',
+    location: 'Gangotri Road, Uttarkashi',
+    beforeImage: image('monal-before.png'),
+    afterImage: image('monal-after.png'),
+    story: 'A forest worker found Neeli, a Himalayan monal, grounded beside the Gangotri Road after a wing injury. The bird was frightened and completely still, so the rescue was done quietly with help from the local forest team. We kept her in a dark recovery box, limited handling, and arranged a wildlife check before release. Once she could balance and lift both wings, Neeli was returned to a mossy forest clearing away from traffic.',
+    date: 'October 2025',
+    published: true,
+  },
+];
+
+const animals = [
+  {
+    name: 'Kalu', type: 'Dog', breed: 'Indian Pariah Dog', age: '3 years', gender: 'Male',
+    description: 'A steady, affectionate Uttarkashi street dog who loves quiet walks, warm blankets, and sitting near people.',
+    image: image('kalu-after.png'), vaccinated: true, neutered: true, status: 'available', published: true,
+  },
+  {
+    name: 'Gauri', type: 'Cow', breed: 'Pahadi Hill Cattle', age: '6 years', gender: 'Female',
+    description: 'A gentle red-and-white hill cow recovering well at a partner gaushala in Barkot.',
+    image: image('gauri-after.png'), vaccinated: true, neutered: false, status: 'adopted', published: true,
+  },
+  {
+    name: 'Neel', type: 'Bird', breed: 'Himalayan Monal', age: 'Adult', gender: 'Male',
+    description: 'A native Himalayan monal rehabilitated with the local forest team and released back to the Uttarkashi hills.',
+    image: image('monal-after.png'), vaccinated: false, neutered: false, status: 'adopted', published: true,
+  },
+];
+
+const volunteers = [
+  {
+    name: 'Meera Rawat', email: 'meera.rawat@lahit.org', phone: '+91 98765 43211', location: 'Uttarkashi town',
+    interest: ['Rescue transport', 'Animal first aid'], message: 'I can take the evening rescue calls around the town and help get animals safely to the clinic.', status: 'approved',
+  },
+  {
+    name: 'Deepak Negi', email: 'deepak.negi@lahit.org', phone: '+91 98765 43212', location: 'Bhatwari',
+    interest: ['Mountain rescue', 'Feeding drives'], message: 'I have a small vehicle and can help with rescues on the Bhatwari side, especially before winter nights.', status: 'approved',
+  },
+  {
+    name: 'Kavita Bisht', email: 'kavita.bisht@lahit.org', phone: '+91 98765 43213', location: 'Dunda',
+    interest: ['Foster care', 'Community awareness'], message: 'I can provide short-term indoor care and speak with shopkeepers and schools about injured street animals.', status: 'approved',
+  },
+  {
+    name: 'Mohan Lal', email: 'mohan.lal@lahit.org', phone: '+91 98765 43214', location: 'Barkot',
+    interest: ['Gaushala support', 'Animal transport'], message: 'I work with local families and can coordinate fodder, water, and safe transport for hill cattle.', status: 'contacted',
+  },
+  {
+    name: 'Sanjana Nautiyal', email: 'sanjana.nautiyal@lahit.org', phone: '+91 98765 43215', location: 'Uttarkashi town',
+    interest: ['Wildlife response', 'Photography'], message: 'I can document recoveries respectfully and help contact the forest team when native birds are found hurt.', status: 'pending',
+  },
+];
+
+const blogs = [
+  {
+    title: 'The Animals We Meet on Uttarkashi Roads', slug: 'animals-we-meet-on-uttarkashi-roads',
+    excerpt: 'From Indian Pariah dogs near Maneri to hill cattle in Barkot, rescue work here starts with knowing the animals who already belong to these mountains.',
+    content: '<p>Uttarkashi rescues rarely begin with a dramatic moment. More often, someone notices an animal missing from the roadside rhythm: a dog who no longer gets up for food, a cow standing alone near a bend, or a Himalayan bird grounded below the forest line.</p><p>Our first response is deliberately local. We call people who know the road, carry water and a blanket, and choose the safest route to care. Indian Pariah dogs, Himalayan Sheepdogs, Pahadi hill cattle, and native Himalayan birds all need different handling. The rescue works when that difference is respected.</p><p>Every recovery is also a community story. A tea seller makes the first call, a driver offers transport, and a volunteer stays through the coldest night. That is how a small team keeps animals visible in a very large landscape.</p>',
+    coverImage: image('kalu-after.png'), author: 'LAHIT Uttarkashi team', category: 'Rescue Stories', tags: ['uttarkashi', 'indian pariah dog', 'community'], published: true, featured: true,
+  },
+  {
+    title: 'A Warm Shed, Clean Water, and Time to Heal', slug: 'a-warm-shed-clean-water-and-time-to-heal',
+    excerpt: 'Gauri’s recovery shows why practical, patient care matters as much as emergency treatment for Pahadi hill cattle.',
+    content: '<p>When Gauri arrived from Barkot, the visible injury was the rope mark around her neck. The less visible problem was exhaustion. She had been standing in the same place for so long that even fresh fodder felt like too much effort.</p><p>The care plan was simple: shade, clean water, small regular feeds, a daily dressing, and someone calm enough to sit nearby without forcing contact. Within days, Gauri started turning toward the sound of the bucket. Within weeks, she was walking to the feeding area herself.</p><p>Good rescue care is not always dramatic. Sometimes it is doing the ordinary things consistently until an animal feels safe enough to try again.</p>',
+    coverImage: image('gauri-after.png'), author: 'LAHIT Uttarkashi team', category: 'Medical Updates', tags: ['pahadi cow', 'barkot', 'recovery'], published: true, featured: false,
+  },
+  {
+    title: 'When a Himalayan Monal Cannot Fly', slug: 'when-a-himalayan-monal-cannot-fly',
+    excerpt: 'A quiet rescue on Gangotri Road, and the careful handoff that helped a native Himalayan bird return to the forest.',
+    content: '<p>Bird rescues ask for a different kind of patience. Neel, a Himalayan monal, was found beside Gangotri Road after a wing injury. The safest first step was not to feed or handle him repeatedly, but to reduce noise, protect him from dogs, and call the local forest team.</p><p>During recovery, the box stayed covered and checks were brief. We watched for balance, alertness, and a full wing lift rather than rushing toward a release date. When Neel could stand firmly and move both wings, the team chose a quiet forest clearing away from traffic.</p><p>Native wildlife belongs in the wild whenever it is safe. Our job is to support that return with care, restraint, and the right local partners.</p>',
+    coverImage: image('monal-after.png'), author: 'LAHIT Uttarkashi team', category: 'Rescue Stories', tags: ['himalayan monal', 'wildlife', 'gangotri road'], published: true, featured: false,
+  },
+];
+
+async function ensureLoginUsers() {
+  const adminPassword = await bcrypt.hash('admin123', 12);
+  await User.updateOne(
+    { email: 'admin@lahit.org' },
+    { $setOnInsert: { name: 'Admin User', email: 'admin@lahit.org', password: adminPassword, role: 'admin' } },
+    { upsert: true },
+  );
+
+  const volunteerPassword = await bcrypt.hash('volunteer123', 12);
+  await User.updateOne(
+    { email: 'volunteer@lahit.org' },
+    { $setOnInsert: { name: 'LAHIT Volunteer', email: 'volunteer@lahit.org', password: volunteerPassword, role: 'volunteer' } },
+    { upsert: true },
+  );
 }
 
-async function createAdminUser() {
-  console.log('\n👤 Creating admin user...');
+async function seedSettingsAndStats() {
+  await Stat.findOneAndUpdate(
+    {},
+    { animalsRescued: 5, mealsServed: 1840, treatments: 37, adoptions: 2, volunteers: 5, citiesCovered: 1, partnerVets: 2, yearsActive: 4 },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+  );
 
-  try {
-    // Check if admin user already exists
-    const existingAdmin = await User.findOne({ email: 'admin@lahit.org' });
-
-    if (existingAdmin) {
-      console.log('ℹ️  Admin user already exists (admin@lahit.org)');
-      return existingAdmin;
-    }
-
-    // Hash password manually
-    const hashedPassword = await bcrypt.hash('admin123', 12);
-
-    // Create new admin user
-    const adminUser = new User({
-      name: 'Admin User',
-      email: 'admin@lahit.org',
-      password: hashedPassword,
-      role: 'admin',
-    });
-
-    await adminUser.save();
-    console.log('✅ Admin user created successfully');
-    console.log('   Email: admin@lahit.org');
-    console.log('   Password: admin123');
-    console.log('   Volunteer email: volunteer@lahit.org');
-    console.log('   Volunteer password: volunteer123');
-    console.log('   Role: admin');
-
-    return adminUser;
-  } catch (error) {
-    console.error('❌ Error creating admin user:', error.message);
-    throw error;
-  }
-}
-
-async function createVolunteerUser() {
-  console.log('\n🙋 Creating seeded volunteer account...');
-
-  const email = 'volunteer@lahit.org';
-  const password = 'volunteer123';
-  const passwordHash = await bcrypt.hash(password, 12);
-  let user = await User.findOne({ email });
-
-  if (user) {
-    user.name = 'LAHIT Volunteer';
-    user.password = passwordHash;
-    user.role = 'volunteer';
-    await user.save();
-  } else {
-    user = await User.create({
-      name: 'LAHIT Volunteer',
-      email,
-      password: passwordHash,
-      role: 'volunteer',
-    });
-  }
-
-  if (!(await Volunteer.findOne({ email }))) {
-    await Volunteer.create({
-      name: 'LAHIT Volunteer',
-      email,
-      phone: '+91 90000 00000',
-      location: 'Uttarkashi',
-      interest: 'Animal Rescue Operations',
-      message: 'Seeded volunteer account for local testing.',
-      status: 'approved',
-    });
-  }
-
-  console.log(`✅ Volunteer account ready (${email})`);
-  return user;
-}
-
-async function createInitialStats() {
-  console.log('\n📊 Creating initial stats data...');
-
-  try {
-    // Check if stats already exist
-    const existingStats = await Stat.findOne();
-
-    if (existingStats) {
-      console.log('ℹ️  Stats data already exists');
-      return existingStats;
-    }
-
-    // Create initial stats
-    const stats = new Stat({
-      animalsRescued: 1200,
-      mealsServed: 30000,
-      treatments: 500,
-      adoptions: 200,
-      volunteers: 50,
-      citiesCovered: 15,
-      partnerVets: 10,
-      yearsActive: 4,
-    });
-
-    await stats.save();
-    console.log('✅ Initial stats created successfully');
-
-    return stats;
-  } catch (error) {
-    console.error('❌ Error creating stats:', error.message);
-    throw error;
-  }
-}
-
-async function createAnimals() {
-  console.log('\n🐕 Creating sample animals...');
-
-  try {
-    // Clear existing animals
-    await Animal.deleteMany({});
-    
-    const animals = [
-      {
-        name: 'Tommy',
-        type: 'Dog',
-        breed: 'Indie Mix',
-        age: '2 years',
-        gender: 'Male',
-        description: 'Friendly and energetic. Loves to play fetch and gets along well with children. Perfect for active families looking for a loyal companion.',
-        image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: true,
-        status: 'available',
-        published: true
-      },
-      {
-        name: 'Molly',
-        type: 'Dog',
-        breed: 'Indie',
-        age: '1 year',
-        gender: 'Female',
-        description: 'Gentle and loving. Perfect for families looking for a calm companion. Good with other pets and very affectionate.',
-        image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: true,
-        status: 'available',
-        published: true
-      },
-      {
-        name: 'Simba',
-        type: 'Cat',
-        breed: 'Domestic Short Hair',
-        age: '8 months',
-        gender: 'Male',
-        description: 'Playful and curious. Loves to explore and cuddle. Very affectionate kitten looking for a forever home.',
-        image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: false,
-        status: 'available',
-        published: true
-      },
-      {
-        name: 'Rosie',
-        type: 'Dog',
-        breed: 'Indie Mix',
-        age: '3 years',
-        gender: 'Female',
-        description: 'Loyal and protective. Great watchdog and loving family member. Well trained and obedient.',
-        image: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: true,
-        status: 'available',
-        published: true
-      },
-      {
-        name: 'Max',
-        type: 'Dog',
-        breed: 'Labrador Mix',
-        age: '4 years',
-        gender: 'Male',
-        description: 'Friendly and obedient. Great with kids and other dogs. Loves swimming and outdoor activities.',
-        image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: true,
-        status: 'pending',
-        published: true
-      },
-      {
-        name: 'Luna',
-        type: 'Cat',
-        breed: 'Persian',
-        age: '2 years',
-        gender: 'Female',
-        description: 'Calm and elegant. Prefers a quiet environment. Very low maintenance and loves to nap.',
-        image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: true,
-        status: 'adopted',
-        published: true
-      },
-      {
-        name: 'Buddy',
-        type: 'Dog',
-        breed: 'Golden Retriever',
-        age: '5 years',
-        gender: 'Male',
-        description: 'Gentle giant. Perfect family dog. Loves everyone and everything. Great with children.',
-        image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: true,
-        status: 'available',
-        published: true
-      },
-      {
-        name: 'Whiskers',
-        type: 'Cat',
-        breed: 'Tabby',
-        age: '1 year',
-        gender: 'Female',
-        description: 'Curious and playful. Loves toys and climbing. Would do well in a home with other cats.',
-        image: 'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=400&h=400&fit=crop',
-        vaccinated: true,
-        neutered: false,
-        status: 'available',
-        published: true
-      }
-    ];
-
-    await Animal.insertMany(animals);
-    console.log('✅ Sample animals created successfully');
-  } catch (error) {
-    console.error('❌ Error creating animals:', error.message);
-    throw error;
-  }
-}
-
-async function createRescues() {
-  console.log('\n🐾 Creating sample rescue stories...');
-
-  try {
-    // Clear existing rescues
-    await Rescue.deleteMany({});
-    
-    const rescues = [
-      {
-        name: 'Bruno',
-        type: 'Dog',
-        location: 'Dehradun',
-        beforeImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop',
-        story: 'Found injured on roadside in Dehradun with a severe leg wound and malnourished. Rescued and treated by volunteers. After 3 months of care and physiotherapy, Bruno made a full recovery. He was adopted by a loving family and now lives happily.',
-        date: 'January 2024',
-        published: true
-      },
-      {
-        name: 'Luna',
-        type: 'Cat',
-        location: 'Mussoorie',
-        beforeImage: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=300&fit=crop',
-        story: 'Abandoned near Mall Road with severe skin infection and wounds. Received intensive care and love from our team. After two months of treatment, Luna transformed into a beautiful, playful cat.',
-        date: 'February 2024',
-        published: true
-      },
-      {
-        name: 'Rocky',
-        type: 'Dog',
-        location: 'Uttarkashi',
-        beforeImage: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=400&h=300&fit=crop',
-        story: 'Hit by a vehicle and left unable to walk. Our team rushed him to the vet in Dehradun. After successful surgery and physiotherapy, Rocky is now running and playing like any healthy dog.',
-        date: 'March 2024',
-        published: true
-      },
-      {
-        name: 'Mithu',
-        type: 'Bird',
-        location: 'Rishikesh',
-        beforeImage: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=300&fit=crop',
-        story: 'Found with a broken wing in a local market, likely from illegal trapping. Nursed back to health over two months. Now flying free in a safe habitat near Rishikesh.',
-        date: 'December 2023',
-        published: true
-      },
-      {
-        name: 'Kali',
-        type: 'Dog',
-        location: 'Haridwar',
-        beforeImage: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop',
-        story: 'Severely malnourished mother dog with three puppies found near a temple. All were rescued and cared for. Puppies found homes through our adoption program.',
-        date: 'November 2023',
-        published: true
-      },
-      {
-        name: 'Bella',
-        type: 'Cow',
-        location: 'Dehradun',
-        beforeImage: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=400&h=300&fit=crop',
-        story: 'Injured cow found on highway with deep cuts from an accident. Treated by our veterinary team and rehabilitated. Now resides safely at a local gaushala.',
-        date: 'October 2023',
-        published: true
-      },
-      {
-        name: 'Charlie',
-        type: 'Dog',
-        location: 'Rishikesh',
-        beforeImage: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&h=300&fit=crop',
-        story: 'Puppy dumped in a river bag, barely alive. Rescued by our volunteers and given emergency care. Charlie survived against all odds and grew into a healthy, happy dog.',
-        date: 'September 2023',
-        published: true
-      },
-      {
-        name: 'Whiskers',
-        type: 'Cat',
-        location: 'Dehradun',
-        beforeImage: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=300&fit=crop&灰度=80',
-        afterImage: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400&h=300&fit=crop',
-        story: 'Kitten found with eye infection so severe she was almost blind. After specialized treatment and surgery, Whiskers regained her sight.',
-        date: 'August 2023',
-        published: true
-      }
-    ];
-
-    await Rescue.insertMany(rescues);
-    console.log('✅ Sample rescue stories created successfully');
-  } catch (error) {
-    console.error('❌ Error creating rescues:', error.message);
-    throw error;
-  }
-}
-
-async function createSettings() {
-  console.log('\n⚙️ Creating default settings...');
-
-  try {
-    // Check if settings already exist
-    const existingSettings = await Settings.findOne();
-
-    if (existingSettings) {
-      console.log('ℹ️  Settings already exist');
-      return;
-    }
-
-    const settings = new Settings({
-      siteName: 'LAHIT - Animal Welfare',
-      siteDescription: 'LAHIT is a non-profit organization dedicated to rescuing, rehabilitating, and finding loving homes for stray and abandoned animals in Uttarakhand, India.',
-      contactEmail: 'contact@lahit.org',
-      contactPhone: '+91 98765 43210',
-      address: 'Dehradun, Uttarakhand, India',
-      facebook: 'https://facebook.com/lahitanimalwelfare',
-      instagram: 'https://instagram.com/lahit_animals',
-      youtube: 'https://youtube.com/@lahitanimalwelfare',
+  await Settings.findOneAndUpdate(
+    {},
+    {
+      siteName: 'LAHIT - Uttarkashi Animal Welfare',
+      siteDescription: 'Local rescue, treatment, and rehabilitation for animals found in the Uttarkashi hills.',
+      contactEmail: 'contact@lahit.org', contactPhone: '+91 98765 43210', address: 'Uttarkashi, Uttarakhand, India',
+      facebook: 'https://facebook.com/lahitanimalwelfare', instagram: 'https://instagram.com/lahit_animals', youtube: 'https://youtube.com/@lahitanimalwelfare',
       maintenanceMode: false,
-      volunteerActivities: [
-        'Animal Rescue Operations',
-        'Daily Feeding Drives',
-        'Medical Assistance',
-        'Adoption Events',
-        'Community Awareness',
-        'Foster Care'
-      ]
-    });
-
-    await settings.save();
-    console.log('✅ Default settings created successfully');
-  } catch (error) {
-    console.error('❌ Error creating settings:', error.message);
-    throw error;
-  }
+      rescueLocations: [
+        { id: 'uttarkashi-base', name: 'Uttarkashi', coordinates: [30.7268, 78.4354], address: 'Uttarkashi, Uttarakhand', isBase: true },
+        { id: 'bhatwari', name: 'Bhatwari rescue route', coordinates: [30.7527, 78.6387], address: 'Bhatwari, Uttarkashi', animalsHelped: 2 },
+        { id: 'barkot', name: 'Barkot gaushala route', coordinates: [30.8085, 78.2066], address: 'Barkot, Uttarkashi', animalsHelped: 1 },
+        { id: 'dunda', name: 'Dunda roadside response', coordinates: [30.7333, 78.4500], address: 'Dunda, Uttarkashi', animalsHelped: 1 },
+      ],
+      volunteerActivities: ['Mountain rescue operations', 'Daily feeding drives', 'Animal first aid', 'Gaushala support', 'Wildlife response'],
+    },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+  );
 }
 
-async function createVolunteers() {
-  console.log('\n🙋 Creating sample volunteers...');
+async function seedContent() {
+  const cloudinaryConfigured = Boolean(
+    (process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME)
+    && (process.env.CLOUDINARY_API_KEY || process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY)
+    && (process.env.CLOUDINARY_API_SECRET || process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET),
+  );
+  const imageCache = new Map();
 
-  try {
-    const existingVolunteers = await Volunteer.countDocuments();
-    
-    if (existingVolunteers > 0) {
-      console.log(`ℹ️  ${existingVolunteers} volunteers already exist`);
-      return;
-    }
+  async function storedImage(value) {
+    if (!cloudinaryConfigured || !value.startsWith('/images/')) return value;
+    if (imageCache.has(value)) return imageCache.get(value);
 
-    const volunteers = [
-      {
-        name: 'Rahul Sharma',
-        email: 'rahul.sharma@email.com',
-        phone: '+91 98765 43211',
-        location: 'Dehradun',
-        interest: 'Animal Rescue Operations',
-        message: 'I have been passionate about animal welfare for years and would love to join your team.',
-        status: 'approved'
-      },
-      {
-        name: 'Priya Singh',
-        email: 'priya.singh@email.com',
-        phone: '+91 98765 43212',
-        location: 'Mussoorie',
-        interest: 'Daily Feeding Drives',
-        message: 'I can dedicate weekends to help with feeding drives in my area.',
-        status: 'approved'
-      },
-      {
-        name: 'Amit Kumar',
-        email: 'amit.kumar@email.com',
-        phone: '+91 98765 43213',
-        location: 'Rishikesh',
-        interest: 'Medical Assistance',
-        message: 'I am a veterinary student and would like to help with medical treatments.',
-        status: 'contacted'
-      },
-      {
-        name: 'Sneha Gupta',
-        email: 'sneha.gupta@email.com',
-        phone: '+91 98765 43214',
-        location: 'Haridwar',
-        interest: 'Community Awareness',
-        message: 'I want to organize awareness campaigns in schools and colleges.',
-        status: 'pending'
-      },
-      {
-        name: 'Vikram Joshi',
-        email: 'vikram.joshi@email.com',
-        phone: '+91 98765 43215',
-        location: 'Uttarkashi',
-        interest: 'Foster Care',
-        message: 'I have a large backyard and can foster animals temporarily.',
-        status: 'approved'
-      }
-    ];
-
-    await Volunteer.insertMany(volunteers);
-    console.log('✅ Sample volunteers created successfully');
-  } catch (error) {
-    console.error('❌ Error creating volunteers:', error.message);
-    throw error;
-  }
-}
-
-async function createBlogs() {
-  console.log('\n📝 Creating sample blog posts...');
-
-  try {
-    const existingBlogs = await Blog.countDocuments();
-    
-    if (existingBlogs > 0) {
-      console.log('ℹ️  Blog posts already exist');
-      return;
-    }
-
-    const blogs = [
-      {
-        title: 'How LAHIT is Making a Difference in Uttarakhand',
-        excerpt: 'Learn about our journey rescuing and rehabilitating stray animals across Uttarakhand.',
-        content: '<p>LAHIT has been at the forefront of animal welfare in Uttarakhand since 2020. Our dedicated team of volunteers works tirelessly to rescue, treat, and rehome injured and abandoned animals.</p><p>From the bustling streets of Dehradun to the serene valleys of Mussoorie, our rescue teams respond to emergency calls 24/7. We have successfully rescued over 1200 animals and provided them with the care they need to recover and find loving homes.</p>',
-        coverImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=400&fit=crop',
-        author: 'Admin',
-        category: 'General',
-        tags: ['lahit', 'uttarakhand', 'animal welfare'],
-        published: true,
-        featured: true
-      },
-      {
-        title: 'Bruno\'s Journey: From Rescue to Forever Home',
-        excerpt: 'Meet Bruno, a dog who was found injured on the roadside and is now living his best life.',
-        content: '<p>Bruno was found injured on a roadside in Dehradun with a severe leg wound and was severely malnourished. Our volunteers rushed him to the vet where he underwent surgery and intensive care.</p><p>After 3 months of physiotherapy and lots of love, Bruno made a full recovery. He was adopted by a loving family who now take him on adventures every weekend.</p>',
-        coverImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=400&fit=crop',
-        author: 'Admin',
-        category: 'Rescue Stories',
-        tags: ['rescue', 'dog', 'dehradun', 'success story'],
-        published: true,
-        featured: false
-      },
-      {
-        title: 'Volunteer Drive: Join Our Weekend Feeding Program',
-        excerpt: 'We are expanding our feeding drives and need more volunteers to help us reach more animals.',
-        content: '<p>Our feeding drives have been a huge success, but we need more hands to help us cover more areas. We are looking for volunteers who can dedicate a few hours on weekends to help us distribute food to stray animals across Dehradun, Mussoorie, and Rishikesh.</p><p>No prior experience is needed - just a love for animals and a willingness to help. We provide all the food and supplies.</p>',
-        coverImage: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=400&fit=crop',
-        author: 'Admin',
-        category: 'Volunteer Events',
-        tags: ['volunteer', 'feeding', 'community'],
-        published: true,
-        featured: false
-      }
-    ];
-
-    await Blog.insertMany(blogs);
-    console.log('✅ Sample blog posts created successfully');
-  } catch (error) {
-    console.error('❌ Error creating blogs:', error.message);
-    throw error;
-  }
-}
-
-async function createMedia() {
-  console.log('\n🖼️  Creating sample media library...');
-
-  try {
-    const existingMedia = await Media.countDocuments();
-    
-    if (existingMedia > 0) {
-      console.log('ℹ️  Media already exists');
-      return;
-    }
-
-    const uploadSeedImage = async (source, publicId) => {
+    try {
+      const source = path.join(__dirname, '..', 'public', value);
+      const filename = path.basename(value, path.extname(value));
       const result = await uploadImageSource(source, {
-        folder: 'lahit/media',
-        public_id: publicId,
+        folder: 'lahit/seed-rescues',
+        public_id: filename,
         overwrite: true,
       });
+      imageCache.set(value, result.secure_url);
       return result.secure_url;
-    };
-    const media = [
-      {
-        filename: 'rescue-hero-v2.webp',
-        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v2.webp'), 'rescue-hero-v2'),
-        type: 'image',
-        category: 'hero',
-        alt: 'A LAHIT volunteer caring for a rescued dog in Uttarakhand',
-        caption: 'Hero image for homepage',
-        uploadedBy: 'Admin'
-      },
-      {
-        filename: 'rescue-hero-v3.webp',
-        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v3.webp'), 'rescue-hero-v3'),
-        type: 'image',
-        category: 'hero',
-        alt: 'Volunteers caring for rescued dogs in Uttarakhand',
-        caption: 'Homepage hero image',
-        uploadedBy: 'Admin'
-      },
-      {
-        filename: 'volunteers.jpg',
-        url: await uploadSeedImage('https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop', 'volunteers'),
-        type: 'image',
-        category: 'volunteer',
-        alt: 'LAHIT volunteers',
-        caption: 'Volunteer team at work',
-        uploadedBy: 'Admin'
-      },
-      {
-        filename: 'rescue-hero-v5.webp',
-        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v5.webp'), 'rescue-hero-v5'),
-        type: 'image',
-        category: 'hero',
-        alt: 'A veterinarian examining a rescued dog during a clinic check-up',
-        caption: 'Homepage hero image',
-        uploadedBy: 'Admin'
-      },
-      {
-        filename: 'rescue-hero-v6.webp',
-        url: await uploadSeedImage(path.join(__dirname, '..', 'public', 'images', 'rescue-hero-v6.webp'), 'rescue-hero-v6'),
-        type: 'image',
-        category: 'hero',
-        alt: 'Veterinary staff providing medical treatment to a rescued animal',
-        caption: 'Homepage hero image',
-        uploadedBy: 'Admin'
-      }
-    ];
+    } catch (error) {
+      console.warn(`⚠️ Could not upload ${value}; keeping the local path. ${error.message}`);
+      return value;
+    }
+  }
 
+  const neelRescueUpdate = {
+    type: 'Bird',
+    beforeImage: image('monal-before.png'),
+    afterImage: image('monal-after.png'),
+    story: 'A shopkeeper found Neel, a blue-grey rock pigeon, grounded beside Gangotri Road after a collision left one wing hanging low. The bird was frightened and still, so volunteers moved him quietly into a dark recovery box and contacted the local animal-care team. After rest, wound care, and careful checks, Neel could perch and fly short distances. He was released from a quiet mountain-side ledge away from traffic.',
+  };
+  const neelAnimalUpdate = {
+    type: 'Bird',
+    breed: 'Rock Pigeon',
+    description: 'A blue-grey rock pigeon recovering after a wing injury and ready to return to the skies around Uttarkashi.',
+    image: image('monal-after.png'),
+  };
+  const neelBlogUpdate = {
+    title: 'When a Pigeon Cannot Fly',
+    excerpt: 'A quiet rescue on Gangotri Road shows how patience and careful wing care helped Neel return to the skies.',
+    content: '<p>Bird rescues ask for a different kind of patience. Neel, a blue-grey rock pigeon, was found beside Gangotri Road after a collision left one wing hanging low. The safest first step was to reduce noise, limit handling, and give him a dark, quiet recovery box.</p><p>For several days, the team checked his balance, appetite, and wing movement without rushing him. Rest, gentle wound care, and short supervised perches helped Neel regain strength. When he could perch securely and fly across the room, the team chose a quiet mountain-side ledge away from traffic.</p><p>Even a common city bird deserves careful help when it is hurt. Good wildlife rescue often means doing less, patiently, until an animal can safely return to its own world.</p>',
+    coverImage: image('monal-after.png'),
+    tags: ['rock pigeon', 'wildlife rescue', 'gangotri road'],
+  };
+
+  const seededRescues = await Promise.all(rescueStories.map(async (story) => ({
+    ...(story.name === 'Neel' ? { ...story, ...neelRescueUpdate } : story),
+    beforeImage: await storedImage(story.beforeImage),
+    afterImage: await storedImage(story.afterImage),
+  })));
+  const seededAnimals = await Promise.all(animals.map(async (animal) => ({
+    ...(animal.name === 'Neel' ? { ...animal, ...neelAnimalUpdate } : animal),
+    image: await storedImage(animal.name === 'Neel' ? neelAnimalUpdate.image : animal.image),
+  })));
+  const seededBlogs = await Promise.all(blogs.map(async (blog) => ({
+    ...(blog.slug === 'when-a-himalayan-monal-cannot-fly' ? { ...blog, ...neelBlogUpdate } : blog),
+    coverImage: await storedImage(blog.slug === 'when-a-himalayan-monal-cannot-fly' ? neelBlogUpdate.coverImage : blog.coverImage),
+  })));
+
+  if (RESET_CONTENT) {
+    await Animal.deleteMany({});
+    await Rescue.deleteMany({});
+    await Volunteer.deleteMany({});
+    await Blog.deleteMany({});
+    await Media.deleteMany({ category: { $in: ['rescue', 'animal', 'blog'] } });
+  }
+
+  if (RESET_CONTENT) {
+    await Animal.insertMany(seededAnimals);
+    await Rescue.insertMany(seededRescues);
+    await Volunteer.insertMany(volunteers);
+    await Blog.insertMany(seededBlogs);
+  } else {
+    await Animal.bulkWrite(seededAnimals.map((animal) => ({ updateOne: { filter: { name: animal.name }, update: { $set: animal }, upsert: true } })));
+    await Rescue.bulkWrite(seededRescues.map((story) => ({ updateOne: { filter: { name: story.name, location: story.location }, update: { $set: story }, upsert: true } })));
+    await Volunteer.bulkWrite(volunteers.map((volunteer) => ({ updateOne: { filter: { email: volunteer.email }, update: { $set: volunteer }, upsert: true } })));
+    await Blog.bulkWrite(seededBlogs.map((blog) => ({ updateOne: { filter: { slug: blog.slug }, update: { $set: blog }, upsert: true } })));
+  }
+
+  const media = [
+    ...seededRescues.map((story) => ({ filename: story.beforeImage.split('/').pop(), url: story.beforeImage, type: 'image', category: 'rescue', alt: `${story.name} before rescue`, caption: `${story.name} before rescue`, uploadedBy: 'Admin' })),
+    ...seededRescues.map((story) => ({ filename: story.afterImage.split('/').pop(), url: story.afterImage, type: 'image', category: 'rescue', alt: `${story.name} after rescue`, caption: `${story.name} after rescue`, uploadedBy: 'Admin' })),
+    ...seededBlogs.map((blog) => ({ filename: blog.coverImage.split('/').pop(), url: blog.coverImage, type: 'image', category: 'blog', alt: blog.title, caption: blog.title, uploadedBy: 'Admin' })),
+  ];
+
+  if (RESET_CONTENT) {
     await Media.insertMany(media);
-    console.log('✅ Sample media created successfully');
-  } catch (error) {
-    console.error('❌ Error creating media:', error.message);
-    throw error;
+  } else {
+    await Media.bulkWrite(media.map((item) => ({ updateOne: { filter: { filename: item.filename }, update: { $set: item }, upsert: true } })));
   }
 }
 
 async function seed() {
-  console.log('🌱 Starting database seed...\n');
-
-  await connectDB();
+  console.log('🌱 Seeding LAHIT with Uttarkashi content...');
+  await mongoose.connect(MONGODB_URI);
 
   try {
-    // Create admin user
-    await createAdminUser();
-
-  // Create seeded volunteer login
-  await createVolunteerUser();
-
-  // Create initial stats
-  await createInitialStats();
-
-    // Create sample animals
-    await createAnimals();
-
-    // Create sample rescues
-    await createRescues();
-
-    // Create default settings
-    await createSettings();
-
-    // Create sample volunteers
-    await createVolunteers();
-
-    // Create sample blogs
-    await createBlogs();
-
-    // Create sample media
-    await createMedia();
-
-    console.log('\n✨ Database seed completed successfully!');
-    console.log('\n📝 Login Credentials:');
-    console.log('   Email: admin@lahit.org');
-    console.log('   Password: admin123');
-    console.log('   Volunteer email: volunteer@lahit.org');
-    console.log('   Volunteer password: volunteer123');
-    console.log('\n⚠️  Please change the default password after first login.\n');
-  } catch (error) {
-    console.error('\n❌ Seed failed:', error.message);
-    process.exit(1);
+    await ensureLoginUsers();
+    await seedSettingsAndStats();
+    await seedContent();
+    console.log(`✅ Seeded ${rescueStories.length} rescue stories, ${blogs.length} blogs, and ${volunteers.length} volunteers.`);
+    console.log(RESET_CONTENT ? '   Content reset was explicitly enabled.' : '   Existing records were preserved; matching seed records were updated.');
+    console.log('   Admin: admin@lahit.org / admin123');
+    console.log('   Volunteer: volunteer@lahit.org / volunteer123');
   } finally {
     await mongoose.connection.close();
-    console.log('🔌 Database connection closed');
   }
 }
 
-// Run the seed function
-seed();
+seed().catch((error) => {
+  console.error('❌ Seed failed:', error.message);
+  process.exitCode = 1;
+});

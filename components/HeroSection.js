@@ -27,7 +27,7 @@ const heroSlides = [
 ];
 
 export default function HeroSection() {
-  const [stats, setStats] = useState({ animalsRescued: 1200, volunteers: 0 });
+  const [stats, setStats] = useState({ animalsRescued: 0, volunteers: 0 });
   const [slides, setSlides] = useState(heroSlides);
   const [current, setCurrent] = useState(0);
 

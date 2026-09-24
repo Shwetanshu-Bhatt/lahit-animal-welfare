@@ -72,6 +72,7 @@ export default function AdoptionSection() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
+                className={animals.length === 1 ? 'w-full justify-self-start sm:max-w-[19rem]' : ''}
               >
                 <Card hover={false} className="group h-full overflow-hidden" padding="none">
                   <div className="relative aspect-[4/3] overflow-hidden">

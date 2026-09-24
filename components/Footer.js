@@ -45,11 +45,11 @@ export default function Footer() {
   }, []);
 
   const socialLinks = [
-    { name: 'Instagram', icon: Instagram, href: settings?.instagram },
+    { name: 'Instagram', icon: Instagram, href: settings?.instagram || 'https://instagram.com/lahitanimalwelfaregroup' },
     { name: 'Facebook', icon: Facebook, href: settings?.facebook },
     { name: 'YouTube', icon: Youtube, href: settings?.youtube },
   ].filter((social) => social.href);
-  const contactEmail = settings?.contactEmail || 'contact@lahitanimalwelfare.org';
+  const contactEmail = settings?.contactEmail || 'contact@lahitanimalwelfaregroup.com';
   const contactPhone = settings?.contactPhone || '';
   const address = settings?.address || 'Dehradun, Uttarakhand, India';
   const scrollToTop = () => {

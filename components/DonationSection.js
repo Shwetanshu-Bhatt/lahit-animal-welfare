@@ -76,12 +76,12 @@ export default function DonationSection() {
     branch: settings?.bankBranch || '',
   };
   const bankConfigured = Boolean(bankDetails.accountNumber && bankDetails.ifscCode);
-  const donationTiers = settings?.donationTiers || [
+  const donationTiers = (settings?.donationTiers || [
     { id: 1, amount: 500, title: 'Daily Meals', description: 'Feed stray dogs for a day', icon: 'Utensils', impact: 'Provides nutritious meals for 10 street dogs' },
     { id: 2, amount: 1500, title: 'Vaccination', description: 'Vaccination for one animal', icon: 'Syringe', impact: 'Complete vaccination course for a rescued animal' },
     { id: 3, amount: 3000, title: 'Emergency Treatment', description: 'Emergency treatment support', icon: 'HeartPulse', impact: 'Covers emergency medical treatment and medicines' },
     { id: 4, amount: 5000, title: 'Rescue Mission', description: 'Fund a complete rescue', icon: 'Ambulance', impact: 'Covers rescue, treatment, and rehabilitation' }
-  ];
+  ]).filter((tier) => tier.title?.trim().toLowerCase() !== '2 manti');
 
   const handleCopy = (text, label) => {
     navigator.clipboard.writeText(text);

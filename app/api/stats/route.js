@@ -18,14 +18,14 @@ export async function GET() {
     // Create default stats if none exist
     if (!stats) {
       stats = await Stat.create({
-        animalsRescued: 1200,
-        mealsServed: 30000,
-        treatments: 500,
-        adoptions: 200,
+        animalsRescued: 0,
+        mealsServed: 0,
+        treatments: 0,
+        adoptions: 0,
         volunteers: volunteerCount,
-        citiesCovered: 15,
-        partnerVets: 10,
-        yearsActive: 4
+        citiesCovered: 0,
+        partnerVets: 0,
+        yearsActive: 0
       });
     }
     

@@ -58,7 +58,7 @@ export default function InstagramFeed() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [instagramPosts, setInstagramPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [instagramUrl, setInstagramUrl] = useState('https://instagram.com/lahitanimalwelfare');
+  const [instagramUrl, setInstagramUrl] = useState('https://instagram.com/lahitanimalwelfaregroup');
 
   useEffect(() => {
     async function fetchSettings() {

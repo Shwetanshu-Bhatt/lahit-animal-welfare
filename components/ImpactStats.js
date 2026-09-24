@@ -55,7 +55,16 @@ export default function ImpactStats() {
         setStats(data.data);
       } catch (error) {
         console.error('Error fetching stats:', error);
-        setStats({ animalsRescued: 1200, mealsServed: 30000, treatments: 500, adoptions: 200 });
+        setStats({
+          animalsRescued: 0,
+          mealsServed: 0,
+          treatments: 0,
+          adoptions: 0,
+          citiesCovered: 0,
+          volunteers: 0,
+          partnerVets: 0,
+          yearsActive: 0,
+        });
       }
     }
     fetchStats();
@@ -67,6 +76,14 @@ export default function ImpactStats() {
     { id: 3, value: stats?.treatments || 0, suffix: '+', label: 'Treatments funded', icon: 'Stethoscope' },
     { id: 4, value: stats?.adoptions || 0, suffix: '+', label: 'Forever homes', icon: 'Home' },
   ];
+
+  const summaryStats = [
+    [stats?.citiesCovered ?? 0, 'Cities covered'],
+    [stats?.volunteers ?? 0, 'Volunteers'],
+    ...(Number(stats?.partnerVets) > 0 ? [[stats.partnerVets, 'Partner vets']] : []),
+    [stats?.yearsActive ?? 0, 'Years active'],
+  ];
+  const summaryColumns = summaryStats.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2';
 
   return (
     <section id="about" className="section-padding overflow-hidden bg-base-100" ref={sectionRef}>
@@ -142,18 +159,24 @@ export default function ImpactStats() {
               Find your way to help <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>
-          <div className="grid grid-cols-2 border-t border-white/15 lg:border-t-0 lg:border-l">
-            {[
-              [stats?.citiesCovered ?? 15, 'Cities covered'],
-              [stats?.volunteers ?? 0, 'Volunteers'],
-              [stats?.partnerVets ?? 10, 'Partner vets'],
-              [stats?.yearsActive ?? 4, 'Years active'],
-            ].map(([value, label]) => (
-              <div key={label} className="flex min-h-28 flex-col justify-end border-r border-b border-white/15 p-5 even:border-r-0 last:border-b-0 sm:min-h-44 sm:p-8 [&:nth-last-child(2)]:border-b-0">
+          <div className={`grid grid-cols-2 border-t border-white/15 lg:border-t-0 lg:border-l ${summaryColumns}`}>
+            {summaryStats.map(([value, label], index) => {
+              const mobileLastColumn = (index + 1) % 2 === 0;
+              const mobileLastRow = index >= summaryStats.length - (summaryStats.length % 2 === 0 ? 2 : 1);
+              const desktopColumns = summaryStats.length === 3 ? 3 : 2;
+              const desktopLastColumn = (index + 1) % desktopColumns === 0;
+              const desktopLastRow = index >= summaryStats.length - desktopColumns;
+
+              return (
+              <div
+                key={label}
+                className={`flex min-h-28 flex-col justify-end border-r border-b border-white/15 p-5 sm:min-h-44 sm:p-8 ${mobileLastColumn ? 'border-r-0' : ''} ${mobileLastRow ? 'border-b-0' : ''} ${desktopLastColumn ? 'lg:border-r-0' : 'lg:border-r'} ${desktopLastRow ? 'lg:border-b-0' : 'lg:border-b'}`}
+              >
                 <p className="text-3xl font-black tracking-[-0.06em] text-accent sm:text-4xl">{value}+</p>
                 <p className="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-white/55">{label}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
       </Container>
