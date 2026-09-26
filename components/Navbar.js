@@ -72,7 +72,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           <Link href="/" className="flex min-w-0 items-center gap-2.5" aria-label="LAHIT home">
             <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-white/30 bg-white shadow-sm sm:h-10 sm:w-10">
-              <Image src="/lahit.png" alt="" fill className="object-cover" priority />
+            <Image src="/lahit.png" alt="" fill sizes="40px" className="object-cover" priority />
             </span>
             <span className="leading-none">
               <span className="block text-lg font-black tracking-[-0.04em]">LAHIT ANIMAL WELFARE GROUP</span>

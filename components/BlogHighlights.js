@@ -69,6 +69,7 @@ export default function BlogHighlights() {
                       src={featured.coverImage}
                       alt={featured.title}
                       fill
+                      sizes="(max-width: 1023px) 100vw, 55vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={() => handleImageError(featured._id)}
                     />

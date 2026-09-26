@@ -80,6 +80,7 @@ export default function AdoptionSection() {
                       src={animal.image}
                       alt={animal.name}
                       fill
+                      sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 25vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute right-3 top-3">

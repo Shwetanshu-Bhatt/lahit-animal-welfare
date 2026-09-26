@@ -33,6 +33,7 @@ function RescueCard({ story, index, featured = false }) {
                 src={story.beforeImage}
                 alt={`${story.name} before rescue`}
                 fill
+                sizes="(max-width: 639px) 48vw, (max-width: 1023px) 25vw, 28vw"
                 className="rescue-story-image object-cover"
                 onError={() => setImgError(prev => ({ ...prev, before: true }))}
               />
@@ -51,6 +52,7 @@ function RescueCard({ story, index, featured = false }) {
                 src={story.afterImage}
                 alt={`${story.name} after recovery`}
                 fill
+                sizes="(max-width: 639px) 48vw, (max-width: 1023px) 25vw, 28vw"
                 className="rescue-story-image object-cover"
                 onError={() => setImgError(prev => ({ ...prev, after: true }))}
               />
@@ -184,7 +186,7 @@ export default function RescueStories() {
               {posts.map((post) => (
                 <Link key={post._id} href={`/blog/${post.slug}`} className="group flex min-w-0 overflow-hidden rounded-2xl border border-primary/10 bg-base-100 transition-transform hover:-translate-y-1">
                   <div className="relative hidden w-32 shrink-0 bg-primary/5 sm:block">
-                    {post.coverImage ? <Image src={post.coverImage} alt={post.title} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><BookOpen className="h-8 w-8 text-primary/25" /></div>}
+                    {post.coverImage ? <Image src={post.coverImage} alt={post.title} fill sizes="128px" className="object-cover" /> : <div className="flex h-full items-center justify-center"><BookOpen className="h-8 w-8 text-primary/25" /></div>}
                   </div>
                   <div className="min-w-0 p-5">
                     <span className="text-[0.65rem] font-black uppercase tracking-[0.1em] text-secondary">{post.category || 'General'}</span>
