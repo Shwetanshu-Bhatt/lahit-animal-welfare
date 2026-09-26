@@ -28,8 +28,8 @@ const BlogSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Rescue Stories', 'Medical Updates', 'Feeding Drives', 'Adoption', 'Volunteer Events', 'General'],
     default: 'General',
+    trim: true,
   },
   tags: [{
     type: String,

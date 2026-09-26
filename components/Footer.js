@@ -18,6 +18,7 @@ import Link from 'next/link';
 const quickLinks = [
   { name: 'Home', href: '/' },
   { name: 'About Us', href: '/#about' },
+  { name: 'Uttarkashi Animal Rescue', href: '/uttarkashi/' },
   { name: 'Rescue Stories', href: '/#rescues' },
   { name: 'Adopt', href: '/animals' },
   { name: 'Field Notes', href: '/blog' },

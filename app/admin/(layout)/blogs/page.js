@@ -5,6 +5,7 @@ import { Trash2, Edit, Eye, EyeOff, FileText } from 'lucide-react';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import { uploadImage } from '@/lib/upload-image';
+import { BLOG_CATEGORIES } from '@/lib/blog-categories';
 
 export default function AdminBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -317,19 +318,20 @@ export default function AdminBlogs() {
                 
                 <div>
                   <label className="block text-sm font-medium text-primary mb-2">Category</label>
-                  <select
+                  <input
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="select select-bordered w-full"
-                  >
-                    <option value="General">General</option>
-                    <option value="Rescue Stories">Rescue Stories</option>
-                    <option value="Medical Updates">Medical Updates</option>
-                    <option value="Feeding Drives">Feeding Drives</option>
-                    <option value="Adoption">Adoption</option>
-                    <option value="Volunteer Events">Volunteer Events</option>
-                  </select>
+                    list="blog-category-options"
+                    className="input input-bordered w-full"
+                    placeholder="Choose or create a category"
+                  />
+                  <datalist id="blog-category-options">
+                    {[...new Set([...BLOG_CATEGORIES, ...blogs.map((blog) => blog.category).filter(Boolean)])].map((category) => (
+                      <option key={category} value={category} />
+                    ))}
+                  </datalist>
+                  <p className="mt-1 text-xs text-primary/55">Choose an existing category or type a new one.</p>
                 </div>
                 
                 <div>
@@ -430,8 +432,8 @@ export default function AdminBlogs() {
                         <p className="text-xs text-primary/60 line-clamp-1">{blog.excerpt}</p>
                       </div>
                     </td>
-                    <td>
-                      <span className="badge badge-primary badge-outline">{blog.category}</span>
+                    <td style={{ whiteSpace: 'nowrap' }}>
+                      <span className="badge badge-primary badge-outline" style={{ display: 'inline-flex', width: 'max-content', whiteSpace: 'nowrap' }}>{blog.category}</span>
                     </td>
                     <td className="text-primary/70">{blog.author}</td>
                     <td>

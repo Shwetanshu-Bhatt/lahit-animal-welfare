@@ -6,9 +6,9 @@ export default async function sitemap() {
   const lastModified = new Date('2026-09-23T00:00:00.000Z');
   const staticEntries = PUBLIC_PATHS.map((path) => ({
     url: `${SITE_URL}${path}`,
-    lastModified,
+    lastModified: path === '/uttarkashi/' ? new Date('2026-09-26T00:00:00.000Z') : lastModified,
     changeFrequency: path === '/' ? 'weekly' : 'monthly',
-    priority: path === '/' ? 1 : path === '/animals/' || path === '/rescues/' ? 0.9 : 0.6,
+    priority: path === '/' ? 1 : path === '/uttarkashi/' || path === '/animals/' || path === '/rescues/' ? 0.9 : 0.6,
   }));
 
   try {

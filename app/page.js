@@ -21,7 +21,6 @@ export default function Home() {
       <ImpactStats />
       <AdoptionSection />
       <RescueStories />
-      <BlogHighlights />
       <HelpCards />
       <EmergencyRescue />
       <InstagramFeed />

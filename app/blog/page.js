@@ -8,11 +8,13 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Container from '@/components/ui/Container';
 import PublicSiteGate from '@/components/PublicSiteGate';
+import { BLOG_CATEGORIES } from '@/lib/blog-categories';
 
 export default function BlogPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
+  const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     fetch('/api/blogs')
@@ -20,6 +22,9 @@ export default function BlogPage() {
       .then((data) => { if (data.success) setPosts(data.data); })
       .finally(() => setLoading(false));
   }, []);
+
+  const categories = [...new Set([...BLOG_CATEGORIES, ...posts.map((post) => post.category).filter(Boolean)])];
+  const visiblePosts = activeCategory === 'All' ? posts : posts.filter((post) => (post.category || 'General') === activeCategory);
 
   function handleImageError(id) {
     setImageErrors(prev => ({ ...prev, [id]: true }));
@@ -42,8 +47,19 @@ export default function BlogPage() {
           ) : posts.length === 0 ? (
             <div className="admin-empty bg-base-100"><BookOpen className="h-8 w-8" /><p>Blogs are coming soon.</p></div>
           ) : (
+            <>
+            <div className="mb-8 flex flex-wrap justify-center gap-2">
+              {['All', ...categories].map((category) => (
+                <button key={category} type="button" onClick={() => setActiveCategory(category)} className={`rounded-full px-4 py-2 text-sm font-bold transition-colors ${activeCategory === category ? 'bg-primary text-white' : 'border border-primary/15 bg-base-100 text-primary hover:bg-primary/5'}`}>
+                  {category}
+                </button>
+              ))}
+            </div>
+            {visiblePosts.length === 0 ? (
+              <div className="admin-empty bg-base-100"><BookOpen className="h-8 w-8" /><p>No blogs in this category yet.</p></div>
+            ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {posts.map((post) => (
+              {visiblePosts.map((post) => (
                 <Link key={post._id} href={`/blog/${post.slug}`} className="group overflow-hidden rounded-[1.75rem] border border-primary/10 bg-base-100 shadow-[0_14px_50px_rgba(11,51,36,0.06)]">
                   <div className="relative aspect-[4/3] overflow-hidden bg-primary/8">
                     {post.coverImage && !imageErrors[post._id] ? (
@@ -62,6 +78,8 @@ export default function BlogPage() {
                 </Link>
               ))}
             </div>
+            )}
+            </>
           )}
         </Container>
       </section>

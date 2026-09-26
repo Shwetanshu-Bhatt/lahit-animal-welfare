@@ -11,10 +11,10 @@ export default function StructuredData() {
         url: SITE_URL,
         logo: `${SITE_URL}/lahit.png`,
         description: SITE_DESCRIPTION,
-        areaServed: {
-          '@type': 'AdministrativeArea',
-          name: 'Uttarakhand, India',
-        },
+        areaServed: [
+          { '@type': 'AdministrativeArea', name: 'Uttarkashi, Uttarakhand, India' },
+          { '@type': 'AdministrativeArea', name: 'Uttarakhand, India' },
+        ],
         knowsAbout: ['animal rescue', 'animal welfare', 'pet adoption', 'stray animal care'],
         sameAs: [
           'https://facebook.com/lahitanimalwelfare',

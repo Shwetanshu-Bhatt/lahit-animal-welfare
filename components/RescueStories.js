@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { MapPin, Calendar, ArrowRight, Loader2 } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight, Loader2, BookOpen } from 'lucide-react';
 import Container from './ui/Container';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -102,6 +102,7 @@ export default function RescueStories() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
   const [rescues, setRescues] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -123,10 +124,13 @@ export default function RescueStories() {
       }
     }
     fetchRescues();
+    fetch('/api/blogs').then((res) => res.json()).then((data) => {
+      if (data.success) setPosts(data.data.slice(0, 2));
+    }).catch((err) => console.error('Error loading story updates:', err));
   }, []);
 
   return (
-    <section id="rescues" className="section-padding bg-base-200" ref={sectionRef}>
+    <section id="stories" className="section-padding bg-base-200" ref={sectionRef}>
       <Container>
         {/* Section Header */}
         <motion.div
@@ -139,11 +143,10 @@ export default function RescueStories() {
             Success Stories
           </span>
           <h2 className="mb-4 text-[2rem] font-bold tracking-[-0.04em] text-primary sm:text-4xl lg:text-5xl">
-            Rescue & Recovery Stories
+            Rescue & Community Stories
           </h2>
           <p className="text-lg text-primary/70 max-w-2xl mx-auto">
-            Every rescue is a journey of hope. See how your support helps transform 
-            injured and abandoned animals into healthy, happy companions.
+            Stories from our rescues, recovery work, medical care, feeding drives, and the community that makes it possible.
           </p>
         </motion.div>
 
@@ -165,6 +168,33 @@ export default function RescueStories() {
             {rescues.map((story, index) => (
               <RescueCard key={story._id || index} story={story} index={index} />
             ))}
+          </div>
+        )}
+
+        {posts.length > 0 && (
+          <div className="mt-14 border-t border-primary/10 pt-10">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <span className="badge badge-secondary badge-outline mb-3">LAHIT updates</span>
+                <h3 className="text-2xl font-bold tracking-[-0.04em] text-primary sm:text-3xl">More from the field</h3>
+              </div>
+              <Button href="/blog" variant="outline" size="sm" icon={ArrowRight}>Browse all updates</Button>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2">
+              {posts.map((post) => (
+                <Link key={post._id} href={`/blog/${post.slug}`} className="group flex min-w-0 overflow-hidden rounded-2xl border border-primary/10 bg-base-100 transition-transform hover:-translate-y-1">
+                  <div className="relative hidden w-32 shrink-0 bg-primary/5 sm:block">
+                    {post.coverImage ? <Image src={post.coverImage} alt={post.title} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><BookOpen className="h-8 w-8 text-primary/25" /></div>}
+                  </div>
+                  <div className="min-w-0 p-5">
+                    <span className="text-[0.65rem] font-black uppercase tracking-[0.1em] text-secondary">{post.category || 'General'}</span>
+                    <h4 className="mt-2 text-xl font-bold text-primary">{post.title}</h4>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-primary/65">{post.excerpt}</p>
+                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary">Read update <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 

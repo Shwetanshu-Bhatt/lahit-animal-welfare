@@ -11,8 +11,7 @@ import Container from './ui/Container';
 const navLinks = [
   { name: 'Our impact', href: '/#about' },
   { name: 'Adopt', href: '/#adoption' },
-  { name: 'Rescues', href: '/rescues' },
-  { name: 'Blogs', href: '/#blogs' },
+  { name: 'Stories', href: '/#stories' },
   { name: 'Volunteer', href: '/#volunteer' },
 ];
 

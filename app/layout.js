@@ -1,15 +1,16 @@
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import StructuredData from '@/components/StructuredData';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Animal Rescue, Adoption & Volunteer Support in Uttarakhand`,
+    default: `${SITE_NAME} | Animal Rescue in Uttarkashi, Uttarakhand`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: ["animal rescue", "Uttarakhand", "stray animals", "animal welfare", "dog rescue", "cat rescue", "volunteer", "donate"],
+  keywords: ['animal rescue Uttarkashi', 'animal welfare Uttarkashi', 'stray dog rescue Uttarkashi', 'animal rescue Uttarakhand', 'pet adoption Uttarakhand', 'animal welfare volunteer Uttarkashi'],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -22,8 +23,8 @@ export const metadata = {
     apple: '/lahit.png',
   },
   openGraph: {
-    title: "LAHIT Animal Welfare | Helping Stray Animals in Uttarakhand",
-    description: "Join us in our mission to rescue, treat, and rehome injured and abandoned animals across Uttarakhand.",
+    title: 'LAHIT Animal Welfare | Animal Rescue in Uttarkashi, Uttarakhand',
+    description: SITE_DESCRIPTION,
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
@@ -46,6 +47,7 @@ export default function RootLayout({ children }) {
       <body className="font-sans antialiased bg-base-200">
         <StructuredData />
         {children}
+        <Analytics />
       </body>
     </html>
   );

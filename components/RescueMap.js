@@ -105,7 +105,7 @@ function MapComponent({ locations }) {
               <h3 className="font-bold text-[#401E01] mb-1">{location.name}</h3>
               <p className="text-sm text-[#401E01]/70 mb-2">{location.address}</p>
               <p className="text-sm font-medium text-[#164020]">
-                {location.isBase ? 'NGO base' : `${location.animalsHelped}+ animals helped`}
+                {location.isBase ? 'LAHIT base' : `${location.animalsHelped}+ animals helped`}
               </p>
             </div>
           </Popup>
@@ -232,7 +232,7 @@ export default function RescueMap() {
                       {location.name}
                     </h4>
                     <p className="text-xs text-[#401E01]/60">
-                      {location.isBase ? 'NGO base' : `${location.animalsHelped}+ animals helped`}
+                      {location.isBase ? 'LAHIT base' : `${location.animalsHelped}+ animals helped`}
                     </p>
                   </div>
                 </div>
